@@ -11,7 +11,7 @@ import {
   Crosshair,
   MapPin,
   Layers,
-  Box3D
+  Box
 } from 'lucide-react';
 import { createSnapPointIndicator, createMockHandlebar } from '@/utils/threeUtils';
 
@@ -154,7 +154,7 @@ export const Viewport: React.FC = () => {
       
       <div className="absolute bottom-4 left-4 z-10">
         <div className="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/80 backdrop-blur-sm text-app-gray">
-          <Box3D size={12} className="text-app-blue" />
+          <Box size={12} className="text-app-blue" />
           <span>Bike Handlebar.stl</span>
         </div>
       </div>
