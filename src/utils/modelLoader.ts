@@ -105,6 +105,7 @@ export const loadModel = async (
   fileType: string
 ): Promise<THREE.Object3D> => {
   try {
+    console.log(`Loading model from URL: ${url}, type: ${fileType}`);
     const lowerType = fileType.toLowerCase();
     
     if (lowerType === 'stl') {

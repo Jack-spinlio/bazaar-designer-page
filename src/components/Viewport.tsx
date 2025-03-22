@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -13,22 +14,9 @@ import {
   Box,
   Trash2
 } from 'lucide-react';
-import { createMockHandlebar, createComponentShape } from '@/utils/threeUtils';
+import { createComponentShape } from '@/utils/threeUtils';
 import { loadModel } from '@/utils/modelLoader';
 import { ComponentItem } from './Sidebar';
-
-const Handlebar = () => {
-  const handlebarRef = useRef<THREE.Group>(null);
-  
-  useEffect(() => {
-    if (handlebarRef.current) {
-      const handlebar = createMockHandlebar();
-      handlebarRef.current.add(handlebar);
-    }
-  }, []);
-  
-  return <group ref={handlebarRef} />;
-};
 
 interface PlacedObjectProps {
   component: ComponentItem;
@@ -46,6 +34,8 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
   isSelected
 }) => {
   const componentRef = useRef<THREE.Group>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
   
   useEffect(() => {
     if (componentRef.current) {
@@ -57,6 +47,8 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
       // Check if we have a model URL to load
       if (component.modelUrl && (component.type === 'STL' || component.type === 'OBJ')) {
         console.log(`Loading ${component.type} model from ${component.modelUrl}`);
+        setIsLoading(true);
+        setLoadError(null);
         
         // Load the STL or OBJ model
         loadModel(component.modelUrl, component.type)
@@ -76,13 +68,21 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
               
               // Add to the group
               componentRef.current.add(model);
+              toast.success(`Loaded ${component.name} model`);
             }
+            setIsLoading(false);
           })
           .catch(error => {
             console.error('Error loading model:', error);
+            setLoadError(`Failed to load ${component.type} model`);
+            toast.error(`Failed to load ${component.name} model`);
+            
             // Fallback to basic shape if model loading fails
             const componentMesh = createComponentShape(component.shape);
-            componentRef.current?.add(componentMesh);
+            if (componentRef.current) {
+              componentRef.current.add(componentMesh);
+            }
+            setIsLoading(false);
           });
       } else {
         // Create the standard component mesh for basic shapes
@@ -113,6 +113,12 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[0.6, 0.6, 0.6]} />
           <meshBasicMaterial color="#ffffff" wireframe={true} />
+        </mesh>
+      )}
+      {isLoading && (
+        <mesh position={[0, 0, 0]}>
+          <sphereGeometry args={[0.2, 16, 16]} />
+          <meshBasicMaterial color="#3b82f6" wireframe={true} />
         </mesh>
       )}
     </group>
@@ -166,7 +172,6 @@ const Scene: React.FC<SceneProps> = ({
       />
       
       <gridHelper args={[10, 10]} position={[0, -0.01, 0]} />
-      <Handlebar />
       
       {/* Render all placed objects */}
       {placedObjects.map((object) => (
@@ -205,7 +210,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
   useEffect(() => {
     if (selectedComponent) {
       console.log('Viewport: Selected component changed:', selectedComponent.name);
-      toast(`Component selected: ${selectedComponent.name}`, {
+      toast.info(`Component selected: ${selectedComponent.name}`, {
         description: "Click in the viewport to place the object",
       });
     }
@@ -226,6 +231,8 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
       toast.success(`Placed ${selectedComponent.name}`);
       onComponentPlaced();
       console.log(`Added ${selectedComponent.name} at position (${position.join(', ')})`);
+    } else {
+      toast.info("Please select a component from the library first");
     }
   };
 
@@ -292,6 +299,12 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
           </Button>
         </div>
       )}
+      
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
+        {selectedComponent ? 
+          `Selected: ${selectedComponent.name} - Click in the viewport to place` : 
+          "Select a component from the library"}
+      </div>
       
       <Canvas shadows className="w-full h-full outline-none">
         <Scene 

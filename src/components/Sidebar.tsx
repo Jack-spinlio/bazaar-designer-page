@@ -92,7 +92,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
           const modelComponents = data.map(file => {
             const fileExt = file.name.split('.').pop()?.toUpperCase() || '';
             const name = file.name.split('.')[0].replace(/_/g, ' ').replace(/^\d+_/, '');
-            const { publicUrl } = supabase.storage
+            
+            // Fix: Get the publicUrl correctly from the object returned by getPublicUrl
+            const publicUrlData = supabase.storage
               .from('models')
               .getPublicUrl(file.name);
               
@@ -103,7 +105,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
               thumbnail: '/placeholder.svg',
               folder: 'Uploads',
               shape: 'box' as const,
-              modelUrl: publicUrl
+              modelUrl: publicUrlData.data.publicUrl
             };
           });
           
