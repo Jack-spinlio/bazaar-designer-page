@@ -146,39 +146,54 @@ export const createComponentShape = (shape: string) => {
   
   switch (shape.toLowerCase()) {
     case 'box':
-      const boxGeom = new THREE.BoxGeometry(0.4, 0.4, 0.4);
+      const boxGeom = new THREE.BoxGeometry(0.5, 0.5, 0.5);
       mesh = new THREE.Mesh(boxGeom, material);
       break;
     
     case 'sphere':
-      const sphereGeom = new THREE.SphereGeometry(0.25, 16, 16);
+      const sphereGeom = new THREE.SphereGeometry(0.3, 16, 16);
       mesh = new THREE.Mesh(sphereGeom, material);
       break;
     
     case 'cylinder':
-      const cylGeom = new THREE.CylinderGeometry(0.2, 0.2, 0.5, 32);
+      const cylGeom = new THREE.CylinderGeometry(0.25, 0.25, 0.6, 32);
       mesh = new THREE.Mesh(cylGeom, material);
       break;
     
     case 'cone':
-      const coneGeom = new THREE.ConeGeometry(0.25, 0.5, 32);
+      const coneGeom = new THREE.ConeGeometry(0.3, 0.6, 32);
       mesh = new THREE.Mesh(coneGeom, material);
       break;
     
     case 'torus':
-      const torusGeom = new THREE.TorusGeometry(0.2, 0.08, 16, 32);
+      const torusGeom = new THREE.TorusGeometry(0.3, 0.1, 16, 32);
       mesh = new THREE.Mesh(torusGeom, material);
       break;
     
     default:
       // Default to a small sphere if shape is unknown
       console.log("Unknown shape:", shape, "defaulting to sphere");
-      const defaultGeom = new THREE.SphereGeometry(0.2, 8, 8);
+      const defaultGeom = new THREE.SphereGeometry(0.3, 16, 16);
       mesh = new THREE.Mesh(defaultGeom, material);
   }
   
   if (mesh) {
+    // Add a wireframe to make it more visible
+    const wireframeMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      wireframe: true
+    });
+    const wireframe = new THREE.Mesh(mesh.geometry.clone(), wireframeMaterial);
+    mesh.add(wireframe);
+    
     group.add(mesh);
+    
+    // Add a small debug sphere to mark the origin
+    const originMarker = new THREE.Mesh(
+      new THREE.SphereGeometry(0.05, 8, 8),
+      new THREE.MeshBasicMaterial({ color: 0xff0000 })
+    );
+    group.add(originMarker);
   }
   
   return group;

@@ -64,6 +64,11 @@ const PlacedComponent: React.FC<PlacedComponentProps> = ({ position, shape }) =>
       componentRef.current.position.set(position[0], position[1], position[2]);
       
       console.log(`Placed component with shape "${shape}" at position (${position.join(', ')})`);
+      
+      // Add a debug box to visualize the component bounds
+      const box = new THREE.Box3().setFromObject(componentMesh);
+      const boxHelper = new THREE.Box3Helper(box, new THREE.Color(0xff0000));
+      componentRef.current.add(boxHelper);
     }
   }, [position, shape]);
 
