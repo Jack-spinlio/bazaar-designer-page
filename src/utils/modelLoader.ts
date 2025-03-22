@@ -111,6 +111,45 @@ export const loadOBJModel = (
   });
 };
 
+// Handle STP/STEP files - Since we don't have a direct Three.js loader for STP/STEP,
+// we'll create a placeholder geometry for them
+export const loadSTPModel = (
+  url: string,
+  onLoad?: (mesh: THREE.Object3D) => void,
+  onProgress?: (event: ProgressEvent) => void,
+  onError?: (error: unknown) => void
+): Promise<THREE.Object3D> => {
+  return new Promise((resolve) => {
+    console.log(`Creating placeholder for STP/STEP model: ${url}`);
+    
+    // Create a group to hold our placeholder geometry
+    const group = new THREE.Group();
+    
+    // Create a placeholder cube
+    const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x3b82f6,
+      metalness: 0.5,
+      roughness: 0.3
+    });
+    const cube = new THREE.Mesh(geometry, material);
+    group.add(cube);
+    
+    // Add a text label indicating this is a placeholder for STP file
+    const messageObj = new THREE.Group();
+    messageObj.position.set(0, 0.5, 0);
+    group.add(messageObj);
+    
+    if (onLoad) onLoad(group);
+    
+    toast.info(`STP/STEP file detected: ${url.split('/').pop()}`, {
+      description: "STP/STEP visualization is simplified as a placeholder"
+    });
+    
+    resolve(group);
+  });
+};
+
 // Generic function to load a model based on its extension
 export const loadModel = async (
   url: string,
@@ -126,6 +165,9 @@ export const loadModel = async (
     } else if (lowerType === 'obj') {
       console.log('Using OBJ loader for', url);
       return await loadOBJModel(url);
+    } else if (lowerType === 'step' || lowerType === 'stp') {
+      console.log('Using STP placeholder for', url);
+      return await loadSTPModel(url);
     } else {
       throw new Error(`Unsupported file type: ${fileType}`);
     }
@@ -143,3 +185,6 @@ export const loadModel = async (
     return new THREE.Mesh(geometry, material);
   }
 };
+
+// We need to import toast for the STP loader
+import { toast } from 'sonner';

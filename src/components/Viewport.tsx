@@ -43,12 +43,12 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
       }
       
       // Check if we have a model URL to load
-      if (component.modelUrl && (component.type === 'STL' || component.type === 'OBJ')) {
+      if (component.modelUrl && (component.type === 'STL' || component.type === 'OBJ' || component.type === 'STP' || component.type === 'STEP')) {
         console.log(`Loading ${component.type} model from ${component.modelUrl}`);
         setIsLoading(true);
         setLoadError(null);
         
-        // Load the STL or OBJ model
+        // Load the model
         loadModel(component.modelUrl, component.type)
           .then(model => {
             if (componentRef.current) {
@@ -204,6 +204,35 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
     position: [number, number, number];
   }>>([]);
   const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null);
+  const [hasLoadedCM18, setHasLoadedCM18] = useState(false);
+  
+  // Default load CM18 model
+  useEffect(() => {
+    if (!hasLoadedCM18) {
+      // Create a CM18 model component
+      const cm18Component: ComponentItem = {
+        id: 'cm18-default',
+        name: 'CM18 3D Model',
+        type: 'STL', // You can change this to match your actual file type
+        thumbnail: '/placeholder.svg',
+        folder: 'Default Models',
+        shape: 'box',
+        modelUrl: '/cm18.stl' // Replace with the actual URL of your CM18 model
+      };
+      
+      // Place it at a default position
+      setPlacedObjects([
+        { 
+          id: `cm18-${Date.now()}`, 
+          component: cm18Component, 
+          position: [0, 0, 0] 
+        }
+      ]);
+      
+      setHasLoadedCM18(true);
+      toast.success('Default CM18 model loaded');
+    }
+  }, [hasLoadedCM18]);
   
   useEffect(() => {
     if (selectedComponent) {
