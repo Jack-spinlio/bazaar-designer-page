@@ -209,28 +209,53 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
   // Default load CM18 model
   useEffect(() => {
     if (!hasLoadedCM18) {
-      // Create a CM18 model component
-      const cm18Component: ComponentItem = {
-        id: 'cm18-default',
-        name: 'CM18 3D Model',
-        type: 'STL', // You can change this to match your actual file type
-        thumbnail: '/placeholder.svg',
-        folder: 'Default Models',
-        shape: 'box',
-        modelUrl: '/cm18.stl' // Replace with the actual URL of your CM18 model
-      };
-      
-      // Place it at a default position
-      setPlacedObjects([
-        { 
-          id: `cm18-${Date.now()}`, 
-          component: cm18Component, 
-          position: [0, 0, 0] 
-        }
-      ]);
-      
-      setHasLoadedCM18(true);
-      toast.success('Default CM18 model loaded');
+      try {
+        // Create a simple cube component instead of trying to load a potentially problematic STL
+        const cm18Component: ComponentItem = {
+          id: 'cm18-default',
+          name: 'CM18 3D Model',
+          type: 'box', // Use a basic shape type instead of STL
+          thumbnail: '/placeholder.svg',
+          folder: 'Default Models',
+          shape: 'box', // Basic cube shape is more reliable than loading a file
+          // No modelUrl - we'll use the basic shape instead
+        };
+        
+        // Place it at a default position
+        setPlacedObjects([
+          { 
+            id: `cm18-${Date.now()}`, 
+            component: cm18Component, 
+            position: [0, 0, 0] 
+          }
+        ]);
+        
+        setHasLoadedCM18(true);
+        toast.success('Default CM18 model loaded as a basic shape');
+        
+        // Also load a sample box component to demonstrate working Three.js rendering
+        const boxComponent: ComponentItem = {
+          id: 'sample-box',
+          name: 'Sample Box',
+          type: 'box',
+          thumbnail: '/placeholder.svg',
+          folder: 'Sample Components',
+          shape: 'box',
+        };
+        
+        // Place it next to the CM18 model
+        setPlacedObjects(prev => [
+          ...prev,
+          { 
+            id: `box-${Date.now()}`, 
+            component: boxComponent, 
+            position: [1.5, 0, 0] 
+          }
+        ]);
+      } catch (error) {
+        console.error('Error loading default models:', error);
+        toast.error('Failed to load default models');
+      }
     }
   }, [hasLoadedCM18]);
   

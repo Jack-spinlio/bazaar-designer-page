@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { toast } from 'sonner';
 
 // Load an STL file from a URL and return a mesh
 export const loadSTLModel = (
@@ -12,51 +13,77 @@ export const loadSTLModel = (
 ): Promise<THREE.Mesh> => {
   return new Promise((resolve, reject) => {
     console.log(`Starting to load STL model from URL: ${url}`);
-    const loader = new STLLoader();
     
-    loader.load(
-      url,
-      (geometry) => {
-        console.log(`STL geometry loaded successfully from ${url}`);
-        // Create a material and a mesh
-        const material = new THREE.MeshStandardMaterial({
-          color: 0x22c55e,
-          metalness: 0.3,
-          roughness: 0.4,
-        });
-        
-        const mesh = new THREE.Mesh(geometry, material);
-        
-        // Center the geometry
-        geometry.computeBoundingBox();
-        if (geometry.boundingBox) {
-          const center = new THREE.Vector3();
-          geometry.boundingBox.getCenter(center);
-          geometry.translate(-center.x, -center.y, -center.z);
+    // Create a fallback mesh in case loading fails
+    const fallbackMesh = createFallbackMesh('STL', url);
+    
+    try {
+      const loader = new STLLoader();
+      
+      loader.load(
+        url,
+        (geometry) => {
+          console.log(`STL geometry loaded successfully from ${url}`);
+          
+          try {
+            // Check if the geometry is valid
+            if (!geometry || !geometry.attributes || !geometry.attributes.position) {
+              console.warn('Loaded STL geometry appears to be invalid');
+              if (onError) onError(new Error('Invalid STL geometry'));
+              resolve(fallbackMesh);
+              return;
+            }
+            
+            // Create a material and a mesh
+            const material = new THREE.MeshStandardMaterial({
+              color: 0x22c55e,
+              metalness: 0.3,
+              roughness: 0.4,
+            });
+            
+            const mesh = new THREE.Mesh(geometry, material);
+            
+            // Center the geometry
+            geometry.computeBoundingBox();
+            if (geometry.boundingBox) {
+              const center = new THREE.Vector3();
+              geometry.boundingBox.getCenter(center);
+              geometry.translate(-center.x, -center.y, -center.z);
+            }
+            
+            // Add a wireframe to make it more visible
+            const wireframeMaterial = new THREE.MeshBasicMaterial({
+              color: 0xffffff,
+              wireframe: true
+            });
+            const wireframe = new THREE.Mesh(geometry.clone(), wireframeMaterial);
+            mesh.add(wireframe);
+            
+            if (onLoad) onLoad(mesh);
+            resolve(mesh);
+            console.log('STL model loaded and processed successfully');
+          } catch (processingError) {
+            console.error('Error processing STL geometry:', processingError);
+            if (onError) onError(processingError);
+            resolve(fallbackMesh);
+          }
+        },
+        (progressEvent) => {
+          console.log(`Loading progress: ${progressEvent.loaded} / ${progressEvent.total}`);
+          if (onProgress) onProgress(progressEvent);
+        },
+        (error) => {
+          console.error('Error loading STL:', error);
+          toast.error(`Failed to load STL model: ${url.split('/').pop()}`);
+          if (onError) onError(error);
+          resolve(fallbackMesh);
         }
-        
-        // Add a wireframe to make it more visible
-        const wireframeMaterial = new THREE.MeshBasicMaterial({
-          color: 0xffffff,
-          wireframe: true
-        });
-        const wireframe = new THREE.Mesh(geometry.clone(), wireframeMaterial);
-        mesh.add(wireframe);
-        
-        if (onLoad) onLoad(mesh);
-        resolve(mesh);
-        console.log('STL model loaded and processed successfully');
-      },
-      (progressEvent) => {
-        console.log(`Loading progress: ${progressEvent.loaded} / ${progressEvent.total}`);
-        if (onProgress) onProgress(progressEvent);
-      },
-      (error) => {
-        console.error('Error loading STL:', error);
-        if (onError) onError(error);
-        reject(error);
-      }
-    );
+      );
+    } catch (initError) {
+      console.error('Error initializing STL loader:', initError);
+      if (onError) onError(initError);
+      resolve(fallbackMesh);
+    }
   });
 };
 
@@ -69,45 +96,62 @@ export const loadOBJModel = (
 ): Promise<THREE.Group> => {
   return new Promise((resolve, reject) => {
     console.log(`Starting to load OBJ model from URL: ${url}`);
-    const loader = new OBJLoader();
     
-    loader.load(
-      url,
-      (object) => {
-        console.log(`OBJ model loaded successfully from ${url}`);
-        // Apply materials to all meshes in the OBJ
-        object.traverse((child) => {
-          if (child instanceof THREE.Mesh) {
-            child.material = new THREE.MeshStandardMaterial({
-              color: 0x22c55e,
-              metalness: 0.3,
-              roughness: 0.4
+    // Create a fallback mesh in case loading fails
+    const fallbackMesh = createFallbackGroup('OBJ', url);
+    
+    try {
+      const loader = new OBJLoader();
+      
+      loader.load(
+        url,
+        (object) => {
+          console.log(`OBJ model loaded successfully from ${url}`);
+          try {
+            // Apply materials to all meshes in the OBJ
+            object.traverse((child) => {
+              if (child instanceof THREE.Mesh) {
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0x22c55e,
+                  metalness: 0.3,
+                  roughness: 0.4
+                });
+                
+                // Add wireframe
+                const wireframeMaterial = new THREE.MeshBasicMaterial({
+                  color: 0xffffff,
+                  wireframe: true
+                });
+                const wireframe = new THREE.Mesh(child.geometry.clone(), wireframeMaterial);
+                child.add(wireframe);
+              }
             });
             
-            // Add wireframe
-            const wireframeMaterial = new THREE.MeshBasicMaterial({
-              color: 0xffffff,
-              wireframe: true
-            });
-            const wireframe = new THREE.Mesh(child.geometry.clone(), wireframeMaterial);
-            child.add(wireframe);
+            if (onLoad) onLoad(object);
+            resolve(object);
+            console.log('OBJ model processed successfully');
+          } catch (processingError) {
+            console.error('Error processing OBJ model:', processingError);
+            if (onError) onError(processingError);
+            resolve(fallbackMesh);
           }
-        });
-        
-        if (onLoad) onLoad(object);
-        resolve(object);
-        console.log('OBJ model processed successfully');
-      },
-      (progressEvent) => {
-        console.log(`Loading progress: ${progressEvent.loaded} / ${progressEvent.total}`);
-        if (onProgress) onProgress(progressEvent);
-      },
-      (error) => {
-        console.error('Error loading OBJ:', error);
-        if (onError) onError(error);
-        reject(error);
-      }
-    );
+        },
+        (progressEvent) => {
+          console.log(`Loading progress: ${progressEvent.loaded} / ${progressEvent.total}`);
+          if (onProgress) onProgress(progressEvent);
+        },
+        (error) => {
+          console.error('Error loading OBJ:', error);
+          toast.error(`Failed to load OBJ model: ${url.split('/').pop()}`);
+          if (onError) onError(error);
+          resolve(fallbackMesh);
+        }
+      );
+    } catch (initError) {
+      console.error('Error initializing OBJ loader:', initError);
+      if (onError) onError(initError);
+      resolve(fallbackMesh);
+    }
   });
 };
 
@@ -150,6 +194,51 @@ export const loadSTPModel = (
   });
 };
 
+// Helper function to create fallback mesh for STL loading errors
+const createFallbackMesh = (fileType: string, url: string): THREE.Mesh => {
+  console.log(`Creating fallback shape for ${fileType} model: ${url}`);
+  
+  // Create a pyramid instead of a cube to distinguish fallbacks from STP placeholders
+  const geometry = new THREE.ConeGeometry(0.4, 0.8, 4);
+  const material = new THREE.MeshStandardMaterial({ 
+    color: 0xff3333,  // Red color to indicate error
+    metalness: 0.2,
+    roughness: 0.8
+  });
+  
+  const mesh = new THREE.Mesh(geometry, material);
+  
+  toast.error(`Could not load ${fileType} model: ${url.split('/').pop()}`, {
+    description: "Using fallback shape instead"
+  });
+  
+  return mesh;
+};
+
+// Helper function to create fallback group for OBJ loading errors
+const createFallbackGroup = (fileType: string, url: string): THREE.Group => {
+  console.log(`Creating fallback shape for ${fileType} model: ${url}`);
+  
+  const group = new THREE.Group();
+  
+  // Create a pyramid instead of a cube to distinguish fallbacks
+  const geometry = new THREE.ConeGeometry(0.4, 0.8, 4);
+  const material = new THREE.MeshStandardMaterial({ 
+    color: 0xff3333,  // Red color to indicate error
+    metalness: 0.2,
+    roughness: 0.8
+  });
+  
+  const mesh = new THREE.Mesh(geometry, material);
+  group.add(mesh);
+  
+  toast.error(`Could not load ${fileType} model: ${url.split('/').pop()}`, {
+    description: "Using fallback shape instead"
+  });
+  
+  return group;
+};
+
 // Generic function to load a model based on its extension
 export const loadModel = async (
   url: string,
@@ -179,12 +268,17 @@ export const loadModel = async (
       console.error('Error stack:', error.stack);
     }
     
-    // Return a default cube as fallback
-    const geometry = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+    // Return a default cube as fallback with red color
+    const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+    const material = new THREE.MeshStandardMaterial({ 
+      color: 0xff3333,
+      wireframe: true
+    });
+    
+    toast.error(`Failed to load ${fileType} model`, {
+      description: "Check console for details"
+    });
+    
     return new THREE.Mesh(geometry, material);
   }
 };
-
-// We need to import toast for the STP loader
-import { toast } from 'sonner';
