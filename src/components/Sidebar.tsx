@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ComponentCard } from './ComponentCard';
 import { 
   Search, 
-  Bike
+  Bike,
+  UploadCloud,
+  PlusCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { FileUploader } from './FileUploader';
+import { 
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { supabase } from '@/integrations/supabase/client';
 
 // Bike components for the library
 const BIKE_COMPONENTS = [
@@ -59,6 +69,61 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [components, setComponents] = useState<ComponentItem[]>([...BIKE_COMPONENTS, ...MOCK_COMPONENTS, ...BASIC_SHAPES]);
+  const [isUploaderOpen, setIsUploaderOpen] = useState(false);
+  const [uploadedModels, setUploadedModels] = useState<ComponentItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch uploaded models from Supabase storage
+    const fetchUploadedModels = async () => {
+      setIsLoading(true);
+      try {
+        const { data, error } = await supabase
+          .storage
+          .from('models')
+          .list();
+          
+        if (error) {
+          throw error;
+        }
+        
+        if (data) {
+          // Map storage files to ComponentItem format
+          const modelComponents = data.map(file => {
+            const fileExt = file.name.split('.').pop()?.toUpperCase() || '';
+            const name = file.name.split('.')[0].replace(/_/g, ' ').replace(/^\d+_/, '');
+            const { publicUrl } = supabase.storage
+              .from('models')
+              .getPublicUrl(file.name);
+              
+            return {
+              id: `supabase-${file.id}`,
+              name: name,
+              type: fileExt,
+              thumbnail: '/placeholder.svg',
+              folder: 'Uploads',
+              shape: 'box' as const,
+              modelUrl: publicUrl
+            };
+          });
+          
+          setUploadedModels(modelComponents);
+          setComponents(prev => {
+            // Filter out any existing uploaded models
+            const filteredComponents = prev.filter(comp => !comp.id.startsWith('supabase-') && !comp.id.startsWith('uploaded-'));
+            return [...filteredComponents, ...modelComponents];
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching uploaded models:', error);
+        toast.error('Failed to load uploaded models');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    fetchUploadedModels();
+  }, []);
   
   const filteredComponents = components.filter(
     component => component.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -71,6 +136,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
       toast.success(`Selected component: ${component.name}`);
     }
   };
+  
+  const handleFileUploaded = (newComponent: ComponentItem) => {
+    setComponents(prev => [...prev, newComponent]);
+    setIsUploaderOpen(false);
+    toast.success(`Component "${newComponent.name}" added to library`);
+  };
 
   return (
     <div className="h-full flex flex-col bg-white shadow-sm">
@@ -78,11 +149,23 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
         <div className="flex items-center justify-between gap-2 mb-4">
           <div className="flex items-center gap-2">
             <Bike size={20} className="text-gray-800" />
-            <h2 className="text-lg font-medium">Prefabs</h2>
+            <h2 className="text-lg font-medium">Component Library</h2>
           </div>
-          <Button variant="link" className="text-gray-600">
-            See all
-          </Button>
+          
+          <Dialog open={isUploaderOpen} onOpenChange={setIsUploaderOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm" className="flex items-center gap-1">
+                <UploadCloud size={16} />
+                Upload
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <FileUploader 
+                onClose={() => setIsUploaderOpen(false)} 
+                onFileUploaded={handleFileUploaded}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
         
         <div className="relative mb-4">
@@ -98,24 +181,60 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
       </div>
 
       <div className="flex-1 overflow-auto p-4">
-        <div className="grid grid-cols-2 gap-3">
-          {BIKE_COMPONENTS.slice(0, 10).map((component) => (
-            <div 
-              key={component.id}
-              onClick={() => handleComponentSelect(component)}
-              className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
-            >
-              <div className="w-full h-24 mb-2 flex items-center justify-center">
-                <img 
-                  src={component.thumbnail} 
-                  alt={component.name}
-                  className="max-h-full max-w-full object-contain"
-                />
+        {isLoading ? (
+          <div className="grid grid-cols-2 gap-3">
+            {[1, 2, 3, 4].map((_, index) => (
+              <div key={index} className="bg-gray-50 rounded-lg p-2 h-36 animate-pulse" />
+            ))}
+          </div>
+        ) : (
+          <>
+            {uploadedModels.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-sm font-semibold mb-2">Uploaded Models</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {uploadedModels.map((component) => (
+                    <div 
+                      key={component.id}
+                      onClick={() => handleComponentSelect(component)}
+                      className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
+                    >
+                      <div className="w-full h-24 mb-2 flex items-center justify-center">
+                        <img 
+                          src={component.thumbnail} 
+                          alt={component.name}
+                          className="max-h-full max-w-full object-contain"
+                        />
+                      </div>
+                      <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
+                      <span className="text-xs text-center text-gray-500">{component.type}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
+            )}
+            
+            <h3 className="text-sm font-semibold mb-2">Bike Components</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {BIKE_COMPONENTS.slice(0, 10).map((component) => (
+                <div 
+                  key={component.id}
+                  onClick={() => handleComponentSelect(component)}
+                  className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
+                >
+                  <div className="w-full h-24 mb-2 flex items-center justify-center">
+                    <img 
+                      src={component.thumbnail} 
+                      alt={component.name}
+                      className="max-h-full max-w-full object-contain"
+                    />
+                  </div>
+                  <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
