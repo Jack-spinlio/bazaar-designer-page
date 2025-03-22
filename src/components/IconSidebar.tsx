@@ -1,18 +1,8 @@
-
 import { Button } from "@/components/ui/button";
-import { 
-  LayoutGrid, 
-  Pencil, 
-  Bike,
-  Settings,
-  Bookmark,
-  Download
-} from "lucide-react";
+import { LayoutGrid, Pencil, Bike, Settings, Bookmark, Download } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
 export const IconSidebar = () => {
-  return (
-    <div className="w-16 border-r border-gray-200 flex flex-col items-center py-4 bg-white">
+  return <div className="w-16 border-r border-gray-200 flex flex-col items-center py-4 bg-white rounded-2xl">
       <TooltipProvider>
         <div className="flex flex-col gap-6">
           <Tooltip>
@@ -84,6 +74,5 @@ export const IconSidebar = () => {
           </Tooltip>
         </div>
       </TooltipProvider>
-    </div>
-  );
+    </div>;
 };
