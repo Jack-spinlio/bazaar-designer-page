@@ -30,7 +30,7 @@ function App() {
           <Sidebar onSelectComponent={handleComponentSelected} />
         </div>
         
-        <Viewport />
+        <Viewport selectedComponent={selectedComponent} onComponentPlaced={() => setSelectedComponent(null)} />
         
         {showSnapPointTools && (
           <div className="w-80">
