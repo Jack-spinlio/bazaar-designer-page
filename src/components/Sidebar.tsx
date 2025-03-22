@@ -245,7 +245,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
   return <div className="h-full flex flex-col bg-white shadow-sm rounded-2xl overflow-hidden">
       <div className="p-4 py-0 px-[16px]">
-        <div className="flex items-center justify-between gap-2 mb-4">
+        <div className="flex items-center justify-between gap-2 mb-4 py-[10px]">
           <div className="flex items-center gap-2">
             <Bike size={20} className="text-gray-800" />
             <h2 className="text-lg font-medium">Component Library</h2>
