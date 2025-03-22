@@ -13,8 +13,22 @@ import {
   List, 
   FilePlus,
   FolderPlus,
+  Box,
+  Circle,
+  Cylinder,
+  Cone,
+  CircleDot
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+// Basic shapes for the component library
+const BASIC_SHAPES = [
+  { id: 'shape-1', name: 'Box', type: 'SHAPE', thumbnail: '/placeholder.svg', folder: 'Basic Shapes', shape: 'box' as const },
+  { id: 'shape-2', name: 'Sphere', type: 'SHAPE', thumbnail: '/placeholder.svg', folder: 'Basic Shapes', shape: 'sphere' as const },
+  { id: 'shape-3', name: 'Cylinder', type: 'SHAPE', thumbnail: '/placeholder.svg', folder: 'Basic Shapes', shape: 'cylinder' as const },
+  { id: 'shape-4', name: 'Cone', type: 'SHAPE', thumbnail: '/placeholder.svg', folder: 'Basic Shapes', shape: 'cone' as const },
+  { id: 'shape-5', name: 'Torus', type: 'SHAPE', thumbnail: '/placeholder.svg', folder: 'Basic Shapes', shape: 'torus' as const },
+];
 
 // Mock data for the component library
 export const MOCK_COMPONENTS = [
@@ -42,8 +56,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showUploader, setShowUploader] = useState(false);
+  const [components, setComponents] = useState<ComponentItem[]>([...MOCK_COMPONENTS, ...BASIC_SHAPES]);
   
-  const filteredComponents = MOCK_COMPONENTS.filter(
+  const filteredComponents = components.filter(
     component => component.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -52,6 +67,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
       onSelectComponent(component);
       toast.success(`Selected component: ${component.name}`);
     }
+  };
+
+  const handleFileUploaded = (newComponent: ComponentItem) => {
+    setComponents(prev => [...prev, newComponent]);
   };
 
   return (
@@ -94,14 +113,17 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
         <div className="px-4">
           <TabsList className="w-full">
             <TabsTrigger value="all" className="flex-1">All</TabsTrigger>
-            <TabsTrigger value="recent" className="flex-1">Recent</TabsTrigger>
+            <TabsTrigger value="shapes" className="flex-1">Shapes</TabsTrigger>
             <TabsTrigger value="folders" className="flex-1">Folders</TabsTrigger>
           </TabsList>
         </div>
 
         <TabsContent value="all" className="flex-1 overflow-auto p-4 mt-0">
           {showUploader ? (
-            <FileUploader onClose={() => setShowUploader(false)} />
+            <FileUploader 
+              onClose={() => setShowUploader(false)} 
+              onFileUploaded={handleFileUploaded}
+            />
           ) : (
             <>
               {filteredComponents.length > 0 ? (
@@ -134,9 +156,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
           )}
         </TabsContent>
 
-        <TabsContent value="recent" className="flex-1 overflow-auto p-4 mt-0">
-          <div className="flex flex-col items-center justify-center h-full text-app-gray-light">
-            <p>No recent components</p>
+        <TabsContent value="shapes" className="flex-1 overflow-auto p-4 mt-0">
+          <div className={viewMode === 'grid' 
+            ? "grid grid-cols-2 gap-4" 
+            : "flex flex-col gap-2"
+          }>
+            {BASIC_SHAPES.map(component => (
+              <ComponentCard 
+                key={component.id}
+                component={component}
+                viewMode={viewMode}
+                onSelect={() => handleComponentSelect(component)}
+              />
+            ))}
           </div>
         </TabsContent>
 
@@ -145,6 +177,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
             <Button variant="outline" className="flex justify-start items-center gap-2 text-app-gray-dark">
               <FolderOpen size={18} className="text-app-blue" />
               <span>Bike Parts</span>
+              <span className="ml-auto text-xs text-app-gray-light">5</span>
+            </Button>
+            
+            <Button variant="outline" className="flex justify-start items-center gap-2 text-app-gray-dark">
+              <FolderOpen size={18} className="text-app-blue" />
+              <span>Basic Shapes</span>
               <span className="ml-auto text-xs text-app-gray-light">5</span>
             </Button>
             

@@ -5,12 +5,17 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Upload, X, FileType } from 'lucide-react';
+import { ComponentItem, MOCK_COMPONENTS } from './Sidebar';
 
 interface FileUploaderProps {
   onClose: () => void;
+  onFileUploaded?: (component: ComponentItem) => void;
 }
 
-export const FileUploader: React.FC<FileUploaderProps> = ({ onClose }) => {
+export const FileUploader: React.FC<FileUploaderProps> = ({ 
+  onClose,
+  onFileUploaded 
+}) => {
   const [dragging, setDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [componentName, setComponentName] = useState('');
@@ -78,6 +83,22 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onClose }) => {
     
     // Simulate file upload with a delay
     setTimeout(() => {
+      // Create a new component
+      const newComponent: ComponentItem = {
+        id: `uploaded-${Date.now()}`,
+        name: componentName,
+        type: file.name.split('.').pop()?.toUpperCase() || 'STL',
+        thumbnail: '/placeholder.svg',
+        folder: 'Uploads',
+        shape: 'box' as const // Default shape
+      };
+      
+      // Add to mock components list - this is a workaround as we can't modify the array directly
+      // In a real app, you'd call an API or update state through a context or store
+      if (onFileUploaded) {
+        onFileUploaded(newComponent);
+      }
+      
       toast.success(`Component "${componentName}" uploaded successfully!`);
       setUploading(false);
       onClose();
@@ -170,4 +191,3 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onClose }) => {
     </div>
   );
 };
-

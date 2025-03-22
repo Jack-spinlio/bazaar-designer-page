@@ -14,10 +14,14 @@ function App() {
     setSelectedComponent(component);
   };
 
+  const toggleSnapPointTools = () => {
+    setShowSnapPointTools(!showSnapPointTools);
+  };
+
   return (
     <div className="flex flex-col h-screen bg-white text-app-gray-dark">
       <StatusBar
-        onToggleSnapPointTools={() => setShowSnapPointTools(!showSnapPointTools)}
+        onToggleSnapPointTools={toggleSnapPointTools}
         showSnapPointTools={showSnapPointTools}
       />
       

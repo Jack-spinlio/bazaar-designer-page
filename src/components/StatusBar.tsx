@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
-import { Circle } from 'lucide-react';
+import { Circle, MapPin } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface LogMessage {
   id: string;
@@ -48,6 +49,15 @@ export const StatusBar: React.FC<StatusBarProps> = ({
         <span>{logs[0]?.message}</span>
       </div>
       <div className="ml-auto flex items-center gap-4">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="h-6 px-2 text-xs hover:bg-app-blue/10"
+          onClick={onToggleSnapPointTools}
+        >
+          <MapPin size={12} className="mr-1" />
+          {showSnapPointTools ? 'Hide' : 'Show'} Snap Point Tools
+        </Button>
         <span className="text-app-gray-light">{formatTime(logs[0]?.timestamp || new Date())}</span>
       </div>
     </div>
