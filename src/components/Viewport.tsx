@@ -67,14 +67,16 @@ const SnapPoint: React.FC<SnapPointProps> = ({
 interface SceneProps {
   mode: 'view' | 'add';
   onAddSnapPoint: (position: [number, number, number]) => void;
+  customSnapPoints: SnapPointProps[];
 }
 
-const Scene: React.FC<SceneProps> = ({ mode, onAddSnapPoint }) => {
+const Scene: React.FC<SceneProps> = ({ mode, onAddSnapPoint, customSnapPoints }) => {
   const directionalLightRef = useRef<THREE.DirectionalLight>(null);
   useHelper(directionalLightRef, THREE.DirectionalLightHelper, 1, 'red');
 
   const handleClick = (event: any) => {
     if (mode === 'add' && event.point) {
+      event.stopPropagation();
       onAddSnapPoint([event.point.x, event.point.y, event.point.z]);
     }
   };
@@ -98,27 +100,52 @@ const Scene: React.FC<SceneProps> = ({ mode, onAddSnapPoint }) => {
         <Handlebar />
       </mesh>
       
+      {/* Default snap points */}
       <SnapPoint position={[-2, 0, 0]} type="plane" selected={true} />
       <SnapPoint position={[2, 0, 0]} type="plane" />
       <SnapPoint position={[0, -0.3, 0]} type="point" />
+      
+      {/* User added snap points */}
+      {customSnapPoints.map((point, index) => (
+        <SnapPoint 
+          key={index}
+          position={point.position}
+          type={point.type}
+          selected={point.selected}
+        />
+      ))}
     </>
   );
 };
 
 export const Viewport: React.FC = () => {
   const [mode, setMode] = useState<'view' | 'add'>('view');
+  const [snapPoints, setSnapPoints] = useState<SnapPointProps[]>([]);
+  const [selectedPointType, setSelectedPointType] = useState<'point' | 'plane'>('point');
   
   const handleAddSnapPoint = () => {
     setMode(mode === 'add' ? 'view' : 'add');
     toast.info(mode === 'add' 
       ? 'Exited snap point placement mode' 
-      : 'Click on the model to place a snap point'
+      : `Click on the model to place a ${selectedPointType}`
     );
   };
 
   const handleSnapPointPlaced = (position: [number, number, number]) => {
-    toast.success('Snap point added at position: ' + position.join(', '));
+    const newPoint: SnapPointProps = {
+      position,
+      type: selectedPointType,
+      selected: false
+    };
+    
+    setSnapPoints([...snapPoints, newPoint]);
+    toast.success(`${selectedPointType === 'point' ? 'Snap point' : 'Snap plane'} added at position: ${position.map(n => n.toFixed(2)).join(', ')}`);
     setMode('view');
+  };
+
+  const togglePointType = () => {
+    setSelectedPointType(selectedPointType === 'point' ? 'plane' : 'point');
+    toast.info(`Selected snap type: ${selectedPointType === 'point' ? 'Plane' : 'Point'}`);
   };
 
   return (
@@ -164,10 +191,13 @@ export const Viewport: React.FC = () => {
           variant="outline"
           size="sm"
           className="bg-white/80 backdrop-blur-sm"
-          onClick={() => toast.info('Add surface plane')}
+          onClick={togglePointType}
         >
-          <Layers size={16} className="mr-2" />
-          Add Surface
+          {selectedPointType === 'point' ? 
+            <MapPin size={16} className="mr-2" /> : 
+            <Layers size={16} className="mr-2" />
+          }
+          {selectedPointType === 'point' ? 'Point' : 'Plane'}
         </Button>
       </div>
       
@@ -178,8 +208,21 @@ export const Viewport: React.FC = () => {
         </div>
       </div>
       
+      {snapPoints.length > 0 && (
+        <div className="absolute bottom-4 right-4 z-10">
+          <div className="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/80 backdrop-blur-sm text-app-blue">
+            <MapPin size={12} />
+            <span>{snapPoints.length} snap {snapPoints.length === 1 ? 'point' : 'points'} added</span>
+          </div>
+        </div>
+      )}
+      
       <Canvas shadows className="w-full h-full outline-none">
-        <Scene mode={mode} onAddSnapPoint={handleSnapPointPlaced} />
+        <Scene 
+          mode={mode} 
+          onAddSnapPoint={handleSnapPointPlaced} 
+          customSnapPoints={snapPoints}
+        />
       </Canvas>
     </div>
   );
