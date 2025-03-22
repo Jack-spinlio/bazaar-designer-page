@@ -1,13 +1,26 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { Layout } from '@/components/Layout';
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 const Index = () => {
+  useEffect(() => {
+    // Welcome toast when the application loads
+    const timeoutId = setTimeout(() => {
+      toast('Welcome to 3D Component Snap Point Manager', {
+        description: 'Upload 3D models and define snap points for easy assembly',
+        action: {
+          label: 'Get Started',
+          onClick: () => toast.info('Try clicking "Add Snap Point" in the 3D viewport')
+        },
+      });
+    }, 1000);
+    
+    return () => clearTimeout(timeoutId);
+  }, []);
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <Layout />
   );
 };
 
