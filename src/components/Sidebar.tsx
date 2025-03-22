@@ -18,11 +18,11 @@ import { toast } from 'sonner';
 
 // Mock data for the component library
 export const MOCK_COMPONENTS = [
-  { id: '1', name: 'Bike Handlebar', type: 'STL', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'cylinder' },
-  { id: '2', name: 'Brake Lever', type: 'OBJ', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'box' },
-  { id: '3', name: 'Grip', type: 'STEP', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'sphere' },
-  { id: '4', name: 'Stem', type: 'STL', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'cone' },
-  { id: '5', name: 'Seat Post', type: 'OBJ', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'torus' },
+  { id: '1', name: 'Bike Handlebar', type: 'STL', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'cylinder' as const },
+  { id: '2', name: 'Brake Lever', type: 'OBJ', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'box' as const },
+  { id: '3', name: 'Grip', type: 'STEP', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'sphere' as const },
+  { id: '4', name: 'Stem', type: 'STL', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'cone' as const },
+  { id: '5', name: 'Seat Post', type: 'OBJ', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'torus' as const },
 ];
 
 export interface ComponentItem {

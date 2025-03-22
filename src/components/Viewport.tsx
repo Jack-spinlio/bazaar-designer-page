@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -15,7 +14,7 @@ import {
   Box
 } from 'lucide-react';
 import { createSnapPointIndicator, createMockHandlebar, createComponentShape } from '@/utils/threeUtils';
-import { ComponentItem } from './Sidebar';
+import { ComponentItem, Sidebar } from './Sidebar';
 
 const Handlebar = () => {
   const handlebarRef = useRef<THREE.Group>(null);
@@ -351,7 +350,6 @@ export const Viewport: React.FC = () => {
         />
       </Canvas>
       
-      {/* This is a prop being passed from Sidebar to Viewport */}
       <div className="hidden">
         <Sidebar onSelectComponent={handleComponentSelected} />
       </div>

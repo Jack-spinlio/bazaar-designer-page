@@ -9,7 +9,15 @@ interface LogMessage {
   timestamp: Date;
 }
 
-export const StatusBar: React.FC = () => {
+interface StatusBarProps {
+  onToggleSnapPointTools?: () => void;
+  showSnapPointTools?: boolean;
+}
+
+export const StatusBar: React.FC<StatusBarProps> = ({ 
+  onToggleSnapPointTools,
+  showSnapPointTools
+}) => {
   const [logs, setLogs] = useState<LogMessage[]>([
     {
       id: '1',
