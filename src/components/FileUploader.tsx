@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Upload, X, FileType } from 'lucide-react';
-import { ComponentItem, MOCK_COMPONENTS } from './Sidebar';
+import { ComponentItem } from './Sidebar';
+import { supabase } from '@/integrations/supabase/client';
 
 interface FileUploaderProps {
   onClose: () => void;
@@ -81,20 +82,40 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     
     setUploading(true);
     
-    // Simulate file upload with a delay
-    setTimeout(() => {
+    try {
+      // Create a unique file path with timestamp to avoid collisions
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${Date.now()}_${componentName.replace(/\s+/g, '_')}.${fileExt}`;
+      
+      // Upload the file to Supabase storage
+      const { data, error } = await supabase.storage
+        .from('models')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Get the public URL for the uploaded file
+      const { data: urlData } = supabase.storage
+        .from('models')
+        .getPublicUrl(filePath);
+      
       // Create a new component
       const newComponent: ComponentItem = {
         id: `uploaded-${Date.now()}`,
         name: componentName,
-        type: file.name.split('.').pop()?.toUpperCase() || 'STL',
+        type: fileExt?.toUpperCase() || 'STL',
         thumbnail: '/placeholder.svg',
         folder: 'Uploads',
-        shape: 'box' as const // Default shape
+        shape: 'box', // Default shape
+        modelUrl: urlData.publicUrl // Store the public URL
       };
       
-      // Add to mock components list - this is a workaround as we can't modify the array directly
-      // In a real app, you'd call an API or update state through a context or store
+      // Add to components list
       if (onFileUploaded) {
         onFileUploaded(newComponent);
       }
@@ -102,7 +123,11 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
       toast.success(`Component "${componentName}" uploaded successfully!`);
       setUploading(false);
       onClose();
-    }, 1500);
+    } catch (error: any) {
+      console.error('Error uploading file:', error);
+      toast.error(`Upload failed: ${error.message || 'Unknown error'}`);
+      setUploading(false);
+    }
   };
 
   return (

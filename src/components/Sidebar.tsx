@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -49,6 +48,7 @@ export interface ComponentItem {
   thumbnail: string;
   folder?: string;
   shape: 'box' | 'sphere' | 'cylinder' | 'cone' | 'torus';
+  modelUrl?: string; // URL to the 3D model file
 }
 
 interface SidebarProps {

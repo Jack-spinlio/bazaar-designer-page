@@ -14,6 +14,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { createMockHandlebar, createComponentShape } from '@/utils/threeUtils';
+import { loadModel } from '@/utils/modelLoader';
 import { ComponentItem } from './Sidebar';
 
 const Handlebar = () => {
@@ -53,18 +54,49 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
         componentRef.current.remove(componentRef.current.children[0]);
       }
       
-      // Create the new component mesh
-      const componentMesh = createComponentShape(component.shape);
-      
-      // Add the mesh to the group
-      componentRef.current.add(componentMesh);
+      // Check if we have a model URL to load
+      if (component.modelUrl && (component.type === 'STL' || component.type === 'OBJ')) {
+        console.log(`Loading ${component.type} model from ${component.modelUrl}`);
+        
+        // Load the STL or OBJ model
+        loadModel(component.modelUrl, component.type)
+          .then(model => {
+            if (componentRef.current) {
+              // Center and scale the model
+              const box = new THREE.Box3().setFromObject(model);
+              const size = new THREE.Vector3();
+              box.getSize(size);
+              
+              // Scale to a reasonable size (about 1 unit)
+              const maxDim = Math.max(size.x, size.y, size.z);
+              if (maxDim > 0) {
+                const scale = 1 / maxDim;
+                model.scale.set(scale, scale, scale);
+              }
+              
+              // Add to the group
+              componentRef.current.add(model);
+            }
+          })
+          .catch(error => {
+            console.error('Error loading model:', error);
+            // Fallback to basic shape if model loading fails
+            const componentMesh = createComponentShape(component.shape);
+            componentRef.current?.add(componentMesh);
+          });
+      } else {
+        // Create the standard component mesh for basic shapes
+        const componentMesh = createComponentShape(component.shape);
+        componentRef.current.add(componentMesh);
+        console.log(`Created basic shape "${component.shape}" for component "${component.name}"`);
+      }
       
       // Set the position
       componentRef.current.position.set(position[0], position[1], position[2]);
       
-      console.log(`Placed component with shape "${component.shape}" at position (${position.join(', ')})`);
+      console.log(`Placed component "${component.name}" at position (${position.join(', ')})`);
     }
-  }, [position, component.shape]);
+  }, [position, component]);
 
   const handleClick = (e: any) => {
     e.stopPropagation();
