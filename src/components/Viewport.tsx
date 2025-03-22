@@ -73,7 +73,7 @@ const Scene: React.FC<SceneProps> = ({ mode, onAddSnapPoint }) => {
   const directionalLightRef = useRef<THREE.DirectionalLight>(null);
   useHelper(directionalLightRef, THREE.DirectionalLightHelper, 1, 'red');
 
-  const handleClick = (event: THREE.Event) => {
+  const handleClick = (event: any) => {
     if (mode === 'add' && event.point) {
       onAddSnapPoint([event.point.x, event.point.y, event.point.z]);
     }
@@ -184,4 +184,3 @@ export const Viewport: React.FC = () => {
     </div>
   );
 };
-
