@@ -3,16 +3,20 @@ import React from 'react';
 import { Sidebar, ComponentItem } from './Sidebar';
 import { Viewport } from './Viewport';
 import { StatusBar } from './StatusBar';
-import { Toaster } from '@/components/ui/sonner';
 import { Button } from '@/components/ui/button';
 import { IconSidebar } from './IconSidebar';
+import { Input } from '@/components/ui/input';
 import { 
   Edit, 
   Share, 
   ArrowUpFromLine,
-  Bell
+  Bell,
+  Check,
+  X
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export interface LayoutProps {
   children?: React.ReactNode;
@@ -21,6 +25,9 @@ export interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = React.useState(true);
   const [selectedComponent, setSelectedComponent] = React.useState<ComponentItem | null>(null);
+  const [isEditingTitle, setIsEditingTitle] = React.useState(false);
+  const [designTitle, setDesignTitle] = React.useState("Bazaar Road bike");
+  const [tempTitle, setTempTitle] = React.useState(designTitle);
   
   const handleComponentSelected = (component: ComponentItem) => {
     setSelectedComponent(component);
@@ -32,19 +39,73 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     setSelectedComponent(null);
   };
 
+  const handleEditTitle = () => {
+    setTempTitle(designTitle);
+    setIsEditingTitle(true);
+  };
+
+  const handleSaveTitle = async () => {
+    if (tempTitle.trim() === '') {
+      toast.error("Design name cannot be empty");
+      return;
+    }
+
+    setDesignTitle(tempTitle);
+    setIsEditingTitle(false);
+    
+    try {
+      // Save to Supabase (assuming a designs table exists)
+      const { error } = await supabase
+        .from('designs')
+        .upsert({ 
+          id: 'current-design', // Using a fixed ID for simplicity
+          name: tempTitle 
+        });
+        
+      if (error) throw error;
+      toast.success("Design name saved");
+    } catch (error) {
+      console.error("Error saving design name:", error);
+      toast.error("Failed to save design name");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditingTitle(false);
+  };
+
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-white">
-      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 z-10">
+    <div className="flex flex-col h-screen p-2.5 overflow-hidden bg-[#F5F5F5]">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 z-10 bg-white rounded-2xl mb-2.5 shadow-sm">
         <div className="flex items-center gap-4">
           <h1 className="text-3xl font-bold text-gray-900">Bazaar</h1>
         </div>
         <div className="flex items-center">
           <div className="flex items-center text-gray-600 mr-4">
             <span>My Design /</span>
-            <span className="font-semibold ml-1">Bazaar Road bike</span>
-            <Button variant="ghost" size="icon" className="ml-1">
-              <Edit size={16} />
-            </Button>
+            {isEditingTitle ? (
+              <div className="flex items-center ml-1">
+                <Input
+                  value={tempTitle}
+                  onChange={(e) => setTempTitle(e.target.value)}
+                  className="h-8 mr-1 w-40"
+                  autoFocus
+                />
+                <Button variant="ghost" size="icon" onClick={handleSaveTitle} className="h-8 w-8">
+                  <Check size={16} className="text-green-500" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={handleCancelEdit} className="h-8 w-8">
+                  <X size={16} className="text-red-500" />
+                </Button>
+              </div>
+            ) : (
+              <>
+                <span className="font-semibold ml-1">{designTitle}</span>
+                <Button variant="ghost" size="icon" className="ml-1" onClick={handleEditTitle}>
+                  <Edit size={16} />
+                </Button>
+              </>
+            )}
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon">
@@ -72,7 +133,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           {sidebarOpen && <Sidebar onSelectComponent={handleComponentSelected} />}
         </div>
 
-        <main className="flex-1 flex flex-col relative">
+        <main className="flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5">
           <Viewport 
             selectedComponent={selectedComponent} 
             onComponentPlaced={handleComponentPlaced} 

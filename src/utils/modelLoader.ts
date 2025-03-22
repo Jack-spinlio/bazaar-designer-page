@@ -11,11 +11,13 @@ export const loadSTLModel = (
   onError?: (error: unknown) => void
 ): Promise<THREE.Mesh> => {
   return new Promise((resolve, reject) => {
+    console.log(`Starting to load STL model from URL: ${url}`);
     const loader = new STLLoader();
     
     loader.load(
       url,
       (geometry) => {
+        console.log(`STL geometry loaded successfully from ${url}`);
         // Create a material and a mesh
         const material = new THREE.MeshStandardMaterial({
           color: 0x22c55e,
@@ -43,8 +45,12 @@ export const loadSTLModel = (
         
         if (onLoad) onLoad(mesh);
         resolve(mesh);
+        console.log('STL model loaded and processed successfully');
       },
-      onProgress,
+      (progressEvent) => {
+        console.log(`Loading progress: ${progressEvent.loaded} / ${progressEvent.total}`);
+        if (onProgress) onProgress(progressEvent);
+      },
       (error) => {
         console.error('Error loading STL:', error);
         if (onError) onError(error);
@@ -62,11 +68,13 @@ export const loadOBJModel = (
   onError?: (error: unknown) => void
 ): Promise<THREE.Group> => {
   return new Promise((resolve, reject) => {
+    console.log(`Starting to load OBJ model from URL: ${url}`);
     const loader = new OBJLoader();
     
     loader.load(
       url,
       (object) => {
+        console.log(`OBJ model loaded successfully from ${url}`);
         // Apply materials to all meshes in the OBJ
         object.traverse((child) => {
           if (child instanceof THREE.Mesh) {
@@ -88,8 +96,12 @@ export const loadOBJModel = (
         
         if (onLoad) onLoad(object);
         resolve(object);
+        console.log('OBJ model processed successfully');
       },
-      onProgress,
+      (progressEvent) => {
+        console.log(`Loading progress: ${progressEvent.loaded} / ${progressEvent.total}`);
+        if (onProgress) onProgress(progressEvent);
+      },
       (error) => {
         console.error('Error loading OBJ:', error);
         if (onError) onError(error);

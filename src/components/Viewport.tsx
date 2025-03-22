@@ -7,8 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
 import { toast } from 'sonner';
 import {
-  ZoomIn,
-  ZoomOut,
   Maximize,
   Layers,
   Box,
@@ -258,36 +256,21 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
   };
 
   return (
-    <div className="relative flex-1 bg-gray-100 overflow-hidden">
-      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+    <div className="relative flex-1 bg-white overflow-hidden rounded-2xl">
+      <div className="absolute top-4 right-4 z-10">
         <Button
           variant="outline"
-          size="icon"
-          className="bg-white/90 backdrop-blur-sm"
-          onClick={() => toast.info('Zoom in')}
-        >
-          <ZoomIn size={18} />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="bg-white/90 backdrop-blur-sm"
-          onClick={() => toast.info('Zoom out')}
-        >
-          <ZoomOut size={18} />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="bg-white/90 backdrop-blur-sm"
+          size="sm"
+          className="flex items-center gap-2 bg-white/90 backdrop-blur-sm"
           onClick={() => toast.info('Fit to view')}
         >
-          <Maximize size={18} />
+          <Maximize size={16} />
+          <span>Fit to View</span>
         </Button>
       </div>
       
       {selectedObjectId && (
-        <div className="absolute top-4 right-4 z-10">
+        <div className="absolute top-4 left-4 z-10">
           <Button
             variant="destructive"
             size="sm"
@@ -300,7 +283,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         </div>
       )}
       
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
+      <div className="absolute left-1/2 bottom-4 transform -translate-x-1/2 w-auto max-w-lg bg-black/70 text-white px-6 py-3 rounded-full text-sm z-10">
         {selectedComponent ? 
           `Selected: ${selectedComponent.name} - Click in the viewport to place` : 
           "Select a component from the library"}

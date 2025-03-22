@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ComponentCard } from './ComponentCard';
 import { 
   Search, 
@@ -93,8 +92,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
             const fileExt = file.name.split('.').pop()?.toUpperCase() || '';
             const name = file.name.split('.')[0].replace(/_/g, ' ').replace(/^\d+_/, '');
             
-            // Fix: Get the publicUrl correctly from the object returned by getPublicUrl
-            const publicUrlData = supabase.storage
+            // Get the publicUrl correctly
+            const { data: publicUrlData } = supabase.storage
               .from('models')
               .getPublicUrl(file.name);
               
@@ -105,7 +104,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
               thumbnail: '/placeholder.svg',
               folder: 'Uploads',
               shape: 'box' as const,
-              modelUrl: publicUrlData.data.publicUrl
+              modelUrl: publicUrlData.publicUrl
             };
           });
           
@@ -127,9 +126,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
     fetchUploadedModels();
   }, []);
   
-  const filteredComponents = components.filter(
-    component => component.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredComponents = components.filter(component => {
+    return component.name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  const filteredUploadedModels = uploadedModels.filter(component => {
+    return component.name.toLowerCase().includes(searchQuery.toLowerCase());
+  });
 
   const handleComponentSelect = (component: ComponentItem) => {
     console.log('Component selected in Sidebar:', component.name);
@@ -146,7 +149,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white shadow-sm">
+    <div className="h-full flex flex-col bg-white shadow-sm rounded-2xl overflow-hidden">
       <div className="p-4">
         <div className="flex items-center justify-between gap-2 mb-4">
           <div className="flex items-center gap-2">
@@ -174,7 +177,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
           <Input
             type="search"
-            placeholder="Search"
+            placeholder="Search components"
             className="pl-9 bg-gray-50 border-gray-200 rounded-full text-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -191,11 +194,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
           </div>
         ) : (
           <>
-            {uploadedModels.length > 0 && (
+            {filteredUploadedModels.length > 0 && (
               <div className="mb-6">
                 <h3 className="text-sm font-semibold mb-2">Uploaded Models</h3>
                 <div className="grid grid-cols-2 gap-3">
-                  {uploadedModels.map((component) => (
+                  {filteredUploadedModels.map((component) => (
                     <div 
                       key={component.id}
                       onClick={() => handleComponentSelect(component)}
@@ -216,25 +219,29 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
               </div>
             )}
             
-            <h3 className="text-sm font-semibold mb-2">Bike Components</h3>
-            <div className="grid grid-cols-2 gap-3">
-              {BIKE_COMPONENTS.slice(0, 10).map((component) => (
-                <div 
-                  key={component.id}
-                  onClick={() => handleComponentSelect(component)}
-                  className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
-                >
-                  <div className="w-full h-24 mb-2 flex items-center justify-center">
-                    <img 
-                      src={component.thumbnail} 
-                      alt={component.name}
-                      className="max-h-full max-w-full object-contain"
-                    />
-                  </div>
-                  <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
+            {!searchQuery && (
+              <>
+                <h3 className="text-sm font-semibold mb-2">Bike Components</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {BIKE_COMPONENTS.slice(0, 10).map((component) => (
+                    <div 
+                      key={component.id}
+                      onClick={() => handleComponentSelect(component)}
+                      className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
+                    >
+                      <div className="w-full h-24 mb-2 flex items-center justify-center">
+                        <img 
+                          src={component.thumbnail} 
+                          alt={component.name}
+                          className="max-h-full max-w-full object-contain"
+                        />
+                      </div>
+                      <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            )}
           </>
         )}
       </div>
