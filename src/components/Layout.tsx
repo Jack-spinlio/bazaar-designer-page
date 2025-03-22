@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Sidebar } from './Sidebar';
+import { Sidebar, ComponentItem } from './Sidebar';
 import { Viewport } from './Viewport';
 import { SnapPointTools } from './SnapPointTools';
 import { StatusBar } from './StatusBar';
@@ -15,9 +15,18 @@ export interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [toolsOpen, setToolsOpen] = useState(true);
+  const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
   
   const toggleSidebar = () => setSidebarOpen(prev => !prev);
   const toggleTools = () => setToolsOpen(prev => !prev);
+  
+  const handleComponentSelected = (component: ComponentItem) => {
+    setSelectedComponent(component);
+  };
+  
+  const handleComponentPlaced = () => {
+    setSelectedComponent(null);
+  };
 
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-app-gray-lighter">
@@ -44,11 +53,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             sidebarOpen ? 'translate-x-0 w-80' : '-translate-x-full w-0'
           }`}
         >
-          {sidebarOpen && <Sidebar />}
+          {sidebarOpen && <Sidebar onSelectComponent={handleComponentSelected} />}
         </div>
 
         <main className="flex-1 flex flex-col relative">
-          <Viewport />
+          <Viewport 
+            selectedComponent={selectedComponent} 
+            onComponentPlaced={handleComponentPlaced} 
+          />
           {children}
         </main>
 
