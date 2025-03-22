@@ -3,6 +3,14 @@ import { useState } from 'react';
 import { Layout } from './components/Layout';
 import './App.css';
 import { Toaster } from 'sonner';
+import * as THREE from 'three';
+
+// Augment the window interface to include THREE
+declare global {
+  interface Window {
+    THREE: typeof THREE;
+  }
+}
 
 function App() {
   // Enable THREE.js debugging
