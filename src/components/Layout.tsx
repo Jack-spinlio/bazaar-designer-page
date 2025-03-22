@@ -54,7 +54,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
     setIsEditingTitle(false);
     
     try {
-      // Save to Supabase (assuming a designs table exists)
+      // Save to Supabase
       const { error } = await supabase
         .from('designs')
         .upsert({ 
@@ -76,7 +76,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="flex flex-col h-screen p-2.5 overflow-hidden bg-[#F5F5F5]">
-      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 z-10 bg-white rounded-2xl mb-2.5 shadow-sm">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 z-10 bg-white rounded-2xl mb-2.5 shadow-sm" style={{ margin: '10px' }}>
         <div className="flex items-center gap-4">
           <h1 className="text-3xl font-bold text-gray-900">Bazaar</h1>
         </div>
@@ -129,11 +129,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         <IconSidebar />
         <div className={`transition-all duration-300 ease-in-out ${
           sidebarOpen ? 'w-80' : 'w-0'
-        }`}>
+        }`} style={{ margin: '10px' }}>
           {sidebarOpen && <Sidebar onSelectComponent={handleComponentSelected} />}
         </div>
 
-        <main className="flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5">
+        <main className="flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5" style={{ margin: '10px' }}>
           <Viewport 
             selectedComponent={selectedComponent} 
             onComponentPlaced={handleComponentPlaced} 

@@ -121,14 +121,22 @@ export const loadModel = async (
     const lowerType = fileType.toLowerCase();
     
     if (lowerType === 'stl') {
+      console.log('Using STL loader for', url);
       return await loadSTLModel(url);
     } else if (lowerType === 'obj') {
+      console.log('Using OBJ loader for', url);
       return await loadOBJModel(url);
     } else {
       throw new Error(`Unsupported file type: ${fileType}`);
     }
   } catch (error) {
     console.error('Error loading model:', error);
+    // More detailed error logging
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    
     // Return a default cube as fallback
     const geometry = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
