@@ -1,10 +1,10 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
 import * as THREE from 'three';
 import { Button } from '@/components/ui/button';
-import { toast } from '@/components/ui/sonner';
+import { Toaster } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 import {
   ZoomIn,
   ZoomOut,
@@ -202,6 +202,11 @@ const Scene: React.FC<SceneProps> = ({
     </>
   );
 };
+
+interface ViewportProps {
+  selectedComponent: ComponentItem | null;
+  onComponentPlaced: () => void;
+}
 
 export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onComponentPlaced }) => {
   const [mode, setMode] = useState<'view' | 'add'>('view');
