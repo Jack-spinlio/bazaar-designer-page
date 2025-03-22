@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -63,9 +64,20 @@ const SnapPoint: React.FC<SnapPointProps> = ({
   return <group ref={snapPointRef} />;
 };
 
-const Scene = () => {
+interface SceneProps {
+  mode: 'view' | 'add';
+  onAddSnapPoint: (position: [number, number, number]) => void;
+}
+
+const Scene: React.FC<SceneProps> = ({ mode, onAddSnapPoint }) => {
   const directionalLightRef = useRef<THREE.DirectionalLight>(null);
   useHelper(directionalLightRef, THREE.DirectionalLightHelper, 1, 'red');
+
+  const handleClick = (event: THREE.Event) => {
+    if (mode === 'add' && event.point) {
+      onAddSnapPoint([event.point.x, event.point.y, event.point.z]);
+    }
+  };
 
   return (
     <>
@@ -82,7 +94,9 @@ const Scene = () => {
       
       <gridHelper args={[10, 10]} position={[0, -0.01, 0]} />
       
-      <Handlebar />
+      <mesh onClick={handleClick}>
+        <Handlebar />
+      </mesh>
       
       <SnapPoint position={[-2, 0, 0]} type="plane" selected={true} />
       <SnapPoint position={[2, 0, 0]} type="plane" />
@@ -100,6 +114,11 @@ export const Viewport: React.FC = () => {
       ? 'Exited snap point placement mode' 
       : 'Click on the model to place a snap point'
     );
+  };
+
+  const handleSnapPointPlaced = (position: [number, number, number]) => {
+    toast.success('Snap point added at position: ' + position.join(', '));
+    setMode('view');
   };
 
   return (
@@ -160,8 +179,9 @@ export const Viewport: React.FC = () => {
       </div>
       
       <Canvas shadows className="w-full h-full outline-none">
-        <Scene />
+        <Scene mode={mode} onAddSnapPoint={handleSnapPointPlaced} />
       </Canvas>
     </div>
   );
 };
+

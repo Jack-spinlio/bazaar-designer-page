@@ -20,15 +20,19 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onClose }) => {
   
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setDragging(true);
   };
   
-  const handleDragLeave = () => {
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     setDragging(false);
   };
   
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setDragging(false);
     
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -128,7 +132,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onClose }) => {
               <p className="text-xs text-center text-app-gray-light">
                 Supported formats: {allowedTypes.join(', ')}
               </p>
-              <Input
+              <input
                 type="file"
                 accept={allowedTypes.join(',')}
                 onChange={handleFileChange}
@@ -166,3 +170,4 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onClose }) => {
     </div>
   );
 };
+
