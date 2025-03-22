@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -55,6 +56,8 @@ const PlacedComponent: React.FC<PlacedComponentProps> = ({ position, shape }) =>
       const componentMesh = createComponentShape(shape);
       componentRef.current.add(componentMesh);
       componentRef.current.position.set(position[0], position[1], position[2]);
+      
+      console.log(`Placed component with shape "${shape}" at position (${position.join(', ')})`);
     }
   }, [position, shape]);
 
@@ -90,6 +93,7 @@ const SnapPoint: React.FC<SnapPointProps> = ({
 
   const handleClick = (e: any) => {
     e.stopPropagation();
+    console.log(`Snap point clicked at position (${position.join(', ')})`);
     if (onSelect) {
       onSelect();
     }
@@ -130,6 +134,12 @@ const Scene: React.FC<SceneProps> = ({
       onAddSnapPoint([event.point.x, event.point.y, event.point.z]);
     }
   };
+
+  useEffect(() => {
+    if (selectedComponent) {
+      console.log('Scene: Selected component changed:', selectedComponent.name);
+    }
+  }, [selectedComponent]);
 
   return (
     <>
@@ -196,6 +206,13 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
   const [selectedPointType, setSelectedPointType] = useState<'point' | 'plane'>('point');
   const [selectedSnapPointIndex, setSelectedSnapPointIndex] = useState<number | null>(null);
   
+  useEffect(() => {
+    if (selectedComponent) {
+      console.log('Viewport: Selected component changed:', selectedComponent.name);
+      toast.info(`Select a snap point to place ${selectedComponent.name}`);
+    }
+  }, [selectedComponent]);
+
   const handleAddSnapPoint = () => {
     setMode(mode === 'add' ? 'view' : 'add');
     toast.info(mode === 'add' 
@@ -222,6 +239,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
   };
 
   const handleSelectSnapPoint = (index: number) => {
+    console.log(`Snap point selected, index: ${index}, component selected: ${selectedComponent?.name || 'none'}`);
     setSelectedSnapPointIndex(index);
     
     if (index >= 0) {

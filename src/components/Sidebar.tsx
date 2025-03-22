@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,14 +62,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
   );
 
   const handleComponentSelect = (component: ComponentItem) => {
+    console.log('Component selected in Sidebar:', component.name);
     if (onSelectComponent) {
       onSelectComponent(component);
-      toast.success(`Selected component: ${component.name}`);
+      toast.success(`Selected component: ${component.name}. Click on a snap point to place it.`);
     }
   };
 
   const handleFileUploaded = (newComponent: ComponentItem) => {
     setComponents(prev => [...prev, newComponent]);
+    toast.success(`Component uploaded: ${newComponent.name}`);
   };
 
   return (

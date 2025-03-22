@@ -22,9 +22,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   
   const handleComponentSelected = (component: ComponentItem) => {
     setSelectedComponent(component);
+    console.log('Component selected in Layout:', component.name);
   };
   
   const handleComponentPlaced = () => {
+    console.log('Component placed in scene');
     setSelectedComponent(null);
   };
 

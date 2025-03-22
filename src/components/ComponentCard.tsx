@@ -28,6 +28,7 @@ export const ComponentCard: React.FC<ComponentCardProps> = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const handleLoad = () => {
+    console.log('ComponentCard: handleLoad called for', component.name);
     if (onSelect) {
       onSelect();
     } else {
