@@ -4,7 +4,7 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
 import * as THREE from 'three';
 import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import { toast } from '@/components/ui/sonner';
 import {
   ZoomIn,
   ZoomOut,
@@ -49,12 +49,18 @@ const PlacedComponent: React.FC<PlacedComponentProps> = ({ position, shape }) =>
   
   useEffect(() => {
     if (componentRef.current) {
+      // Clear any existing children
       while (componentRef.current.children.length > 0) {
         componentRef.current.remove(componentRef.current.children[0]);
       }
       
+      // Create the new component mesh
       const componentMesh = createComponentShape(shape);
+      
+      // Add the mesh to the group
       componentRef.current.add(componentMesh);
+      
+      // Set the position
       componentRef.current.position.set(position[0], position[1], position[2]);
       
       console.log(`Placed component with shape "${shape}" at position (${position.join(', ')})`);
@@ -76,6 +82,7 @@ const SnapPoint: React.FC<SnapPointProps> = ({
   
   useEffect(() => {
     if (snapPointRef.current) {
+      // Clear any existing children
       while (snapPointRef.current.children.length > 0) {
         snapPointRef.current.remove(snapPointRef.current.children[0]);
       }
@@ -156,9 +163,7 @@ const Scene: React.FC<SceneProps> = ({
       
       <gridHelper args={[10, 10]} position={[0, -0.01, 0]} />
       
-      <mesh onClick={handleClick}>
-        <Handlebar />
-      </mesh>
+      <Handlebar />
       
       {/* Default snap points */}
       <SnapPoint 
@@ -166,18 +171,21 @@ const Scene: React.FC<SceneProps> = ({
         type="plane" 
         selected={selectedSnapPointIndex === -3}
         onSelect={() => onSelectSnapPoint(-3)}
+        component={selectedSnapPointIndex === -3 && selectedComponent ? selectedComponent : undefined}
       />
       <SnapPoint 
         position={[2, 0, 0]} 
         type="plane" 
         selected={selectedSnapPointIndex === -2}
         onSelect={() => onSelectSnapPoint(-2)}
+        component={selectedSnapPointIndex === -2 && selectedComponent ? selectedComponent : undefined}
       />
       <SnapPoint 
         position={[0, -0.3, 0]} 
         type="point" 
         selected={selectedSnapPointIndex === -1}
         onSelect={() => onSelectSnapPoint(-1)}
+        component={selectedSnapPointIndex === -1 && selectedComponent ? selectedComponent : undefined}
       />
       
       {/* User added snap points */}
@@ -187,18 +195,13 @@ const Scene: React.FC<SceneProps> = ({
           position={point.position}
           type={point.type}
           selected={selectedSnapPointIndex === index}
-          component={point.component}
+          component={point.component || (selectedSnapPointIndex === index && selectedComponent ? selectedComponent : undefined)}
           onSelect={() => onSelectSnapPoint(index)}
         />
       ))}
     </>
   );
 };
-
-interface ViewportProps {
-  selectedComponent: ComponentItem | null;
-  onComponentPlaced: () => void;
-}
 
 export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onComponentPlaced }) => {
   const [mode, setMode] = useState<'view' | 'add'>('view');
@@ -209,13 +212,15 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
   useEffect(() => {
     if (selectedComponent) {
       console.log('Viewport: Selected component changed:', selectedComponent.name);
-      toast.info(`Select a snap point to place ${selectedComponent.name}`);
+      toast(`Component selected: ${selectedComponent.name}`, {
+        description: "Click on a snap point to place it",
+      });
     }
   }, [selectedComponent]);
 
   const handleAddSnapPoint = () => {
     setMode(mode === 'add' ? 'view' : 'add');
-    toast.info(mode === 'add' 
+    toast(mode === 'add' 
       ? 'Exited snap point placement mode' 
       : `Click on the model to place a ${selectedPointType}`
     );
@@ -229,13 +234,13 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
     };
     
     setSnapPoints([...snapPoints, newPoint]);
-    toast.success(`${selectedPointType === 'point' ? 'Snap point' : 'Snap plane'} added at position: ${position.map(n => n.toFixed(2)).join(', ')}`);
+    toast(`${selectedPointType === 'point' ? 'Snap point' : 'Snap plane'} added at position: ${position.map(n => n.toFixed(2)).join(', ')}`);
     setMode('view');
   };
 
   const togglePointType = () => {
     setSelectedPointType(selectedPointType === 'point' ? 'plane' : 'point');
-    toast.info(`Selected snap type: ${selectedPointType === 'point' ? 'Plane' : 'Point'}`);
+    toast(`Selected snap type: ${selectedPointType === 'point' ? 'Plane' : 'Point'}`);
   };
 
   const handleSelectSnapPoint = (index: number) => {
@@ -243,13 +248,13 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
     setSelectedSnapPointIndex(index);
     
     if (index >= 0) {
-      toast.info(`Selected snap point at position: ${snapPoints[index].position.map(n => n.toFixed(2)).join(', ')}`);
+      toast(`Selected snap point at position: ${snapPoints[index].position.map(n => n.toFixed(2)).join(', ')}`);
     } else if (index === -3) {
-      toast.info('Selected left grip mount');
+      toast('Selected left grip mount');
     } else if (index === -2) {
-      toast.info('Selected right grip mount');
+      toast('Selected right grip mount');
     } else if (index === -1) {
-      toast.info('Selected stem clamp');
+      toast('Selected stem clamp');
     }
     
     // If we have a component selected, attach it to this snap point

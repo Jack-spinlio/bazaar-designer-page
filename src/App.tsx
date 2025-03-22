@@ -2,10 +2,14 @@
 import { useState } from 'react';
 import { Layout } from './components/Layout';
 import './App.css';
+import { Toaster } from 'sonner';
 
 function App() {
   return (
-    <Layout />
+    <>
+      <Layout />
+      <Toaster position="top-right" />
+    </>
   );
 }
 

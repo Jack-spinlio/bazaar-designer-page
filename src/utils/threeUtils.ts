@@ -144,7 +144,7 @@ export const createComponentShape = (shape: string) => {
   
   let mesh;
   
-  switch (shape) {
+  switch (shape.toLowerCase()) {
     case 'box':
       const boxGeom = new THREE.BoxGeometry(0.4, 0.4, 0.4);
       mesh = new THREE.Mesh(boxGeom, material);
@@ -172,6 +172,7 @@ export const createComponentShape = (shape: string) => {
     
     default:
       // Default to a small sphere if shape is unknown
+      console.log("Unknown shape:", shape, "defaulting to sphere");
       const defaultGeom = new THREE.SphereGeometry(0.2, 8, 8);
       mesh = new THREE.Mesh(defaultGeom, material);
   }
