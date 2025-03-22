@@ -8,7 +8,7 @@ export const loadSTLModel = (
   url: string, 
   onLoad?: (mesh: THREE.Mesh) => void,
   onProgress?: (event: ProgressEvent) => void,
-  onError?: (error: ErrorEvent) => void
+  onError?: (error: unknown) => void
 ): Promise<THREE.Mesh> => {
   return new Promise((resolve, reject) => {
     const loader = new STLLoader();
@@ -59,7 +59,7 @@ export const loadOBJModel = (
   url: string,
   onLoad?: (mesh: THREE.Group) => void,
   onProgress?: (event: ProgressEvent) => void,
-  onError?: (error: ErrorEvent) => void
+  onError?: (error: unknown) => void
 ): Promise<THREE.Group> => {
   return new Promise((resolve, reject) => {
     const loader = new OBJLoader();

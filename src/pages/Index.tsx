@@ -1,6 +1,6 @@
 
+import React, { useEffect } from 'react';
 import { Layout } from '@/components/Layout';
-import { useEffect } from 'react';
 import { toast } from 'sonner';
 
 const Index = () => {

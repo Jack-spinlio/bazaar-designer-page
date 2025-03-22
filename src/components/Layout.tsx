@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Sidebar, ComponentItem } from './Sidebar';
 import { Viewport } from './Viewport';
 import { StatusBar } from './StatusBar';
@@ -19,8 +19,8 @@ export interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
+  const [sidebarOpen, setSidebarOpen] = React.useState(true);
+  const [selectedComponent, setSelectedComponent] = React.useState<ComponentItem | null>(null);
   
   const handleComponentSelected = (component: ComponentItem) => {
     setSelectedComponent(component);
