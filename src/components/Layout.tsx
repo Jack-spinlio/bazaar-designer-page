@@ -2,11 +2,17 @@
 import React, { useState } from 'react';
 import { Sidebar, ComponentItem } from './Sidebar';
 import { Viewport } from './Viewport';
-import { SnapPointTools } from './SnapPointTools';
 import { StatusBar } from './StatusBar';
-import { Toaster } from '@/components/ui/toaster';
+import { Toaster } from '@/components/ui/sonner';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { IconSidebar } from './IconSidebar';
+import { 
+  Edit, 
+  Share, 
+  ArrowUpFromLine,
+  Bell
+} from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export interface LayoutProps {
   children?: React.ReactNode;
@@ -14,11 +20,7 @@ export interface LayoutProps {
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [toolsOpen, setToolsOpen] = useState(true);
   const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
-  
-  const toggleSidebar = () => setSidebarOpen(prev => !prev);
-  const toggleTools = () => setToolsOpen(prev => !prev);
   
   const handleComponentSelected = (component: ComponentItem) => {
     setSelectedComponent(component);
@@ -31,30 +33,42 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-app-gray-lighter">
-      <header className="flex items-center justify-between px-4 py-2 border-b border-app-gray-light/20 glassmorphism z-10">
+    <div className="flex flex-col h-screen overflow-hidden bg-white">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 z-10">
         <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleSidebar}
-            className="hover:bg-app-blue/10 text-app-gray-dark hover:text-app-blue"
-          >
-            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </Button>
-          <h1 className="text-xl font-medium text-app-gray-dark">3D Component Snap Point Manager</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Bazaar</h1>
         </div>
-        <div className="flex items-center gap-2">
-          {/* Additional header controls would go here */}
+        <div className="flex items-center">
+          <div className="flex items-center text-gray-600 mr-4">
+            <span>My Design /</span>
+            <span className="font-semibold ml-1">Bazaar Road bike</span>
+            <Button variant="ghost" size="icon" className="ml-1">
+              <Edit size={16} />
+            </Button>
+          </div>
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon">
+              <Bell size={20} />
+              <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500"></span>
+            </Button>
+            <Avatar className="h-9 w-9">
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            <Button className="px-6 flex items-center gap-2 rounded-full bg-black text-white hover:bg-gray-800">
+              <Share size={16} className="mr-1" />
+              Share
+              <ArrowUpFromLine size={16} className="ml-1" />
+            </Button>
+          </div>
         </div>
       </header>
       
       <div className="flex flex-1 overflow-hidden">
-        <div 
-          className={`transition-all duration-300 ease-in-out transform ${
-            sidebarOpen ? 'translate-x-0 w-80' : '-translate-x-full w-0'
-          }`}
-        >
+        <IconSidebar />
+        <div className={`transition-all duration-300 ease-in-out ${
+          sidebarOpen ? 'w-80' : 'w-0'
+        }`}>
           {sidebarOpen && <Sidebar onSelectComponent={handleComponentSelected} />}
         </div>
 
@@ -65,29 +79,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           />
           {children}
         </main>
-
-        <div 
-          className={`transition-all duration-300 ease-in-out transform ${
-            toolsOpen ? 'translate-x-0 w-80' : 'translate-x-full w-0'
-          }`}
-        >
-          {toolsOpen && <SnapPointTools onClose={() => setToolsOpen(false)} />}
-        </div>
-        
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={toggleTools}
-          className={`absolute right-0 top-1/2 transform -translate-y-1/2 z-10 hover:bg-app-blue/10 text-app-gray-dark hover:text-app-blue ${
-            toolsOpen ? 'mr-80' : 'mr-0'
-          }`}
-        >
-          {toolsOpen ? <X size={20} /> : <Menu size={20} />}
-        </Button>
       </div>
-      
-      <StatusBar />
-      <Toaster />
     </div>
   );
 };

@@ -7,12 +7,8 @@ const Index = () => {
   useEffect(() => {
     // Welcome toast when the application loads
     const timeoutId = setTimeout(() => {
-      toast('Welcome to 3D Component Snap Point Manager', {
-        description: 'Upload 3D models and define snap points for easy assembly',
-        action: {
-          label: 'Get Started',
-          onClick: () => toast.info('Try clicking "Add Snap Point" in the 3D viewport')
-        },
+      toast('Welcome to Bazaar', {
+        description: 'Select bike components from the sidebar and place them in the 3D viewport',
       });
     }, 1000);
     

@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -192,7 +191,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         }
       ]);
       
-      toast.success(`Placed ${selectedComponent.name} at position: ${position.map(n => n.toFixed(2)).join(', ')}`);
+      toast.success(`Placed ${selectedComponent.name}`);
       onComponentPlaced();
       console.log(`Added ${selectedComponent.name} at position (${position.join(', ')})`);
     }
@@ -225,7 +224,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         <Button
           variant="outline"
           size="icon"
-          className="bg-white/80 backdrop-blur-sm"
+          className="bg-white/90 backdrop-blur-sm"
           onClick={() => toast.info('Zoom in')}
         >
           <ZoomIn size={18} />
@@ -233,7 +232,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         <Button
           variant="outline"
           size="icon"
-          className="bg-white/80 backdrop-blur-sm"
+          className="bg-white/90 backdrop-blur-sm"
           onClick={() => toast.info('Zoom out')}
         >
           <ZoomOut size={18} />
@@ -241,51 +240,15 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         <Button
           variant="outline"
           size="icon"
-          className="bg-white/80 backdrop-blur-sm"
+          className="bg-white/90 backdrop-blur-sm"
           onClick={() => toast.info('Fit to view')}
         >
           <Maximize size={18} />
         </Button>
       </div>
       
-      <div className="absolute bottom-4 left-4 z-10">
-        <div className="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/80 backdrop-blur-sm text-app-gray">
-          <Box size={12} className="text-app-blue" />
-          <span>Bike Handlebar.stl</span>
-        </div>
-      </div>
-      
-      {placedObjects.length > 0 && (
-        <div className="absolute bottom-4 right-4 z-10">
-          <div className="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/80 backdrop-blur-sm text-app-blue">
-            <Layers size={12} />
-            <span>{placedObjects.length} object{placedObjects.length === 1 ? '' : 's'}</span>
-          </div>
-        </div>
-      )}
-      
-      {selectedComponent && (
-        <div className="absolute top-4 right-4 z-10">
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/90 backdrop-blur-sm border border-app-blue/20 text-app-blue">
-            <Box size={16} />
-            <span className="font-medium">{selectedComponent.name}</span>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-red-500 hover:bg-red-50 ml-2 h-6 px-2"
-              onClick={() => {
-                onComponentPlaced();
-                toast.info('Component selection canceled');
-              }}
-            >
-              Cancel
-            </Button>
-          </div>
-        </div>
-      )}
-      
       {selectedObjectId && (
-        <div className="absolute top-16 right-4 z-10">
+        <div className="absolute top-4 right-4 z-10">
           <Button
             variant="destructive"
             size="sm"

@@ -1,24 +1,28 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
-import { FileUploader } from './FileUploader';
 import { ComponentCard } from './ComponentCard';
 import { 
   Search, 
-  FolderOpen, 
-  Grid2x2, 
-  List, 
-  FilePlus,
-  FolderPlus,
-  Box,
-  Circle,
-  Cylinder,
-  Cone,
-  CircleDot
+  Bike
 } from 'lucide-react';
 import { toast } from 'sonner';
+
+// Bike components for the library
+const BIKE_COMPONENTS = [
+  { id: 'bike-1', name: 'Road bike', type: 'BIKE', thumbnail: '/lovable-uploads/9191150b-7bc6-46a5-942d-92a375bd4cf6.png', folder: 'Bikes', shape: 'box' as const },
+  { id: 'bike-2', name: 'Canyon bike', type: 'BIKE', thumbnail: '/lovable-uploads/9191150b-7bc6-46a5-942d-92a375bd4cf6.png', folder: 'Bikes', shape: 'box' as const },
+  { id: 'bike-3', name: 'Girls bike', type: 'BIKE', thumbnail: '/lovable-uploads/9191150b-7bc6-46a5-942d-92a375bd4cf6.png', folder: 'Bikes', shape: 'box' as const },
+  { id: 'bike-4', name: 'City bike', type: 'BIKE', thumbnail: '/lovable-uploads/9191150b-7bc6-46a5-942d-92a375bd4cf6.png', folder: 'Bikes', shape: 'box' as const },
+  { id: 'bike-5', name: 'Electric bike', type: 'BIKE', thumbnail: '/lovable-uploads/9191150b-7bc6-46a5-942d-92a375bd4cf6.png', folder: 'Bikes', shape: 'box' as const },
+  { id: 'bike-6', name: 'Classic bike', type: 'BIKE', thumbnail: '/lovable-uploads/9191150b-7bc6-46a5-942d-92a375bd4cf6.png', folder: 'Bikes', shape: 'box' as const },
+  { id: 'bike-7', name: 'e-Cargo', type: 'BIKE', thumbnail: '/lovable-uploads/9191150b-7bc6-46a5-942d-92a375bd4cf6.png', folder: 'Bikes', shape: 'box' as const },
+  { id: 'bike-8', name: 'e-MTB', type: 'BIKE', thumbnail: '/lovable-uploads/9191150b-7bc6-46a5-942d-92a375bd4cf6.png', folder: 'Bikes', shape: 'box' as const },
+  { id: 'bike-9', name: 'City bike', type: 'BIKE', thumbnail: '/lovable-uploads/9191150b-7bc6-46a5-942d-92a375bd4cf6.png', folder: 'Bikes', shape: 'box' as const },
+  { id: 'bike-10', name: 'Race bike', type: 'BIKE', thumbnail: '/lovable-uploads/9191150b-7bc6-46a5-942d-92a375bd4cf6.png', folder: 'Bikes', shape: 'box' as const },
+];
 
 // Basic shapes for the component library
 const BASIC_SHAPES = [
@@ -54,8 +58,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [showUploader, setShowUploader] = useState(false);
-  const [components, setComponents] = useState<ComponentItem[]>([...MOCK_COMPONENTS, ...BASIC_SHAPES]);
+  const [components, setComponents] = useState<ComponentItem[]>([...BIKE_COMPONENTS, ...MOCK_COMPONENTS, ...BASIC_SHAPES]);
   
   const filteredComponents = components.filter(
     component => component.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -65,135 +68,55 @@ export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
     console.log('Component selected in Sidebar:', component.name);
     if (onSelectComponent) {
       onSelectComponent(component);
-      toast.success(`Selected component: ${component.name}. Click on a snap point to place it.`);
+      toast.success(`Selected component: ${component.name}`);
     }
   };
 
-  const handleFileUploaded = (newComponent: ComponentItem) => {
-    setComponents(prev => [...prev, newComponent]);
-    toast.success(`Component uploaded: ${newComponent.name}`);
-  };
-
   return (
-    <div className="h-full flex flex-col border-r border-app-gray-light/20 bg-white">
+    <div className="h-full flex flex-col bg-white shadow-sm">
       <div className="p-4">
-        <div className="flex items-center gap-2 mb-4">
-          <h2 className="text-lg font-medium">Component Library</h2>
-          <div className="flex-1" />
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
-            className="hover:bg-app-blue/10 text-app-gray-dark hover:text-app-blue"
-          >
-            {viewMode === 'grid' ? <List size={18} /> : <Grid2x2 size={18} />}
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setShowUploader(true)}
-            className="hover:bg-app-blue/10 text-app-gray-dark hover:text-app-blue"
-          >
-            <FilePlus size={18} />
+        <div className="flex items-center justify-between gap-2 mb-4">
+          <div className="flex items-center gap-2">
+            <Bike size={20} className="text-gray-800" />
+            <h2 className="text-lg font-medium">Prefabs</h2>
+          </div>
+          <Button variant="link" className="text-gray-600">
+            See all
           </Button>
         </div>
         
         <div className="relative mb-4">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-app-gray-light" />
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
           <Input
             type="search"
-            placeholder="Search components..."
-            className="pl-9 bg-app-gray-lighter border-app-gray-light/20"
+            placeholder="Search"
+            className="pl-9 bg-gray-50 border-gray-200 rounded-full text-sm"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
 
-      <Tabs defaultValue="all" className="flex-1 overflow-hidden">
-        <div className="px-4">
-          <TabsList className="w-full">
-            <TabsTrigger value="all" className="flex-1">All</TabsTrigger>
-            <TabsTrigger value="shapes" className="flex-1">Shapes</TabsTrigger>
-            <TabsTrigger value="folders" className="flex-1">Folders</TabsTrigger>
-          </TabsList>
+      <div className="flex-1 overflow-auto p-4">
+        <div className="grid grid-cols-2 gap-3">
+          {BIKE_COMPONENTS.slice(0, 10).map((component) => (
+            <div 
+              key={component.id}
+              onClick={() => handleComponentSelect(component)}
+              className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
+            >
+              <div className="w-full h-24 mb-2 flex items-center justify-center">
+                <img 
+                  src={component.thumbnail} 
+                  alt={component.name}
+                  className="max-h-full max-w-full object-contain"
+                />
+              </div>
+              <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
+            </div>
+          ))}
         </div>
-
-        <TabsContent value="all" className="flex-1 overflow-auto p-4 mt-0">
-          {showUploader ? (
-            <FileUploader 
-              onClose={() => setShowUploader(false)} 
-              onFileUploaded={handleFileUploaded}
-            />
-          ) : (
-            <>
-              {filteredComponents.length > 0 ? (
-                <div className={viewMode === 'grid' 
-                  ? "grid grid-cols-2 gap-4" 
-                  : "flex flex-col gap-2"
-                }>
-                  {filteredComponents.map(component => (
-                    <ComponentCard 
-                      key={component.id}
-                      component={component}
-                      viewMode={viewMode}
-                      onSelect={() => handleComponentSelect(component)}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <div className="flex flex-col items-center justify-center h-full text-center text-app-gray-light">
-                  <p className="mb-2">No components found</p>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowUploader(true)}
-                    className="mt-2"
-                  >
-                    Upload Component
-                  </Button>
-                </div>
-              )}
-            </>
-          )}
-        </TabsContent>
-
-        <TabsContent value="shapes" className="flex-1 overflow-auto p-4 mt-0">
-          <div className={viewMode === 'grid' 
-            ? "grid grid-cols-2 gap-4" 
-            : "flex flex-col gap-2"
-          }>
-            {BASIC_SHAPES.map(component => (
-              <ComponentCard 
-                key={component.id}
-                component={component}
-                viewMode={viewMode}
-                onSelect={() => handleComponentSelect(component)}
-              />
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="folders" className="flex-1 overflow-auto p-4 mt-0">
-          <div className="flex flex-col gap-2">
-            <Button variant="outline" className="flex justify-start items-center gap-2 text-app-gray-dark">
-              <FolderOpen size={18} className="text-app-blue" />
-              <span>Bike Parts</span>
-              <span className="ml-auto text-xs text-app-gray-light">5</span>
-            </Button>
-            
-            <Button variant="outline" className="flex justify-start items-center gap-2 text-app-gray-dark">
-              <FolderOpen size={18} className="text-app-blue" />
-              <span>Basic Shapes</span>
-              <span className="ml-auto text-xs text-app-gray-light">5</span>
-            </Button>
-            
-            <Button variant="ghost" className="flex justify-start items-center gap-2 text-app-gray">
-              <FolderPlus size={18} />
-              <span>Create New Folder</span>
-            </Button>
-          </div>
-        </TabsContent>
-      </Tabs>
+      </div>
     </div>
   );
 };
