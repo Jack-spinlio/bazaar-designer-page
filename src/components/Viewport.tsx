@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -12,18 +11,16 @@ import {
   Crosshair,
   MapPin,
   Layers,
-  Cube
+  Box3D
 } from 'lucide-react';
 import { createSnapPointIndicator, createMockHandlebar } from '@/utils/threeUtils';
 
-// Handlebar component
 const Handlebar = () => {
   const handlebarRef = useRef<THREE.Group>(null);
   
   useEffect(() => {
     if (handlebarRef.current) {
       const handlebar = createMockHandlebar();
-      // Copy the mock handlebar to our ref
       handlebarRef.current.add(handlebar);
     }
   }, []);
@@ -31,7 +28,6 @@ const Handlebar = () => {
   return <group ref={handlebarRef} />;
 };
 
-// Snap point component
 interface SnapPointProps {
   position: [number, number, number];
   type: 'point' | 'plane';
@@ -49,16 +45,13 @@ const SnapPoint: React.FC<SnapPointProps> = ({
   
   useEffect(() => {
     if (snapPointRef.current) {
-      // Clear any existing children
       while (snapPointRef.current.children.length > 0) {
         snapPointRef.current.remove(snapPointRef.current.children[0]);
       }
       
-      // Create new indicator
       const pos = new THREE.Vector3(...position);
       const indicator = createSnapPointIndicator(new THREE.Vector3(0, 0, 0), type);
       
-      // Set scale based on selection state
       const scale = selected ? 1.5 : 1;
       indicator.scale.set(scale, scale, scale);
       
@@ -70,9 +63,7 @@ const SnapPoint: React.FC<SnapPointProps> = ({
   return <group ref={snapPointRef} />;
 };
 
-// Scene setup
 const Scene = () => {
-  // Add a directional light
   const directionalLightRef = useRef<THREE.DirectionalLight>(null);
   useHelper(directionalLightRef, THREE.DirectionalLightHelper, 1, 'red');
 
@@ -93,7 +84,6 @@ const Scene = () => {
       
       <Handlebar />
       
-      {/* Example snap points */}
       <SnapPoint position={[-2, 0, 0]} type="plane" selected={true} />
       <SnapPoint position={[2, 0, 0]} type="plane" />
       <SnapPoint position={[0, -0.3, 0]} type="point" />
@@ -164,7 +154,7 @@ export const Viewport: React.FC = () => {
       
       <div className="absolute bottom-4 left-4 z-10">
         <div className="flex items-center gap-1 text-xs px-2 py-1 rounded-full bg-white/80 backdrop-blur-sm text-app-gray">
-          <Cube size={12} className="text-app-blue" />
+          <Box3D size={12} className="text-app-blue" />
           <span>Bike Handlebar.stl</span>
         </div>
       </div>
