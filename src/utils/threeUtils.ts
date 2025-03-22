@@ -133,3 +133,52 @@ export const createSnapPointIndicator = (position: THREE.Vector3, type: 'point' 
   group.position.copy(position);
   return group;
 };
+
+export const createComponentShape = (shape: string) => {
+  const group = new THREE.Group();
+  const material = new THREE.MeshStandardMaterial({ 
+    color: 0x22c55e, // green color
+    metalness: 0.3,
+    roughness: 0.4
+  });
+  
+  let mesh;
+  
+  switch (shape) {
+    case 'box':
+      const boxGeom = new THREE.BoxGeometry(0.4, 0.4, 0.4);
+      mesh = new THREE.Mesh(boxGeom, material);
+      break;
+    
+    case 'sphere':
+      const sphereGeom = new THREE.SphereGeometry(0.25, 16, 16);
+      mesh = new THREE.Mesh(sphereGeom, material);
+      break;
+    
+    case 'cylinder':
+      const cylGeom = new THREE.CylinderGeometry(0.2, 0.2, 0.5, 32);
+      mesh = new THREE.Mesh(cylGeom, material);
+      break;
+    
+    case 'cone':
+      const coneGeom = new THREE.ConeGeometry(0.25, 0.5, 32);
+      mesh = new THREE.Mesh(coneGeom, material);
+      break;
+    
+    case 'torus':
+      const torusGeom = new THREE.TorusGeometry(0.2, 0.08, 16, 32);
+      mesh = new THREE.Mesh(torusGeom, material);
+      break;
+    
+    default:
+      // Default to a small sphere if shape is unknown
+      const defaultGeom = new THREE.SphereGeometry(0.2, 8, 8);
+      mesh = new THREE.Mesh(defaultGeom, material);
+  }
+  
+  if (mesh) {
+    group.add(mesh);
+  }
+  
+  return group;
+};

@@ -7,28 +7,27 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
-
-interface Component {
-  id: string;
-  name: string;
-  type: string;
-  thumbnail: string;
-  folder?: string;
-}
+import { ComponentItem } from './Sidebar';
 
 interface ComponentCardProps {
-  component: Component;
+  component: ComponentItem;
   viewMode: 'grid' | 'list';
+  onSelect?: () => void;
 }
 
 export const ComponentCard: React.FC<ComponentCardProps> = ({
   component,
-  viewMode
+  viewMode,
+  onSelect
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   const handleLoad = () => {
-    toast.success(`Loaded component: ${component.name}`);
+    if (onSelect) {
+      onSelect();
+    } else {
+      toast.success(`Loaded component: ${component.name}`);
+    }
   };
 
   if (viewMode === 'grid') {

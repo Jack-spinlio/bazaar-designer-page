@@ -14,7 +14,8 @@ import {
   Layers,
   Box
 } from 'lucide-react';
-import { createSnapPointIndicator, createMockHandlebar } from '@/utils/threeUtils';
+import { createSnapPointIndicator, createMockHandlebar, createComponentShape } from '@/utils/threeUtils';
+import { ComponentItem } from './Sidebar';
 
 const Handlebar = () => {
   const handlebarRef = useRef<THREE.Group>(null);
@@ -34,13 +35,40 @@ interface SnapPointProps {
   type: 'point' | 'plane';
   color?: string;
   selected?: boolean;
+  component?: ComponentItem;
+  onSelect?: () => void;
 }
+
+interface PlacedComponentProps {
+  position: [number, number, number];
+  shape: string;
+}
+
+const PlacedComponent: React.FC<PlacedComponentProps> = ({ position, shape }) => {
+  const componentRef = useRef<THREE.Group>(null);
+  
+  useEffect(() => {
+    if (componentRef.current) {
+      while (componentRef.current.children.length > 0) {
+        componentRef.current.remove(componentRef.current.children[0]);
+      }
+      
+      const componentMesh = createComponentShape(shape);
+      componentRef.current.add(componentMesh);
+      componentRef.current.position.set(position[0], position[1], position[2]);
+    }
+  }, [position, shape]);
+
+  return <group ref={componentRef} />;
+};
 
 const SnapPoint: React.FC<SnapPointProps> = ({ 
   position, 
   type, 
   color = '#0ea5e9',
-  selected = false
+  selected = false,
+  component,
+  onSelect
 }) => {
   const snapPointRef = useRef<THREE.Group>(null);
   
@@ -61,16 +89,37 @@ const SnapPoint: React.FC<SnapPointProps> = ({
     }
   }, [position, type, selected]);
 
-  return <group ref={snapPointRef} />;
+  const handleClick = (e: any) => {
+    e.stopPropagation();
+    if (onSelect) {
+      onSelect();
+    }
+  };
+
+  return (
+    <group ref={snapPointRef} onClick={handleClick}>
+      {component && (
+        <PlacedComponent position={position} shape={component.shape} />
+      )}
+    </group>
+  );
 };
 
 interface SceneProps {
   mode: 'view' | 'add';
   onAddSnapPoint: (position: [number, number, number]) => void;
   customSnapPoints: SnapPointProps[];
+  onSelectSnapPoint: (index: number) => void;
+  selectedSnapPointIndex: number | null;
 }
 
-const Scene: React.FC<SceneProps> = ({ mode, onAddSnapPoint, customSnapPoints }) => {
+const Scene: React.FC<SceneProps> = ({ 
+  mode, 
+  onAddSnapPoint, 
+  customSnapPoints, 
+  onSelectSnapPoint,
+  selectedSnapPointIndex
+}) => {
   const directionalLightRef = useRef<THREE.DirectionalLight>(null);
   useHelper(directionalLightRef, THREE.DirectionalLightHelper, 1, 'red');
 
@@ -101,9 +150,24 @@ const Scene: React.FC<SceneProps> = ({ mode, onAddSnapPoint, customSnapPoints })
       </mesh>
       
       {/* Default snap points */}
-      <SnapPoint position={[-2, 0, 0]} type="plane" selected={true} />
-      <SnapPoint position={[2, 0, 0]} type="plane" />
-      <SnapPoint position={[0, -0.3, 0]} type="point" />
+      <SnapPoint 
+        position={[-2, 0, 0]} 
+        type="plane" 
+        selected={selectedSnapPointIndex === -3}
+        onSelect={() => onSelectSnapPoint(-3)}
+      />
+      <SnapPoint 
+        position={[2, 0, 0]} 
+        type="plane" 
+        selected={selectedSnapPointIndex === -2}
+        onSelect={() => onSelectSnapPoint(-2)}
+      />
+      <SnapPoint 
+        position={[0, -0.3, 0]} 
+        type="point" 
+        selected={selectedSnapPointIndex === -1}
+        onSelect={() => onSelectSnapPoint(-1)}
+      />
       
       {/* User added snap points */}
       {customSnapPoints.map((point, index) => (
@@ -111,7 +175,9 @@ const Scene: React.FC<SceneProps> = ({ mode, onAddSnapPoint, customSnapPoints })
           key={index}
           position={point.position}
           type={point.type}
-          selected={point.selected}
+          selected={selectedSnapPointIndex === index}
+          component={point.component}
+          onSelect={() => onSelectSnapPoint(index)}
         />
       ))}
     </>
@@ -122,6 +188,8 @@ export const Viewport: React.FC = () => {
   const [mode, setMode] = useState<'view' | 'add'>('view');
   const [snapPoints, setSnapPoints] = useState<SnapPointProps[]>([]);
   const [selectedPointType, setSelectedPointType] = useState<'point' | 'plane'>('point');
+  const [selectedSnapPointIndex, setSelectedSnapPointIndex] = useState<number | null>(null);
+  const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
   
   const handleAddSnapPoint = () => {
     setMode(mode === 'add' ? 'view' : 'add');
@@ -146,6 +214,42 @@ export const Viewport: React.FC = () => {
   const togglePointType = () => {
     setSelectedPointType(selectedPointType === 'point' ? 'plane' : 'point');
     toast.info(`Selected snap type: ${selectedPointType === 'point' ? 'Plane' : 'Point'}`);
+  };
+
+  const handleSelectSnapPoint = (index: number) => {
+    setSelectedSnapPointIndex(index);
+    
+    if (index >= 0) {
+      toast.info(`Selected snap point at position: ${snapPoints[index].position.map(n => n.toFixed(2)).join(', ')}`);
+    } else if (index === -3) {
+      toast.info('Selected left grip mount');
+    } else if (index === -2) {
+      toast.info('Selected right grip mount');
+    } else if (index === -1) {
+      toast.info('Selected stem clamp');
+    }
+    
+    // If we have a component selected, attach it to this snap point
+    if (selectedComponent && index !== null) {
+      if (index >= 0) {
+        // Update user-added snap point
+        const updatedSnapPoints = [...snapPoints];
+        updatedSnapPoints[index] = {
+          ...updatedSnapPoints[index],
+          component: selectedComponent
+        };
+        setSnapPoints(updatedSnapPoints);
+        toast.success(`Added ${selectedComponent.name} to snap point`);
+        setSelectedComponent(null);
+      } else {
+        toast.info("Default snap points can't have components attached in this demo");
+      }
+    }
+  };
+
+  const handleComponentSelected = (component: ComponentItem) => {
+    setSelectedComponent(component);
+    toast.info(`Selected ${component.name} - now click on a snap point to place it`);
   };
 
   return (
@@ -217,13 +321,40 @@ export const Viewport: React.FC = () => {
         </div>
       )}
       
+      {selectedComponent && (
+        <div className="absolute top-16 right-4 z-10">
+          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/90 backdrop-blur-sm border border-app-blue/20 text-app-blue">
+            <Box size={16} />
+            <span className="font-medium">{selectedComponent.name}</span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-red-500 hover:bg-red-50 ml-2 h-6 px-2"
+              onClick={() => {
+                setSelectedComponent(null);
+                toast.info('Component selection canceled');
+              }}
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      )}
+      
       <Canvas shadows className="w-full h-full outline-none">
         <Scene 
           mode={mode} 
           onAddSnapPoint={handleSnapPointPlaced} 
           customSnapPoints={snapPoints}
+          onSelectSnapPoint={handleSelectSnapPoint}
+          selectedSnapPointIndex={selectedSnapPointIndex}
         />
       </Canvas>
+      
+      {/* This is a prop being passed from Sidebar to Viewport */}
+      <div className="hidden">
+        <Sidebar onSelectComponent={handleComponentSelected} />
+      </div>
     </div>
   );
 };

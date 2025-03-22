@@ -14,17 +14,31 @@ import {
   FilePlus,
   FolderPlus,
 } from 'lucide-react';
+import { toast } from 'sonner';
 
 // Mock data for the component library
-const MOCK_COMPONENTS = [
-  { id: '1', name: 'Bike Handlebar', type: 'STL', thumbnail: '/placeholder.svg', folder: 'Bike Parts' },
-  { id: '2', name: 'Brake Lever', type: 'OBJ', thumbnail: '/placeholder.svg', folder: 'Bike Parts' },
-  { id: '3', name: 'Grip', type: 'STEP', thumbnail: '/placeholder.svg', folder: 'Bike Parts' },
-  { id: '4', name: 'Stem', type: 'STL', thumbnail: '/placeholder.svg', folder: 'Bike Parts' },
-  { id: '5', name: 'Seat Post', type: 'OBJ', thumbnail: '/placeholder.svg', folder: 'Bike Parts' },
+export const MOCK_COMPONENTS = [
+  { id: '1', name: 'Bike Handlebar', type: 'STL', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'cylinder' },
+  { id: '2', name: 'Brake Lever', type: 'OBJ', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'box' },
+  { id: '3', name: 'Grip', type: 'STEP', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'sphere' },
+  { id: '4', name: 'Stem', type: 'STL', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'cone' },
+  { id: '5', name: 'Seat Post', type: 'OBJ', thumbnail: '/placeholder.svg', folder: 'Bike Parts', shape: 'torus' },
 ];
 
-export const Sidebar: React.FC = () => {
+export interface ComponentItem {
+  id: string;
+  name: string;
+  type: string;
+  thumbnail: string;
+  folder?: string;
+  shape: 'box' | 'sphere' | 'cylinder' | 'cone' | 'torus';
+}
+
+interface SidebarProps {
+  onSelectComponent?: (component: ComponentItem) => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ onSelectComponent }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showUploader, setShowUploader] = useState(false);
@@ -32,6 +46,13 @@ export const Sidebar: React.FC = () => {
   const filteredComponents = MOCK_COMPONENTS.filter(
     component => component.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleComponentSelect = (component: ComponentItem) => {
+    if (onSelectComponent) {
+      onSelectComponent(component);
+      toast.success(`Selected component: ${component.name}`);
+    }
+  };
 
   return (
     <div className="h-full flex flex-col border-r border-app-gray-light/20 bg-white">
@@ -93,6 +114,7 @@ export const Sidebar: React.FC = () => {
                       key={component.id}
                       component={component}
                       viewMode={viewMode}
+                      onSelect={() => handleComponentSelect(component)}
                     />
                   ))}
                 </div>

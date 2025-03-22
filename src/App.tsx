@@ -1,27 +1,41 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+import { useState } from 'react';
+import { Viewport } from './components/Viewport';
+import { Sidebar, ComponentItem } from './components/Sidebar';
+import { SnapPointTools } from './components/SnapPointTools';
+import { StatusBar } from './components/StatusBar';
+import './App.css';
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  const [showSnapPointTools, setShowSnapPointTools] = useState(false);
+  const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
+
+  const handleComponentSelected = (component: ComponentItem) => {
+    setSelectedComponent(component);
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-white text-app-gray-dark">
+      <StatusBar
+        onToggleSnapPointTools={() => setShowSnapPointTools(!showSnapPointTools)}
+        showSnapPointTools={showSnapPointTools}
+      />
+      
+      <div className="flex flex-1 overflow-hidden">
+        <div className="w-64 h-full">
+          <Sidebar onSelectComponent={handleComponentSelected} />
+        </div>
+        
+        <Viewport />
+        
+        {showSnapPointTools && (
+          <div className="w-80">
+            <SnapPointTools onClose={() => setShowSnapPointTools(false)} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default App;
