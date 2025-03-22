@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -64,11 +65,6 @@ const PlacedComponent: React.FC<PlacedComponentProps> = ({ position, shape }) =>
       componentRef.current.position.set(position[0], position[1], position[2]);
       
       console.log(`Placed component with shape "${shape}" at position (${position.join(', ')})`);
-      
-      // Add a debug box to visualize the component bounds
-      const box = new THREE.Box3().setFromObject(componentMesh);
-      const boxHelper = new THREE.Box3Helper(box, new THREE.Color(0xff0000));
-      componentRef.current.add(boxHelper);
     }
   }, [position, shape]);
 
@@ -143,15 +139,15 @@ const Scene: React.FC<SceneProps> = ({
   const handleClick = (event: any) => {
     if (mode === 'add' && event.point) {
       event.stopPropagation();
-      onAddSnapPoint([event.point.x, event.point.y, event.point.z]);
+      const position: [number, number, number] = [
+        event.point.x, 
+        event.point.y, 
+        event.point.z
+      ];
+      console.log(`Adding snap point at position (${position.join(', ')})`);
+      onAddSnapPoint(position);
     }
   };
-
-  useEffect(() => {
-    if (selectedComponent) {
-      console.log('Scene: Selected component changed:', selectedComponent.name);
-    }
-  }, [selectedComponent]);
 
   return (
     <>
@@ -204,6 +200,14 @@ const Scene: React.FC<SceneProps> = ({
           onSelect={() => onSelectSnapPoint(index)}
         />
       ))}
+      
+      {/* Add a mesh to capture clicks for adding snap points */}
+      {mode === 'add' && (
+        <mesh onClick={handleClick} visible={false}>
+          <boxGeometry args={[50, 50, 50]} />
+          <meshBasicMaterial transparent opacity={0} />
+        </mesh>
+      )}
     </>
   );
 };
@@ -234,6 +238,8 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
       ? 'Exited snap point placement mode' 
       : `Click on the model to place a ${selectedPointType}`
     );
+    
+    console.log(`Snap point mode set to: ${mode === 'add' ? 'view' : 'add'}`);
   };
 
   const handleSnapPointPlaced = (position: [number, number, number]) => {
@@ -244,8 +250,10 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
     };
     
     setSnapPoints([...snapPoints, newPoint]);
-    toast(`${selectedPointType === 'point' ? 'Snap point' : 'Snap plane'} added at position: ${position.map(n => n.toFixed(2)).join(', ')}`);
+    toast.success(`${selectedPointType === 'point' ? 'Snap point' : 'Snap plane'} added at position: ${position.map(n => n.toFixed(2)).join(', ')}`);
     setMode('view');
+    
+    console.log(`Snap point added at position: ${position.join(', ')}`);
   };
 
   const togglePointType = () => {
@@ -282,6 +290,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         // Tell the parent that we've placed the component
         onComponentPlaced();
       } else if (index === -3 || index === -2 || index === -1) {
+        // Default snap points are handled differently
         // Create a new snap point at the position of the default snap point with the component attached
         let position: [number, number, number] = [0, 0, 0];
         
