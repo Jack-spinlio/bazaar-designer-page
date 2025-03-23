@@ -47,7 +47,7 @@ const Timeline = () => {
 
   return (
     <Layout>
-      <div className="h-full w-full bg-gray-50">
+      <div className="h-full w-full bg-white">
         <TimelineChart components={bikeComponents} />
       </div>
     </Layout>

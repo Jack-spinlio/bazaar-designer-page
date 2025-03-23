@@ -3,7 +3,6 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Layout } from './components/Layout';
 import Index from './pages/Index';
-import Dashboard from './pages/Dashboard';
 import Edit from './pages/Edit';
 import Prefabs from './pages/Prefabs';
 import Components from './pages/Components';
@@ -32,9 +31,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<Navigate to="/edit" replace />} />
         <Route path="/index" element={<Index />} />
-        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/edit" element={<Edit />} />
         <Route path="/prefabs" element={<Prefabs />} />
         <Route path="/components" element={<Components />} />

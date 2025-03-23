@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
@@ -34,12 +33,10 @@ export const EditToolbar = () => {
   const [showOnlyFrame, setShowOnlyFrame] = useState(false);
   const [wheelColor, setWheelColor] = useState('blue');
   
-  // Tubing values
   const [frontWidth, setFrontWidth] = useState([300]);
   const [rearWidth, setRearWidth] = useState([260]);
   const [height, setHeight] = useState([300]);
   
-  // Geometry values
   const [seatTubeLength, setSeatTubeLength] = useState([540]);
   const [seatTubeAngle, setSeatTubeAngle] = useState([72]);
   const [topTubeLength, setTopTubeLength] = useState([580]);
@@ -48,7 +45,6 @@ export const EditToolbar = () => {
   const [chainStayLength, setChainStayLength] = useState([420]);
   const [bbDrop, setBbDrop] = useState([60]);
   
-  // Parts values - Wheels
   const [wheelSize, setWheelSize] = useState([540]);
   const [rearWheelSpacing, setRearWheelSpacing] = useState([150]);
   const [wheelDepth, setWheelDepth] = useState([27]);
@@ -125,11 +121,46 @@ export const EditToolbar = () => {
     );
   };
 
+  const renderTubeContent = () => {
+    return (
+      <div className="pl-4">
+        <div className="mb-6">
+          <h3 className="text-sm text-gray-500 mb-3">Color:</h3>
+          <div className="grid grid-cols-6 gap-2">
+            {colorOptions.map((option) => (
+              <div
+                key={option.name}
+                className={`w-10 h-10 rounded-full cursor-pointer ${option.color} flex items-center justify-center ${
+                  selectedColor === option.name ? 'ring-2 ring-offset-2 ring-blue-500' : ''
+                }`}
+                onClick={() => setSelectedColor(option.name)}
+              >
+                {selectedColor === option.name && option.color !== 'bg-white border border-gray-300' && (
+                  <div className="text-white">✓</div>
+                )}
+                {selectedColor === option.name && option.color === 'bg-white border border-gray-300' && (
+                  <div className="text-black">✓</div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="mb-6">
+          {renderSliderWithValue("Width:", frontWidth, setFrontWidth, 200, 320)}
+          
+          {renderSliderWithValue("Height:", height, setHeight, 200, 320)}
+          
+          {renderSliderWithValue("Diameter:", rearWidth, setRearWidth, 200, 320)}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-sm w-full h-full overflow-hidden">
       <ScrollArea className="h-full">
         <div className="p-4">
-          {/* Tabs */}
           <Tabs value={selectedTab} defaultValue="tubing" className="mb-6" onValueChange={setSelectedTab}>
             <TabsList className="grid grid-cols-3 mb-4 w-full">
               <TabsTrigger value="tubing" className={selectedTab === 'tubing' ? 'bg-black text-white' : ''}>
@@ -143,9 +174,7 @@ export const EditToolbar = () => {
               </TabsTrigger>
             </TabsList>
             
-            {/* Tubing Tab Content */}
             <TabsContent value="tubing" className="space-y-4">
-              {/* Frame Color */}
               <div className="mb-6">
                 <h3 className="text-sm text-gray-500 mb-3">Frame color:</h3>
                 <div className="grid grid-cols-6 gap-2">
@@ -168,7 +197,6 @@ export const EditToolbar = () => {
                 </div>
               </div>
 
-              {/* Paint Finish */}
               <div className="mb-6">
                 <h3 className="text-sm text-gray-500 mb-3">Paint finish:</h3>
                 <div className="grid grid-cols-2 gap-3">
@@ -193,7 +221,6 @@ export const EditToolbar = () => {
                 </div>
               </div>
 
-              {/* Top Tube */}
               <div className="mb-4">
                 <div 
                   className="flex items-center bg-gray-100 p-2 rounded-md cursor-pointer mb-2"
@@ -205,14 +232,9 @@ export const EditToolbar = () => {
                     {expandTopTube ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                   </div>
                 </div>
-                {expandTopTube && (
-                  <div className="pl-4">
-                    {/* Tube settings would go here */}
-                  </div>
-                )}
+                {expandTopTube && renderTubeContent()}
               </div>
 
-              {/* Shapes */}
               <div className="mb-6">
                 <h3 className="text-sm text-gray-500 mb-3">Shapes:</h3>
                 <div className="grid grid-cols-2 gap-3">
@@ -250,16 +272,14 @@ export const EditToolbar = () => {
                 </div>
               </div>
 
-              {/* Front width slider */}
-              {renderSliderWithValue("Front width:", frontWidth, setFrontWidth, 200, 320)}
-              
-              {/* Rear width slider */}
-              {renderSliderWithValue("Rear width:", rearWidth, setRearWidth, 200, 320)}
-              
-              {/* Height slider */}
-              {renderSliderWithValue("Height:", height, setHeight, 200, 320)}
+              <div className="mb-6">
+                {renderSliderWithValue("Front width:", frontWidth, setFrontWidth, 200, 320)}
+                
+                {renderSliderWithValue("Rear width:", rearWidth, setRearWidth, 200, 320)}
+                
+                {renderSliderWithValue("Height:", height, setHeight, 200, 320)}
+              </div>
 
-              {/* Down tube */}
               <div className="mb-4">
                 <div 
                   className="flex items-center bg-gray-100 p-2 rounded-md cursor-pointer mb-2"
@@ -271,15 +291,10 @@ export const EditToolbar = () => {
                     {expandDownTube ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                   </div>
                 </div>
-                {expandDownTube && (
-                  <div className="pl-4">
-                    {/* Tube settings would go here */}
-                  </div>
-                )}
+                {expandDownTube && renderTubeContent()}
               </div>
             </TabsContent>
             
-            {/* Geometry Tab Content */}
             <TabsContent value="geometry" className="space-y-4">
               {renderSliderWithValue("Seat tube length:", seatTubeLength, setSeatTubeLength, 450, 600)}
               {renderSliderWithValue("Seat tube angle:", seatTubeAngle, setSeatTubeAngle, 65, 77, "°")}
@@ -290,9 +305,7 @@ export const EditToolbar = () => {
               {renderSliderWithValue("BB drop:", bbDrop, setBbDrop, 20, 80)}
             </TabsContent>
             
-            {/* Parts Tab Content */}
             <TabsContent value="parts" className="space-y-4">
-              {/* Wheels section */}
               <div className="mb-4">
                 <div 
                   className="flex items-center bg-gray-100 p-3 rounded-md cursor-pointer mb-2"
@@ -307,7 +320,6 @@ export const EditToolbar = () => {
                 
                 {expandWheels && (
                   <div className="pl-0 space-y-4">
-                    {/* Wheel Color */}
                     <div className="mb-6">
                       <h3 className="text-sm text-gray-500 mb-3">Color:</h3>
                       <div className="grid grid-cols-6 gap-2">
@@ -339,7 +351,6 @@ export const EditToolbar = () => {
                 )}
               </div>
               
-              {/* Forks section */}
               <div className="mb-4">
                 <div 
                   className="flex items-center bg-gray-100 p-3 rounded-md cursor-pointer mb-2"
@@ -358,7 +369,6 @@ export const EditToolbar = () => {
                 )}
               </div>
               
-              {/* Water bottles section */}
               <div className="mb-6">
                 <div 
                   className="flex items-center bg-gray-100 p-3 rounded-md cursor-pointer mb-2"
@@ -381,7 +391,6 @@ export const EditToolbar = () => {
                 )}
               </div>
               
-              {/* Show only frame toggle */}
               <div className="flex items-center justify-between p-2">
                 <span className="font-medium">Show only frame</span>
                 <Switch

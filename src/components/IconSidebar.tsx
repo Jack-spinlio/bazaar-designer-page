@@ -1,6 +1,6 @@
+
 import { Button } from "@/components/ui/button";
 import { 
-  LayoutDashboard, 
   Pencil, 
   Bike, 
   Puzzle, 
@@ -19,7 +19,6 @@ export const IconSidebar = () => {
   const isActive = (path: string) => location.pathname === path;
   
   const sidebarItems = [
-    { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
     { icon: Pencil, label: "Edit", path: "/edit" },
     { icon: Bike, label: "Prefabs", path: "/prefabs" },
     { icon: Puzzle, label: "Components", path: "/components" },

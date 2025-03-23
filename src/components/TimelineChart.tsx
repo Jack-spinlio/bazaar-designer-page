@@ -103,11 +103,11 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
           
           {/* Total timeline row */}
           <div className="flex items-center mb-3">
-            <div className="w-44 pr-2 font-medium flex-shrink-0">
+            <div className="w-44 pr-2 font-bold text-left flex-shrink-0 bg-white py-2 pl-2 rounded-l-lg">
               Total Timeline
             </div>
             
-            <div className="flex-1 h-8 bg-gray-600 rounded-lg flex items-center px-4 text-white">
+            <div className="flex-1 h-8 bg-gray-600 rounded-r-lg flex items-center px-4 text-white">
               90 days period
             </div>
           </div>
@@ -121,7 +121,7 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
                   <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
                     {component.icon}
                   </div>
-                  <span className="font-medium text-sm">{component.name}</span>
+                  <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">{component.name}</span>
                 </div>
                 
                 {/* Timeline bar */}
@@ -134,9 +134,9 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
                     }} 
                     className={`absolute h-8 ${getComponentColor(component.id)} rounded-full flex items-center px-2`}
                   >
-                    <ChevronRight size={16} className="mr-1" />
-                    <span className="text-xs font-medium">{component.name}</span>
-                    <span className="text-xs ml-1">{component.days} days</span>
+                    <ChevronRight size={16} className="mr-1 flex-shrink-0" />
+                    <span className="text-xs font-medium whitespace-nowrap overflow-hidden text-ellipsis">{component.name}</span>
+                    <span className="text-xs ml-1 whitespace-nowrap">{component.days} days</span>
                   </div>
                 </div>
               </div>
