@@ -8,6 +8,7 @@ import Prefabs from './pages/Prefabs';
 import Components from './pages/Components';
 import Saved from './pages/Saved';
 import Timeline from './pages/Timeline';
+import BOM from './pages/BOM';  // Added BOM import
 import Uploads from './pages/Uploads';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
@@ -36,6 +37,7 @@ function App() {
         <Route path="/edit" element={<Edit />} />
         <Route path="/prefabs" element={<Prefabs />} />
         <Route path="/components" element={<Components />} />
+        <Route path="/bom" element={<BOM />} />  {/* Added BOM route */}
         <Route path="/saved" element={<Saved />} />
         <Route path="/timeline" element={<Timeline />} />
         <Route path="/uploads" element={<Uploads />} />

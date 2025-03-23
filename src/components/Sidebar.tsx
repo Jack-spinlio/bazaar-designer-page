@@ -4,9 +4,8 @@ import { Input } from '@/components/ui/input';
 import { ComponentCard } from './ComponentCard';
 import { Search, Bike } from 'lucide-react';
 import { toast } from 'sonner';
-import { FileUploader } from './FileUploader';
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { supabase } from '@/integrations/supabase/client';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 const BIKE_COMPONENTS = [{
   id: 'bike-1',
@@ -166,17 +165,19 @@ export interface ComponentItem {
 
 interface SidebarProps {
   onSelectComponent?: (component: ComponentItem) => void;
+  children?: React.ReactNode;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
-  onSelectComponent
+  onSelectComponent,
+  children
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [components, setComponents] = useState<ComponentItem[]>([...BIKE_COMPONENTS, ...MOCK_COMPONENTS, ...BASIC_SHAPES]);
-  const [isUploaderOpen, setIsUploaderOpen] = useState(false);
   const [uploadedModels, setUploadedModels] = useState<ComponentItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<'marketplace' | 'uploads'>('marketplace');
 
   useEffect(() => {
     const fetchUploadedModels = async () => {
@@ -239,11 +240,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  const handleFileUploaded = (newComponent: ComponentItem) => {
-    setComponents(prev => [...prev, newComponent]);
-    setIsUploaderOpen(false);
-    toast.success(`Component "${newComponent.name}" added to library`);
-  };
+  // If children are provided, render them instead of the default content
+  if (children) {
+    return (
+      <div className="h-full flex flex-col bg-white shadow-sm rounded-2xl overflow-hidden">
+        <div className="p-4 py-0 px-[16px]">
+          <div className="flex items-center justify-between gap-2 mb-4 py-[10px]">
+            <div className="flex items-center gap-2">
+              <Bike size={20} className="text-gray-800" />
+              <h2 className="text-lg font-medium">Component Library</h2>
+            </div>
+          </div>
+          
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+            <Input type="search" placeholder="Search components" className="pl-9 bg-gray-50 border-gray-200 rounded-full text-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-auto p-4">
+          {children}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-full flex flex-col bg-white shadow-sm rounded-2xl overflow-hidden">
@@ -253,6 +273,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <Bike size={20} className="text-gray-800" />
             <h2 className="text-lg font-medium">Component Library</h2>
           </div>
+        </div>
+        
+        <div className="mb-4">
+          <Tabs defaultValue="marketplace" className="w-full" onValueChange={(value) => setActiveTab(value as 'marketplace' | 'uploads')}>
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="marketplace">Marketplace</TabsTrigger>
+              <TabsTrigger value="uploads">My Uploads</TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
         
         <div className="relative mb-4">
@@ -270,9 +299,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         ) : (
           <>
-            {filteredUploadedModels.length > 0 && (
+            {activeTab === 'uploads' && filteredUploadedModels.length > 0 && (
               <div className="mb-6">
-                <h3 className="text-sm font-semibold mb-2">Uploaded Models</h3>
                 <div className="grid grid-cols-2 gap-3">
                   {filteredUploadedModels.map(component => (
                     <div 
@@ -291,23 +319,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
             )}
             
-            {!searchQuery && (
+            {activeTab === 'marketplace' && (
               <>
-                <h3 className="text-sm font-semibold mb-2">Bike Components</h3>
-                <div className="grid grid-cols-2 gap-3">
-                  {BIKE_COMPONENTS.slice(0, 10).map(component => (
-                    <div 
-                      key={component.id} 
-                      onClick={() => handleComponentSelect(component)} 
-                      className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
-                    >
-                      <div className="w-full h-24 mb-2 flex items-center justify-center">
-                        <img src={component.thumbnail} alt={component.name} className="max-h-full max-w-full object-contain" />
-                      </div>
-                      <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
+                {!searchQuery && (
+                  <>
+                    <h3 className="text-sm font-semibold mb-2">Bike Components</h3>
+                    <div className="grid grid-cols-2 gap-3">
+                      {BIKE_COMPONENTS.slice(0, 10).map(component => (
+                        <div 
+                          key={component.id} 
+                          onClick={() => handleComponentSelect(component)} 
+                          className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
+                        >
+                          <div className="w-full h-24 mb-2 flex items-center justify-center">
+                            <img src={component.thumbnail} alt={component.name} className="max-h-full max-w-full object-contain" />
+                          </div>
+                          <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </>
+                )}
               </>
             )}
           </>

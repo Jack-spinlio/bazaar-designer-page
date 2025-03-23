@@ -1,104 +1,103 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Trash2, Download, Upload } from 'lucide-react';
+import { Upload, X, FileType } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-
-interface FileObject {
-  id: string;
-  name: string;
-  created_at: string;
-  updated_at: string;
-  size: number;
-  mimetype: string;
-}
-
-// Define a simple FileUploader component for this page
-const SimpleFileUploader = ({ onFileSelect, accept, isUploading }: {
-  onFileSelect: (file: File) => void;
-  accept: string;
-  isUploading: boolean;
-}) => {
-  return (
-    <div className="border-2 border-dashed rounded-lg p-6 text-center">
-      <input
-        type="file"
-        id="file-upload"
-        className="hidden"
-        accept={accept}
-        onChange={(e) => e.target.files && e.target.files[0] && onFileSelect(e.target.files[0])}
-        disabled={isUploading}
-      />
-      <label htmlFor="file-upload" className="cursor-pointer">
-        <div className="flex flex-col items-center justify-center">
-          <Upload className="w-12 h-12 text-gray-400 mb-3" />
-          <p className="text-sm text-gray-500">Drag and drop or click to upload</p>
-          <p className="text-xs text-gray-400 mt-1">
-            Supported formats: .obj, .step, .stp, .stl, .fbx, .gltf, .glb, .3ds
-          </p>
-          {isUploading ? (
-            <Button disabled className="mt-4">Uploading...</Button>
-          ) : (
-            <Button className="mt-4">Select File</Button>
-          )}
-        </div>
-      </label>
-    </div>
-  );
-};
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useNavigate } from 'react-router-dom';
 
 const Uploads = () => {
-  const [files, setFiles] = useState<FileObject[]>([]);
+  const navigate = useNavigate();
+  const [file, setFile] = useState<File | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const [componentName, setComponentName] = useState('');
+  const [category, setCategory] = useState('');
+  const [subCategory, setSubCategory] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   
-  const fetchUserUploads = async () => {
-    try {
-      const { data, error } = await supabase
-        .storage
-        .from('models')
-        .list();
-        
-      if (error) throw error;
-      
-      if (data) {
-        setFiles(data as unknown as FileObject[]);
-      }
-    } catch (error) {
-      console.error('Error fetching uploads:', error);
-      toast.error('Failed to load uploads');
+  const allowedTypes = ['.stl', '.obj', '.step', '.stp', '.glb', '.gltf', '.gh', '.ghx'];
+  
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(true);
+  };
+  
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+  };
+  
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+    
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      validateAndSetFile(e.dataTransfer.files[0]);
     }
   };
   
-  useEffect(() => {
-    fetchUserUploads();
-  }, []);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      validateAndSetFile(e.target.files[0]);
+    }
+  };
   
-  const handleUpload = async (file: File) => {
-    // Check if file type is supported
-    const supportedTypes = ['.obj', '.step', '.stp', '.stl', '.fbx', '.gltf', '.glb', '.3ds'];
-    const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+  const validateAndSetFile = (file: File) => {
+    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
     
-    if (!supportedTypes.includes(fileExt)) {
-      toast.error(`Unsupported file type: ${fileExt}. Supported types: ${supportedTypes.join(', ')}`);
+    if (!allowedTypes.includes(fileExtension)) {
+      toast.error(`Invalid file type. Please upload ${allowedTypes.join(', ')} files.`);
+      return;
+    }
+    
+    setFile(file);
+    
+    // Auto-set the component name from the file name (remove extension)
+    const nameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
+    setComponentName(nameWithoutExtension);
+  };
+  
+  const handleClose = () => {
+    navigate('/edit');
+  };
+  
+  const handleUpload = async () => {
+    if (!file) {
+      toast.error('Please select a file to upload');
+      return;
+    }
+    
+    if (!componentName.trim()) {
+      toast.error('Please enter a component name');
       return;
     }
     
     setIsUploading(true);
     
     try {
-      const { error } = await supabase.storage
+      // Create a unique file path with timestamp to avoid collisions
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${Date.now()}_${componentName.replace(/\s+/g, '_')}.${fileExt}`;
+      
+      // Upload the file to Supabase storage
+      const { data, error } = await supabase.storage
         .from('models')
-        .upload(`${Date.now()}_${file.name}`, file, {
+        .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: false
+          upsert: true
         });
-        
-      if (error) throw error;
+      
+      if (error) {
+        throw error;
+      }
       
       toast.success('File uploaded successfully');
-      fetchUserUploads(); // Refresh the file list
+      handleClose();
     } catch (error: any) {
       console.error('Upload error:', error);
       toast.error(error.message || 'Upload failed');
@@ -107,87 +106,138 @@ const Uploads = () => {
     }
   };
   
-  const handleDelete = async (fileName: string) => {
-    try {
-      const { error } = await supabase
-        .storage
-        .from('models')
-        .remove([fileName]);
-        
-      if (error) throw error;
-      
-      toast.success('File deleted successfully');
-      setFiles(files.filter(file => file.name !== fileName));
-    } catch (error) {
-      console.error('Delete error:', error);
-      toast.error('Failed to delete file');
-    }
+  const handleRemoveFile = () => {
+    setFile(null);
+    setComponentName('');
   };
-  
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return bytes + ' bytes';
-    else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-    else return (bytes / 1048576).toFixed(1) + ' MB';
-  };
-  
+
   return (
     <Layout>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-4">My Uploads</h1>
-        
-        <div className="bg-white p-6 rounded-xl shadow-sm mb-6">
-          <h2 className="text-lg font-semibold mb-4">Upload 3D Model</h2>
-          <p className="text-sm text-gray-500 mb-4">
-            Supported file types: .obj, .step, .stp, .stl, .fbx, .gltf, .glb, .3ds
-          </p>
+      <Dialog open onOpenChange={handleClose}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>List a Product</DialogTitle>
+          </DialogHeader>
           
-          <SimpleFileUploader 
-            onFileSelect={handleUpload}
-            accept=".obj,.step,.stp,.stl,.fbx,.gltf,.glb,.3ds"
-            isUploading={isUploading}
-          />
-        </div>
-        
-        <div className="bg-white p-6 rounded-xl shadow-sm">
-          <h2 className="text-lg font-semibold mb-4">My Models</h2>
-          
-          {files.length === 0 ? (
-            <p className="text-gray-500">No uploads yet. Upload your first 3D model above.</p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {files.map((file) => (
-                <div key={file.id} className="border rounded-lg p-4 flex flex-col">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium truncate" title={file.name}>{file.name}</h3>
-                  </div>
-                  <p className="text-sm text-gray-500">{formatFileSize(file.size)}</p>
-                  <p className="text-sm text-gray-500 mb-4">
-                    Uploaded: {new Date(file.created_at).toLocaleDateString()}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">What are you uploading?</label>
+              <input 
+                type="text" 
+                value={componentName}
+                onChange={(e) => setComponentName(e.target.value)}
+                className="w-full p-2 border rounded"
+                placeholder="Enter product name"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Category</label>
+              <select 
+                className="w-full p-2 border rounded" 
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option value="">Select category</option>
+                <option value="fork">Fork</option>
+                <option value="frame">Frame</option>
+                <option value="handlebar">Handlebar</option>
+                <option value="wheel">Wheel</option>
+                <option value="saddle">Saddle</option>
+              </select>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Sub Category</label>
+              <select 
+                className="w-full p-2 border rounded"
+                value={subCategory}
+                onChange={(e) => setSubCategory(e.target.value)}
+              >
+                <option value="">Select sub-category</option>
+                <option value="rigid">Rigid</option>
+                <option value="suspension">Suspension</option>
+                <option value="carbon">Carbon</option>
+                <option value="aluminum">Aluminum</option>
+              </select>
+            </div>
+            
+            <div
+              className={`border-2 border-dashed rounded-lg p-6 transition-colors flex flex-col items-center justify-center ${
+                dragging
+                  ? 'border-blue-500 bg-blue-50'
+                  : file
+                  ? 'border-green-500 bg-green-50'
+                  : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
+              }`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              {file ? (
+                <div className="text-center">
+                  <FileType size={40} className="mx-auto mb-2 text-green-500" />
+                  <p className="font-medium text-gray-800">{file.name}</p>
+                  <p className="text-sm text-gray-500">
+                    {(file.size / 1024 / 1024).toFixed(2)} MB
                   </p>
-                  
-                  <div className="flex gap-2 mt-auto">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => window.open(supabase.storage.from('models').getPublicUrl(file.name).data.publicUrl)}
+                  <div className="flex justify-center space-x-2 mt-2">
+                    <button
+                      type="button"
+                      className="flex items-center text-red-500 hover:text-red-700"
+                      onClick={handleRemoveFile}
                     >
-                      <Download size={16} className="mr-1" /> Download
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      className="text-red-500 hover:text-red-700" 
-                      onClick={() => handleDelete(file.name)}
-                    >
-                      <Trash2 size={16} className="mr-1" /> Delete
-                    </Button>
+                      <X size={16} className="mr-1" />
+                      Remove
+                    </button>
                   </div>
                 </div>
-              ))}
+              ) : (
+                <>
+                  <div className="text-center">
+                    <Upload size={40} className="mx-auto mb-2 text-gray-400" />
+                    <p className="text-sm font-medium text-gray-700 mb-1">
+                      Drag and drop or click to choose your .gh or .ghx file here
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      Max file size: 10 MB
+                    </p>
+                    <input
+                      type="file"
+                      id="file-upload"
+                      className="hidden"
+                      accept={allowedTypes.join(',')}
+                      onChange={handleFileChange}
+                    />
+                    <label htmlFor="file-upload">
+                      <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="sm"
+                        className="mt-3"
+                      >
+                        Select File
+                      </Button>
+                    </label>
+                  </div>
+                </>
+              )}
             </div>
-          )}
-        </div>
-      </div>
+            
+            <div className="flex justify-end space-x-2 pt-3">
+              <Button variant="outline" onClick={handleClose}>
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleUpload} 
+                disabled={!file || !componentName || isUploading}
+              >
+                {isUploading ? 'Uploading...' : 'Upload'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };
