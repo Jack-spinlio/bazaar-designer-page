@@ -137,7 +137,7 @@ const BOM = () => {
     <Layout>
       <div className="flex h-full">
         {/* Left side: Bill of Materials table */}
-        <div className="w-3/5 pt-0 px-2.5 overflow-auto">
+        <div className="w-3/5 overflow-auto">
           <div className="bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold">Bill of materials</h2>
