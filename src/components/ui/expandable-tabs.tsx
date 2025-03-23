@@ -7,19 +7,19 @@ import { useOnClickOutside } from "usehooks-ts";
 import { cn } from "@/lib/utils";
 import { LucideIcon } from "lucide-react";
 
-interface Tab {
+export interface Tab {
   title: string;
   icon: LucideIcon;
   type?: never;
 }
 
-interface Separator {
+export interface Separator {
   type: "separator";
   title?: never;
   icon?: never;
 }
 
-type TabItem = Tab | Separator;
+export type TabItem = Tab | Separator;
 
 interface ExpandableTabsProps {
   tabs: TabItem[];

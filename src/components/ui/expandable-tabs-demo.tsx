@@ -1,9 +1,9 @@
 
 import { Bell, Home, HelpCircle, Settings, Shield, Mail, User, FileText, Lock } from "lucide-react";
-import { ExpandableTabs } from "@/components/ui/expandable-tabs";
+import { ExpandableTabs, TabItem } from "@/components/ui/expandable-tabs";
 
 function DefaultDemo() {
-  const tabs = [
+  const tabs: TabItem[] = [
     { title: "Dashboard", icon: Home },
     { title: "Notifications", icon: Bell },
     { type: "separator" as const },
@@ -20,7 +20,7 @@ function DefaultDemo() {
 }
 
 function CustomColorDemo() {
-  const tabs = [
+  const tabs: TabItem[] = [
     { title: "Profile", icon: User },
     { title: "Messages", icon: Mail },
     { type: "separator" as const },

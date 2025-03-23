@@ -1,46 +1,65 @@
+
 import { Button } from "@/components/ui/button";
-import { LayoutGrid, Pencil, Bike, Settings, Bookmark, Download } from "lucide-react";
+import { 
+  LayoutDashboard, 
+  Pencil, 
+  Bike, 
+  Puzzle, 
+  Bookmark, 
+  Timeline, 
+  Upload,
+  Settings 
+} from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useNavigate, useLocation } from "react-router-dom";
+
 export const IconSidebar = () => {
-  return <div className="w-16 border-r border-gray-200 flex flex-col items-center py-4 bg-white rounded-2xl">
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  const isActive = (path: string) => location.pathname === path;
+  
+  const sidebarItems = [
+    { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
+    { icon: Pencil, label: "Edit", path: "/edit" },
+    { icon: Bike, label: "Prefabs", path: "/prefabs" },
+    { icon: Puzzle, label: "Components", path: "/components" },
+    { icon: Bookmark, label: "Saved", path: "/saved" },
+    { icon: Timeline, label: "Timeline", path: "/timeline" },
+    { icon: Upload, label: "My Uploads", path: "/uploads" },
+  ];
+
+  return (
+    <div className="w-16 border-r border-gray-200 flex flex-col items-center py-4 bg-white rounded-2xl h-full shadow-sm">
       <TooltipProvider>
-        <div className="flex flex-col gap-6">
+        <div className="flex-1 flex flex-col gap-6 items-center">
+          {sidebarItems.map((item, index) => (
+            <Tooltip key={item.path}>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant={isActive(item.path) ? "default" : "ghost"} 
+                  size="icon" 
+                  className={
+                    isActive(item.path) 
+                      ? "bg-black text-white" 
+                      : "text-gray-400 hover:text-gray-600"
+                  }
+                  onClick={() => navigate(item.path)}
+                >
+                  <item.icon size={20} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>{item.label}</p>
+              </TooltipContent>
+            </Tooltip>
+          ))}
+        </div>
+        
+        <div className="mt-auto">
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-gray-400">
-                <LayoutGrid size={20} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Dashboard</p>
-            </TooltipContent>
-          </Tooltip>
-          
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-gray-400">
-                <Pencil size={20} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Edit</p>
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="bg-black text-white rounded-full p-2">
-                <Bike size={20} />
-              </div>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Bikes</p>
-            </TooltipContent>
-          </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-gray-400">
+              <Button variant="ghost" size="icon" className="text-gray-400" onClick={() => navigate("/settings")}>
                 <Settings size={20} />
               </Button>
             </TooltipTrigger>
@@ -48,31 +67,8 @@ export const IconSidebar = () => {
               <p>Settings</p>
             </TooltipContent>
           </Tooltip>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-gray-400">
-                <Bookmark size={20} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Bookmarks</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
-        
-        <div className="mt-auto">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-gray-400">
-                <Download size={20} />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              <p>Download</p>
-            </TooltipContent>
-          </Tooltip>
         </div>
       </TooltipProvider>
-    </div>;
+    </div>
+  );
 };
