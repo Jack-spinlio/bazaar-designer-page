@@ -19,9 +19,9 @@ const BIKE_PREFABS = [
   },
   {
     id: 'bike-2',
-    name: 'Canyon bike',
+    name: 'Step-Thru eBike',
     type: 'BIKE',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//7.jpg',
     folder: 'Bikes',
     shape: 'box' as const
   },
@@ -29,23 +29,7 @@ const BIKE_PREFABS = [
     id: 'bike-3',
     name: 'Girls bike',
     type: 'BIKE',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
-    folder: 'Bikes',
-    shape: 'box' as const
-  },
-  {
-    id: 'bike-4',
-    name: 'City bike',
-    type: 'BIKE',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
-    folder: 'Bikes',
-    shape: 'box' as const
-  },
-  {
-    id: 'bike-5',
-    name: 'Electric bike',
-    type: 'BIKE',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Screenshot%202025-03-21%20at%2011.56.01.png',
     folder: 'Bikes',
     shape: 'box' as const
   },
@@ -53,31 +37,7 @@ const BIKE_PREFABS = [
     id: 'bike-6',
     name: 'Classic bike',
     type: 'BIKE',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
-    folder: 'Bikes',
-    shape: 'box' as const
-  },
-  {
-    id: 'bike-7',
-    name: 'e-Cargo',
-    type: 'BIKE',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
-    folder: 'Bikes',
-    shape: 'box' as const
-  },
-  {
-    id: 'bike-8',
-    name: 'e-MTB',
-    type: 'BIKE',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
-    folder: 'Bikes',
-    shape: 'box' as const
-  },
-  {
-    id: 'bike-9',
-    name: 'City bike',
-    type: 'BIKE',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//3.jpg',
     folder: 'Bikes',
     shape: 'box' as const
   },
@@ -85,7 +45,39 @@ const BIKE_PREFABS = [
     id: 'bike-10',
     name: 'Race bike',
     type: 'BIKE',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//4.jpg',
+    folder: 'Bikes',
+    shape: 'box' as const
+  },
+  {
+    id: 'bike-11',
+    name: 'Urban eBike',
+    type: 'BIKE',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//8.jpg',
+    folder: 'Bikes',
+    shape: 'box' as const
+  },
+  {
+    id: 'bike-12',
+    name: 'City eBike',
+    type: 'BIKE',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//9.jpg',
+    folder: 'Bikes',
+    shape: 'box' as const
+  },
+  {
+    id: 'bike-13',
+    name: 'V-Brake Road Bike',
+    type: 'BIKE',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Screenshot%202025-03-21%20at%2011.55.15.png',
+    folder: 'Bikes',
+    shape: 'box' as const
+  },
+  {
+    id: 'bike-14',
+    name: 'eGravel Bike',
+    type: 'BIKE',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz_supreme.jpg',
     folder: 'Bikes',
     shape: 'box' as const
   }
