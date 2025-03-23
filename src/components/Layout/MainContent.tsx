@@ -19,12 +19,17 @@ export const MainContent: React.FC<MainContentProps> = ({
   const showComponentSidebar = location.pathname === '/components';
   const showPrefabSidebar = location.pathname === '/prefabs';
   const showSavedSidebar = location.pathname === '/saved';
+  
+  // Add check to prevent duplicate viewport on BOM page
+  const shouldRenderViewport = location.pathname !== '/bom';
 
   return (
     <main className={`flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5 ${
       !showComponentSidebar && !showPrefabSidebar && !showSavedSidebar ? 'w-full' : ''
     }`}>
-      <Viewport selectedComponent={selectedComponent} onComponentPlaced={onComponentPlaced} />
+      {shouldRenderViewport && (
+        <Viewport selectedComponent={selectedComponent} onComponentPlaced={onComponentPlaced} />
+      )}
       {children}
     </main>
   );
