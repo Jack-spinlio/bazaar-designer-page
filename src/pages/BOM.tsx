@@ -10,6 +10,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { ChevronRight } from 'lucide-react';
+import { Viewport } from '@/components/Viewport';
 
 // Type for component data
 interface ComponentData {
@@ -128,50 +129,68 @@ const BOM = () => {
     }
   ];
 
+  const handleComponentPlaced = () => {
+    console.log('Component placed in the viewport');
+  };
+
   return (
     <Layout>
-      <div className="p-6 flex">
-        <div className="bg-white rounded-lg p-6 shadow-sm mb-6 w-1/2">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold">Bill of materials</h2>
-          </div>
+      <div className="flex h-full">
+        {/* Left side: Bill of Materials table */}
+        <div className="w-1/2 p-6 overflow-auto">
+          <div className="bg-white rounded-lg p-6 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-semibold">Bill of materials</h2>
+              <button className="text-gray-500 hover:text-gray-700">
+                See all
+              </button>
+            </div>
 
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[40px]"></TableHead>
-                  <TableHead className="w-[40px]"></TableHead>
-                  <TableHead>Component</TableHead>
-                  <TableHead>Manufacturer</TableHead>
-                  <TableHead>Model</TableHead>
-                  <TableHead>Production time</TableHead>
-                  <TableHead>Country</TableHead>
-                  <TableHead>Price</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {components.map((component) => (
-                  <TableRow key={component.id} className="cursor-pointer hover:bg-gray-50">
-                    <TableCell className="w-[40px]">
-                      <ChevronRight size={16} className="text-gray-400" />
-                    </TableCell>
-                    <TableCell className="w-[40px]">
-                      <span role="img" aria-label={component.component}>
-                        {component.icon}
-                      </span>
-                    </TableCell>
-                    <TableCell className="font-medium">{component.component}</TableCell>
-                    <TableCell>{component.manufacturer}</TableCell>
-                    <TableCell>{component.model}</TableCell>
-                    <TableCell>{component.productionTime}</TableCell>
-                    <TableCell>{component.country}</TableCell>
-                    <TableCell>{component.price}</TableCell>
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[40px]"></TableHead>
+                    <TableHead className="w-[40px]"></TableHead>
+                    <TableHead>Component</TableHead>
+                    <TableHead>Manufacturer</TableHead>
+                    <TableHead>Model</TableHead>
+                    <TableHead>Production time</TableHead>
+                    <TableHead>Country</TableHead>
+                    <TableHead>Price</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {components.map((component) => (
+                    <TableRow key={component.id} className="cursor-pointer hover:bg-gray-50">
+                      <TableCell className="w-[40px]">
+                        <ChevronRight size={16} className="text-gray-400" />
+                      </TableCell>
+                      <TableCell className="w-[40px]">
+                        <span role="img" aria-label={component.component}>
+                          {component.icon}
+                        </span>
+                      </TableCell>
+                      <TableCell className="font-medium">{component.component}</TableCell>
+                      <TableCell>{component.manufacturer}</TableCell>
+                      <TableCell>{component.model}</TableCell>
+                      <TableCell>{component.productionTime}</TableCell>
+                      <TableCell>{component.country}</TableCell>
+                      <TableCell>{component.price}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
+        </div>
+        
+        {/* Right side: 3D Viewport */}
+        <div className="w-1/2 h-full">
+          <Viewport 
+            selectedComponent={null}
+            onComponentPlaced={handleComponentPlaced}
+          />
         </div>
       </div>
     </Layout>
