@@ -20,8 +20,11 @@ export const MainContent: React.FC<MainContentProps> = ({
   const showPrefabSidebar = location.pathname === '/prefabs';
   const showSavedSidebar = location.pathname === '/saved';
   
-  // Add check to prevent duplicate viewport on BOM page
-  const shouldRenderViewport = location.pathname !== '/bom';
+  // Add check to prevent viewport on BOM and other pages where it's not needed
+  const shouldRenderViewport = location.pathname !== '/bom' && 
+                              location.pathname !== '/timeline' &&
+                              location.pathname !== '/settings' &&
+                              location.pathname !== '/uploads';
 
   return (
     <main className={`flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5 ${
@@ -30,7 +33,8 @@ export const MainContent: React.FC<MainContentProps> = ({
       {shouldRenderViewport && (
         <Viewport selectedComponent={selectedComponent} onComponentPlaced={onComponentPlaced} />
       )}
-      {children}
+      {/* Only render children if they exist and we're not showing the viewport */}
+      {children && !shouldRenderViewport && children}
     </main>
   );
 };

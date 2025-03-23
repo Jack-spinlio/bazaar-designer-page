@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Layout } from '@/components/Layout';
-import { Viewport } from '@/components/Viewport';
 import { ComponentItem } from '@/components/Sidebar';
 
 const Components = () => {
@@ -17,12 +16,7 @@ const Components = () => {
   
   return (
     <Layout>
-      <div className="flex-1 h-full">
-        <Viewport 
-          selectedComponent={selectedComponent}
-          onComponentPlaced={handleComponentPlaced}
-        />
-      </div>
+      {/* Empty container - the Layout component already includes the Viewport */}
     </Layout>
   );
 };
