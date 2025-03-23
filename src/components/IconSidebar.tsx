@@ -50,7 +50,7 @@ export const IconSidebar = () => {
                     size="icon" 
                     className={
                       isActive(item.path) 
-                        ? "bg-black text-white" 
+                        ? "bg-black text-white hover:bg-black hover:text-white" 
                         : "text-gray-400 hover:text-gray-600"
                     }
                     onClick={() => navigate(item.path)}

@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ComponentCard } from './ComponentCard';
-import { Search, Bike, UploadCloud } from 'lucide-react';
+import { Search, Bike } from 'lucide-react';
 import { toast } from 'sonner';
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FileUploader } from './FileUploader';
 
 // Bike models for the prefabs library
@@ -137,18 +136,6 @@ export const PrefabSidebar: React.FC<PrefabSidebarProps> = ({
             <Bike size={20} className="text-gray-800" />
             <h2 className="text-lg font-medium">Prefabs</h2>
           </div>
-          
-          <Dialog open={isUploaderOpen} onOpenChange={setIsUploaderOpen}>
-            <DialogTrigger asChild>
-              <Button variant="outline" size="sm" className="flex items-center gap-1">
-                <UploadCloud size={16} />
-                Upload
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <FileUploader onClose={() => setIsUploaderOpen(false)} onFileUploaded={handleFileUploaded} />
-            </DialogContent>
-          </Dialog>
         </div>
         
         <div className="relative mb-4">
@@ -171,27 +158,24 @@ export const PrefabSidebar: React.FC<PrefabSidebarProps> = ({
             ))}
           </div>
         ) : (
-          <>
-            <h3 className="text-sm font-semibold mb-2">Bike Models</h3>
-            <div className="grid grid-cols-2 gap-3">
-              {filteredPrefabs.map(prefab => (
-                <div 
-                  key={prefab.id} 
-                  onClick={() => handlePrefabSelect(prefab)} 
-                  className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
-                >
-                  <div className="w-full h-24 mb-2 flex items-center justify-center">
-                    <img 
-                      src={prefab.thumbnail} 
-                      alt={prefab.name} 
-                      className="max-h-full max-w-full object-contain" 
-                    />
-                  </div>
-                  <span className="text-sm text-center font-medium text-gray-800">{prefab.name}</span>
+          <div className="grid grid-cols-2 gap-3">
+            {filteredPrefabs.map(prefab => (
+              <div 
+                key={prefab.id} 
+                onClick={() => handlePrefabSelect(prefab)} 
+                className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
+              >
+                <div className="w-full h-24 mb-2 flex items-center justify-center">
+                  <img 
+                    src={prefab.thumbnail} 
+                    alt={prefab.name} 
+                    className="max-h-full max-w-full object-contain" 
+                  />
                 </div>
-              ))}
-            </div>
-          </>
+                <span className="text-sm text-center font-medium text-gray-800">{prefab.name}</span>
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>
