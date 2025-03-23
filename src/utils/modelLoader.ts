@@ -2,7 +2,6 @@
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
-import { toast } from 'sonner';
 
 // Load an STL file from a URL and return a mesh
 export const loadSTLModel = (
@@ -74,7 +73,7 @@ export const loadSTLModel = (
         },
         (error) => {
           console.error('Error loading STL:', error);
-          toast.error(`Failed to load STL model: ${url.split('/').pop()}`);
+          // Removed toast error notification
           if (onError) onError(error);
           resolve(fallbackMesh);
         }
@@ -142,7 +141,7 @@ export const loadOBJModel = (
         },
         (error) => {
           console.error('Error loading OBJ:', error);
-          toast.error(`Failed to load OBJ model: ${url.split('/').pop()}`);
+          // Removed toast error notification
           if (onError) onError(error);
           resolve(fallbackMesh);
         }
@@ -186,9 +185,7 @@ export const loadSTPModel = (
     
     if (onLoad) onLoad(group);
     
-    toast.info(`STP/STEP file detected: ${url.split('/').pop()}`, {
-      description: "STP/STEP visualization is simplified as a placeholder"
-    });
+    // Removed toast info notification
     
     resolve(group);
   });
@@ -208,9 +205,7 @@ const createFallbackMesh = (fileType: string, url: string): THREE.Mesh => {
   
   const mesh = new THREE.Mesh(geometry, material);
   
-  toast.error(`Could not load ${fileType} model: ${url.split('/').pop()}`, {
-    description: "Using fallback shape instead"
-  });
+  // Removed toast error notification
   
   return mesh;
 };
@@ -232,9 +227,7 @@ const createFallbackGroup = (fileType: string, url: string): THREE.Group => {
   const mesh = new THREE.Mesh(geometry, material);
   group.add(mesh);
   
-  toast.error(`Could not load ${fileType} model: ${url.split('/').pop()}`, {
-    description: "Using fallback shape instead"
-  });
+  // Removed toast error notification
   
   return group;
 };
@@ -275,9 +268,7 @@ export const loadModel = async (
       wireframe: true
     });
     
-    toast.error(`Failed to load ${fileType} model`, {
-      description: "Check console for details"
-    });
+    // Removed toast error notification
     
     return new THREE.Mesh(geometry, material);
   }

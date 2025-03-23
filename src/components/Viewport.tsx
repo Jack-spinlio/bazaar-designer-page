@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -66,14 +67,14 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
               
               // Add to the group
               componentRef.current.add(model);
-              toast.success(`Loaded ${component.name} model`);
+              // Removed success toast
             }
             setIsLoading(false);
           })
           .catch(error => {
             console.error('Error loading model:', error);
             setLoadError(`Failed to load ${component.type} model`);
-            toast.error(`Failed to load ${component.name} model`);
+            // Removed error toast
             
             // Fallback to basic shape if model loading fails
             const componentMesh = createComponentShape(component.shape);
@@ -232,7 +233,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         ]);
         
         setHasLoadedCM18(true);
-        toast.success('Default CM18 model loaded as a basic shape');
+        // Removed toast notification for CM18 model load
         
         // Also load a sample box component to demonstrate working Three.js rendering
         const boxComponent: ComponentItem = {
@@ -255,7 +256,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         ]);
       } catch (error) {
         console.error('Error loading default models:', error);
-        toast.error('Failed to load default models');
+        // Removed error toast for default models
       }
     }
   }, [hasLoadedCM18]);
@@ -263,9 +264,6 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
   useEffect(() => {
     if (selectedComponent) {
       console.log('Viewport: Selected component changed:', selectedComponent.name);
-      toast.info(`Component selected: ${selectedComponent.name}`, {
-        description: "Click in the viewport to place the object",
-      });
     }
   }, [selectedComponent]);
 
@@ -281,11 +279,11 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         }
       ]);
       
-      toast.success(`Placed ${selectedComponent.name}`);
+      // Removed success toast for placing component
       onComponentPlaced();
       console.log(`Added ${selectedComponent.name} at position (${position.join(', ')})`);
     } else {
-      toast.info("Please select a component from the library first");
+      // Removed info toast for selecting component first
     }
   };
 
@@ -293,7 +291,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
     setSelectedObjectId(id === selectedObjectId ? null : id);
     const selected = placedObjects.find(obj => obj.id === id);
     if (selected) {
-      toast.info(`Selected ${selected.component.name}`);
+      // Removed info toast for selected object
       console.log(`Selected object: ${selected.component.name} (${id})`);
     }
   };
@@ -304,7 +302,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
       setPlacedObjects(placedObjects.filter(obj => obj.id !== selectedObjectId));
       setSelectedObjectId(null);
       if (selectedObject) {
-        toast.success(`Deleted ${selectedObject.component.name}`);
+        // Removed success toast for deleted object
         console.log(`Deleted object: ${selectedObject.component.name} (${selectedObjectId})`);
       }
     }
@@ -317,7 +315,9 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
           variant="outline"
           size="sm"
           className="flex items-center gap-2 bg-white/90 backdrop-blur-sm"
-          onClick={() => toast.info('Fit to view')}
+          onClick={() => {
+            // Removed info toast for fit to view
+          }}
         >
           <Maximize size={16} />
           <span>Fit to View</span>
