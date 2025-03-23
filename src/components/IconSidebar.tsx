@@ -13,7 +13,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { FileUploader } from "@/components/FileUploader";
 
 export const IconSidebar = () => {
@@ -98,6 +98,7 @@ export const IconSidebar = () => {
 
       <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
         <DialogContent className="sm:max-w-md">
+          <DialogTitle>Upload File</DialogTitle>
           <FileUploader 
             onClose={() => setUploadDialogOpen(false)} 
             onFileUploaded={() => {

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Layout } from '@/components/Layout';
 import { 
@@ -129,47 +130,51 @@ const BOM = () => {
 
   return (
     <Layout>
-      <div className="p-6 max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold">Components</h2>
-          </div>
-
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[40px]"></TableHead>
-                  <TableHead className="w-[40px]"></TableHead>
-                  <TableHead>Component</TableHead>
-                  <TableHead>Manufacturer</TableHead>
-                  <TableHead>Model</TableHead>
-                  <TableHead>Production time</TableHead>
-                  <TableHead>Country</TableHead>
-                  <TableHead>Price</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {components.map((component) => (
-                  <TableRow key={component.id} className="cursor-pointer hover:bg-gray-50">
-                    <TableCell className="w-[40px]">
-                      <ChevronRight size={16} className="text-gray-400" />
-                    </TableCell>
-                    <TableCell className="w-[40px]">
-                      <span role="img" aria-label={component.component}>
-                        {component.icon}
-                      </span>
-                    </TableCell>
-                    <TableCell className="font-medium">{component.component}</TableCell>
-                    <TableCell>{component.manufacturer}</TableCell>
-                    <TableCell>{component.model}</TableCell>
-                    <TableCell>{component.productionTime}</TableCell>
-                    <TableCell>{component.country}</TableCell>
-                    <TableCell>{component.price}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+      <div className="absolute inset-0 z-20 pointer-events-none">
+        <div className="relative w-full h-full">
+          <div className="absolute top-[120px] left-0 right-0 bottom-0 bg-white rounded-t-3xl shadow-lg pointer-events-auto overflow-auto">
+            <div className="p-6 max-w-5xl mx-auto">
+              <div className="flex flex-col">
+                <h2 className="text-2xl font-semibold mb-6">Components</h2>
+                
+                <div className="overflow-x-auto rounded-lg border border-gray-100">
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="bg-gray-50">
+                        <TableHead className="w-[40px]"></TableHead>
+                        <TableHead className="w-[40px]"></TableHead>
+                        <TableHead>Component</TableHead>
+                        <TableHead>Manufacturer</TableHead>
+                        <TableHead>Model</TableHead>
+                        <TableHead>Production time</TableHead>
+                        <TableHead>Country</TableHead>
+                        <TableHead>Price</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {components.map((component) => (
+                        <TableRow key={component.id} className="cursor-pointer hover:bg-gray-50 border-b border-gray-100">
+                          <TableCell className="w-[40px]">
+                            <ChevronRight size={16} className="text-gray-400" />
+                          </TableCell>
+                          <TableCell className="w-[40px]">
+                            <span role="img" aria-label={component.component}>
+                              {component.icon}
+                            </span>
+                          </TableCell>
+                          <TableCell className="font-medium">{component.component}</TableCell>
+                          <TableCell>{component.manufacturer}</TableCell>
+                          <TableCell>{component.model}</TableCell>
+                          <TableCell>{component.productionTime}</TableCell>
+                          <TableCell>{component.country}</TableCell>
+                          <TableCell>{component.price}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
