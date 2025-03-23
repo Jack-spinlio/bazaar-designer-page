@@ -90,7 +90,7 @@ export const SharePopover: React.FC = () => {
                     <ChevronDown size={14} />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[180px]" align="end">
+                <PopoverContent className="w-[150px]" align="end" side="bottom">
                   <div className="space-y-1">
                     <Button variant="ghost" size="sm" className="w-full justify-start text-xs" onClick={() => setViewPermission("Can view")}>
                       Can view
@@ -120,22 +120,22 @@ export const SharePopover: React.FC = () => {
           
           <div className="flex justify-between gap-2">
             <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-1 py-2 h-auto rounded-xl" onClick={handleDownload}>
-              <div className="h-10 w-10 flex items-center justify-center rounded-full border border-gray-200">
-                <Download size={16} />
+              <div className="h-8 w-8 flex items-center justify-center rounded-full border border-gray-200">
+                <Download size={14} />
               </div>
               <span className="text-xs">Download</span>
             </Button>
             
             <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-1 py-2 h-auto rounded-xl" onClick={handleARView}>
-              <div className="h-10 w-10 flex items-center justify-center rounded-full border border-gray-200">
-                <Smartphone size={16} />
+              <div className="h-8 w-8 flex items-center justify-center rounded-full border border-gray-200">
+                <Smartphone size={14} />
               </div>
               <span className="text-xs">AR</span>
             </Button>
             
             <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-1 py-2 h-auto rounded-xl" onClick={handleSeeAll}>
-              <div className="h-10 w-10 flex items-center justify-center rounded-full border border-gray-200">
-                <MoreHorizontal size={16} />
+              <div className="h-8 w-8 flex items-center justify-center rounded-full border border-gray-200">
+                <MoreHorizontal size={14} />
               </div>
               <span className="text-xs">See all</span>
             </Button>
