@@ -63,10 +63,10 @@ export const SharePopover: React.FC = () => {
           <div className="space-y-2">
             <h3 className="text-base font-semibold">Create a link</h3>
             
-            <div className="flex gap-2 mb-2">
+            <div className="flex flex-col gap-2 mb-2">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="flex-1 justify-between py-1 h-auto rounded-full text-xs">
+                  <Button variant="outline" className="w-full justify-between py-1 h-auto rounded-full text-xs">
                     <span className="truncate">{linkAccess}</span>
                     <ChevronDown size={14} />
                   </Button>
@@ -85,12 +85,12 @@ export const SharePopover: React.FC = () => {
               
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="flex-1 justify-between py-1 h-auto rounded-full text-xs">
+                  <Button variant="outline" className="w-full justify-between py-1 h-auto rounded-full text-xs">
                     <span className="truncate">{viewPermission}</span>
                     <ChevronDown size={14} />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[150px]" align="end" side="bottom">
+                <PopoverContent className="w-[150px]" align="start" side="bottom">
                   <div className="space-y-1">
                     <Button variant="ghost" size="sm" className="w-full justify-start text-xs" onClick={() => setViewPermission("Can view")}>
                       Can view
