@@ -3,14 +3,13 @@ import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { TimelineChart } from '@/components/TimelineChart';
 import { 
-  Engine, 
+  Cog, 
   Disc, 
   Grip, 
   Lightbulb, 
   Shield, 
   Link, 
   Footprints, 
-  Cog, 
   Frame as FrameIcon, 
   Utensils
 } from 'lucide-react';
@@ -30,7 +29,7 @@ const Timeline = () => {
   const [bikeComponents] = useState<BikeComponent[]>([
     { id: '1', name: 'Frame', icon: <FrameIcon size={20} />, days: 90, color: 'bg-blue-100', startWeek: 1 },
     { id: '2', name: 'Fork', icon: <Utensils size={20} />, days: 42, color: 'bg-purple-100', startWeek: 8 },
-    { id: '3', name: 'Motor', icon: <Engine size={20} />, days: 35, color: 'bg-green-100', startWeek: 11 },
+    { id: '3', name: 'Motor', icon: <Cog size={20} />, days: 35, color: 'bg-green-100', startWeek: 11 },
     { id: '4', name: 'Rear Hub', icon: <Disc size={20} />, days: 40, color: 'bg-pink-100', startWeek: 12 },
     { id: '5', name: 'Handlebar', icon: <Grip size={20} />, days: 60, color: 'bg-blue-100', startWeek: 9 },
     { id: '6', name: 'Brakes', icon: <Disc size={20} />, days: 60, color: 'bg-yellow-100', startWeek: 10 },
