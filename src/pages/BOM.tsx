@@ -9,7 +9,6 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { ChevronRight } from 'lucide-react';
 import { Viewport } from '@/components/Viewport';
 
 // Type for component data
@@ -151,7 +150,6 @@ const BOM = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[40px]"></TableHead>
-                    <TableHead className="w-[40px]"></TableHead>
                     <TableHead>Component</TableHead>
                     <TableHead>Manufacturer</TableHead>
                     <TableHead>Model</TableHead>
@@ -163,9 +161,6 @@ const BOM = () => {
                 <TableBody>
                   {components.map((component) => (
                     <TableRow key={component.id} className="cursor-pointer hover:bg-gray-50">
-                      <TableCell className="w-[40px]">
-                        <ChevronRight size={16} className="text-gray-400" />
-                      </TableCell>
                       <TableCell className="w-[40px]">
                         <span role="img" aria-label={component.component}>
                           {component.icon}
