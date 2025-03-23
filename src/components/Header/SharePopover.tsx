@@ -51,32 +51,32 @@ export const SharePopover: React.FC = () => {
           Share
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-[320px] p-5">
-        <div className="flex flex-col space-y-5">
-          <h2 className="text-2xl font-bold">Share this design</h2>
+      <PopoverContent align="end" className="w-[300px] p-4" side="bottom" sideOffset={5}>
+        <div className="flex flex-col space-y-4">
+          <h2 className="text-xl font-bold">Share this design</h2>
           
-          <Button onClick={handlePublishToCommunity} className="w-full bg-black text-white rounded-full py-5 h-auto flex items-center justify-center gap-2">
-            <SmilePlus size={20} />
-            <span className="text-base">Publish to Community</span>
+          <Button onClick={handlePublishToCommunity} className="w-full bg-black text-white rounded-full py-2 h-auto flex items-center justify-center gap-2">
+            <SmilePlus size={18} />
+            <span className="text-sm">Publish to Community</span>
           </Button>
           
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold">Create a link</h3>
+            <h3 className="text-base font-semibold">Create a link</h3>
             
-            <div className="flex gap-3 mb-3">
+            <div className="flex gap-2 mb-2">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="flex-1 justify-between py-5 h-auto rounded-full">
-                    <span className="text-sm">{linkAccess}</span>
-                    <ChevronDown size={16} />
+                  <Button variant="outline" className="flex-1 justify-between py-1 h-auto rounded-full text-xs">
+                    <span className="truncate">{linkAccess}</span>
+                    <ChevronDown size={14} />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[200px]">
-                  <div className="space-y-2">
-                    <Button variant="ghost" className="w-full justify-start" onClick={() => setLinkAccess("Anyone with the link")}>
+                <PopoverContent className="w-[180px]" align="start">
+                  <div className="space-y-1">
+                    <Button variant="ghost" size="sm" className="w-full justify-start text-xs" onClick={() => setLinkAccess("Anyone with the link")}>
                       Anyone with the link
                     </Button>
-                    <Button variant="ghost" className="w-full justify-start" onClick={() => setLinkAccess("Specific people")}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start text-xs" onClick={() => setLinkAccess("Specific people")}>
                       Specific people
                     </Button>
                   </div>
@@ -85,17 +85,17 @@ export const SharePopover: React.FC = () => {
               
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="flex-1 justify-between py-5 h-auto rounded-full">
-                    <span className="text-sm">{viewPermission}</span>
-                    <ChevronDown size={16} />
+                  <Button variant="outline" className="flex-1 justify-between py-1 h-auto rounded-full text-xs">
+                    <span className="truncate">{viewPermission}</span>
+                    <ChevronDown size={14} />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[200px]">
-                  <div className="space-y-2">
-                    <Button variant="ghost" className="w-full justify-start" onClick={() => setViewPermission("Can view")}>
+                <PopoverContent className="w-[180px]" align="end">
+                  <div className="space-y-1">
+                    <Button variant="ghost" size="sm" className="w-full justify-start text-xs" onClick={() => setViewPermission("Can view")}>
                       Can view
                     </Button>
-                    <Button variant="ghost" className="w-full justify-start" onClick={() => setViewPermission("Can edit")}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start text-xs" onClick={() => setViewPermission("Can edit")}>
                       Can edit
                     </Button>
                   </div>
@@ -103,41 +103,41 @@ export const SharePopover: React.FC = () => {
               </Popover>
             </div>
             
-            <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-5 h-auto rounded-full" onClick={handleCopyLink}>
-              <Link size={18} />
-              <span className="text-base">Copy Link</span>
+            <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-1 h-auto rounded-full text-sm" onClick={handleCopyLink}>
+              <Link size={16} />
+              <span>Copy Link</span>
             </Button>
           </div>
           
-          <div className="space-y-3">
-            <h3 className="text-lg font-semibold">Ready for a sample?</h3>
+          <div className="space-y-2">
+            <h3 className="text-base font-semibold">Ready for a sample?</h3>
             
-            <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-5 h-auto rounded-full" onClick={handleShareWithProducer}>
-              <User size={18} />
-              <span className="text-base">Share with producer</span>
+            <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-1 h-auto rounded-full text-sm" onClick={handleShareWithProducer}>
+              <User size={16} />
+              <span>Share with producer</span>
             </Button>
           </div>
           
-          <div className="flex justify-between gap-3">
-            <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-2 py-3 h-auto rounded-xl" onClick={handleDownload}>
-              <div className="h-14 w-14 flex items-center justify-center rounded-full border border-gray-200">
-                <Download size={20} />
+          <div className="flex justify-between gap-2">
+            <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-1 py-2 h-auto rounded-xl" onClick={handleDownload}>
+              <div className="h-10 w-10 flex items-center justify-center rounded-full border border-gray-200">
+                <Download size={16} />
               </div>
-              <span className="text-sm">Download</span>
+              <span className="text-xs">Download</span>
             </Button>
             
-            <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-2 py-3 h-auto rounded-xl" onClick={handleARView}>
-              <div className="h-14 w-14 flex items-center justify-center rounded-full border border-gray-200">
-                <Smartphone size={20} />
+            <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-1 py-2 h-auto rounded-xl" onClick={handleARView}>
+              <div className="h-10 w-10 flex items-center justify-center rounded-full border border-gray-200">
+                <Smartphone size={16} />
               </div>
-              <span className="text-sm">AR</span>
+              <span className="text-xs">AR</span>
             </Button>
             
-            <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-2 py-3 h-auto rounded-xl" onClick={handleSeeAll}>
-              <div className="h-14 w-14 flex items-center justify-center rounded-full border border-gray-200">
-                <MoreHorizontal size={20} />
+            <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-1 py-2 h-auto rounded-xl" onClick={handleSeeAll}>
+              <div className="h-10 w-10 flex items-center justify-center rounded-full border border-gray-200">
+                <MoreHorizontal size={16} />
               </div>
-              <span className="text-sm">See all</span>
+              <span className="text-xs">See all</span>
             </Button>
           </div>
         </div>

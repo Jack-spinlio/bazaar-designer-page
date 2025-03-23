@@ -7,7 +7,6 @@ import {
   Bookmark, 
   Clock, 
   Upload,
-  Settings,
   FileSpreadsheet
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -77,19 +76,6 @@ export const IconSidebar = () => {
               </TooltipTrigger>
               <TooltipContent side="right">
                 <p>Upload</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
-          
-          <div className="mt-auto">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-gray-400" onClick={() => navigate("/settings")}>
-                  <Settings size={20} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Settings</p>
               </TooltipContent>
             </Tooltip>
           </div>
