@@ -17,17 +17,21 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useLocation } from 'react-router-dom';
 
 export interface LayoutProps {
   children?: React.ReactNode;
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = React.useState(true);
   const [selectedComponent, setSelectedComponent] = React.useState<ComponentItem | null>(null);
   const [isEditingTitle, setIsEditingTitle] = React.useState(false);
   const [designTitle, setDesignTitle] = React.useState("Bazaar Road bike");
   const [tempTitle, setTempTitle] = React.useState(designTitle);
+  
+  // Get current location to determine whether to show the sidebar
+  const location = useLocation();
+  const showComponentSidebar = location.pathname === '/components';
   
   const handleComponentSelected = (component: ComponentItem) => {
     setSelectedComponent(component);
@@ -127,13 +131,15 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       
       <div className="flex flex-1 overflow-hidden">
         <IconSidebar />
-        <div className={`transition-all duration-300 ease-in-out ${
-          sidebarOpen ? 'w-80' : 'w-0'
-        }`} style={{ margin: '10px' }}>
-          {sidebarOpen && <Sidebar onSelectComponent={handleComponentSelected} />}
-        </div>
+        
+        {/* Only show component sidebar for the Components page */}
+        {showComponentSidebar && (
+          <div className="w-80 transition-all duration-300 ease-in-out" style={{ margin: '10px' }}>
+            <Sidebar onSelectComponent={handleComponentSelected} />
+          </div>
+        )}
 
-        <main className="flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5" style={{ margin: '10px' }}>
+        <main className={`flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5 ${!showComponentSidebar ? 'w-full' : ''}`} style={{ margin: '10px' }}>
           <Viewport 
             selectedComponent={selectedComponent} 
             onComponentPlaced={handleComponentPlaced} 
