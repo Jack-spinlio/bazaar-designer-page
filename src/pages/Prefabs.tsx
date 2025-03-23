@@ -5,10 +5,7 @@ import { Layout } from '@/components/Layout';
 const Prefabs = () => {
   return (
     <Layout>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-4">Prefabs</h1>
-        <p>Browse and select prefabricated bike components.</p>
-      </div>
+      {/* The main content area will now be empty since we're using the sidebar for displaying prefabs */}
     </Layout>
   );
 };
