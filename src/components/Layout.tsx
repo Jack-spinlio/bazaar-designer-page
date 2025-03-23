@@ -7,16 +7,18 @@ import { StatusBar } from './StatusBar';
 import { Button } from '@/components/ui/button';
 import { IconSidebar } from './IconSidebar';
 import { Input } from '@/components/ui/input';
-import { Edit, Share, ArrowUpFromLine, Bell, Check, X, ChevronDown, Smartphone, Link, Download, ScanLine, SmilePlus, User, Eye, MoreHorizontal } from 'lucide-react';
+import { Edit, Share, Bell, Check, X, ChevronDown, Smartphone, Link, Download, ScanLine, SmilePlus, User, Eye, MoreHorizontal } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useLocation } from 'react-router-dom';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+
 export interface LayoutProps {
   children?: React.ReactNode;
 }
+
 export const Layout: React.FC<LayoutProps> = ({
   children
 }) => {
@@ -29,32 +31,37 @@ export const Layout: React.FC<LayoutProps> = ({
   const [linkAccess, setLinkAccess] = React.useState("Anyone with the link");
   const [viewPermission, setViewPermission] = React.useState("Can view");
 
-  // Get current location to determine whether to show the sidebar
   const location = useLocation();
   const showComponentSidebar = location.pathname === '/components';
   const showPrefabSidebar = location.pathname === '/prefabs';
   const showSavedSidebar = location.pathname === '/saved';
+
   const handleComponentSelected = (component: ComponentItem) => {
     setSelectedComponent(component);
     console.log('Component selected in Layout:', component.name);
   };
+
   const handlePrefabSelected = (prefab: PrefabItem) => {
     setSelectedPrefab(prefab);
     console.log('Prefab selected in Layout:', prefab.name);
   };
+
   const handleDesignSelected = (design: SavedDesign) => {
     setSelectedDesign(design);
     console.log('Design selected in Layout:', design.name);
   };
+
   const handleComponentPlaced = () => {
     console.log('Component placed in scene');
     setSelectedComponent(null);
     setSelectedPrefab(null);
   };
+
   const handleEditTitle = () => {
     setTempTitle(designTitle);
     setIsEditingTitle(true);
   };
+
   const handleSaveTitle = async () => {
     if (tempTitle.trim() === '') {
       toast.error("Design name cannot be empty");
@@ -63,12 +70,10 @@ export const Layout: React.FC<LayoutProps> = ({
     setDesignTitle(tempTitle);
     setIsEditingTitle(false);
     try {
-      // Save to Supabase
       const {
         error
       } = await supabase.from('designs').upsert({
         id: 'current-design',
-        // Using a fixed ID for simplicity
         name: tempTitle
       });
       if (error) throw error;
@@ -78,29 +83,36 @@ export const Layout: React.FC<LayoutProps> = ({
       toast.error("Failed to save design name");
     }
   };
+
   const handleCancelEdit = () => {
     setIsEditingTitle(false);
   };
+
   const handleCopyLink = () => {
-    // In a real app, this would generate and copy a sharing link
     navigator.clipboard.writeText(`https://bazaar.app/designs/${designTitle.toLowerCase().replace(/\s+/g, '-')}`);
     toast.success("Link copied to clipboard");
   };
+
   const handlePublishToCommunity = () => {
     toast.success("Design published to community");
   };
+
   const handleShareWithProducer = () => {
     toast.success("Design shared with producer");
   };
+
   const handleDownload = () => {
     toast.success("Preparing download...");
   };
+
   const handleARView = () => {
     toast.success("Opening AR view...");
   };
+
   const handleSeeAll = () => {
     toast.success("Showing all sharing options");
   };
+
   return <div className="flex flex-col h-screen p-2.5 overflow-hidden bg-[#F5F5F5]">
       <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 z-10 bg-white rounded-2xl mb-2.5 shadow-sm" style={{
       margin: '10px'
@@ -136,38 +148,34 @@ export const Layout: React.FC<LayoutProps> = ({
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             
-            {/* Share Button with Dropdown */}
             <Popover>
               <PopoverTrigger asChild>
                 <Button className="px-6 flex items-center gap-2 rounded-full bg-black text-white hover:bg-gray-800">
                   <Share size={16} className="mr-1" />
                   Share
-                  <ArrowUpFromLine size={16} className="ml-1" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent align="end" className="w-[280px] p-6">
-                <div className="flex flex-col space-y-6">
-                  <h2 className="text-3xl font-bold">Share this design</h2>
+              <PopoverContent align="end" className="w-[320px] p-5">
+                <div className="flex flex-col space-y-5">
+                  <h2 className="text-2xl font-bold">Share this design</h2>
                   
-                  {/* Publish to Community Button */}
-                  <Button onClick={handlePublishToCommunity} className="w-full bg-black text-white rounded-full py-6 h-auto flex items-center justify-center gap-2">
-                    <SmilePlus size={24} />
-                    <span className="text-lg">Publish to Community</span>
+                  <Button onClick={handlePublishToCommunity} className="w-full bg-black text-white rounded-full py-5 h-auto flex items-center justify-center gap-2">
+                    <SmilePlus size={20} />
+                    <span className="text-base">Publish to Community</span>
                   </Button>
                   
                   <div className="space-y-2">
-                    <h3 className="text-xl font-semibold">Create a link</h3>
+                    <h3 className="text-lg font-semibold">Create a link</h3>
                     
-                    <div className="flex gap-4 mb-4">
-                      {/* Access Permission Button */}
+                    <div className="flex gap-3 mb-3">
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Button variant="outline" className="flex-1 justify-between py-6 h-auto rounded-full">
-                            <span className="text-base">{linkAccess}</span>
-                            <ChevronDown size={20} />
+                          <Button variant="outline" className="flex-1 justify-between py-5 h-auto rounded-full">
+                            <span className="text-sm">{linkAccess}</span>
+                            <ChevronDown size={16} />
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[240px]">
+                        <PopoverContent className="w-[200px]">
                           <div className="space-y-2">
                             <Button variant="ghost" className="w-full justify-start" onClick={() => setLinkAccess("Anyone with the link")}>
                               Anyone with the link
@@ -179,15 +187,14 @@ export const Layout: React.FC<LayoutProps> = ({
                         </PopoverContent>
                       </Popover>
                       
-                      {/* View Permission Button */}
                       <Popover>
                         <PopoverTrigger asChild>
-                          <Button variant="outline" className="flex-1 justify-between py-6 h-auto rounded-full">
-                            <span className="text-base">{viewPermission}</span>
-                            <ChevronDown size={20} />
+                          <Button variant="outline" className="flex-1 justify-between py-5 h-auto rounded-full">
+                            <span className="text-sm">{viewPermission}</span>
+                            <ChevronDown size={16} />
                           </Button>
                         </PopoverTrigger>
-                        <PopoverContent className="w-[240px]">
+                        <PopoverContent className="w-[200px]">
                           <div className="space-y-2">
                             <Button variant="ghost" className="w-full justify-start" onClick={() => setViewPermission("Can view")}>
                               Can view
@@ -200,47 +207,41 @@ export const Layout: React.FC<LayoutProps> = ({
                       </Popover>
                     </div>
                     
-                    {/* Copy Link Button */}
-                    <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-6 h-auto rounded-full" onClick={handleCopyLink}>
-                      <Link size={20} />
-                      <span className="text-lg">Copy Link</span>
+                    <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-5 h-auto rounded-full" onClick={handleCopyLink}>
+                      <Link size={18} />
+                      <span className="text-base">Copy Link</span>
                     </Button>
                   </div>
                   
                   <div className="space-y-3">
-                    <h3 className="text-xl font-semibold">Ready for a sample?</h3>
+                    <h3 className="text-lg font-semibold">Ready for a sample?</h3>
                     
-                    {/* Share with Producer Button */}
-                    <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-6 h-auto rounded-full" onClick={handleShareWithProducer}>
-                      <User size={20} />
-                      <span className="text-lg">Share with producer</span>
+                    <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-5 h-auto rounded-full" onClick={handleShareWithProducer}>
+                      <User size={18} />
+                      <span className="text-base">Share with producer</span>
                     </Button>
                   </div>
                   
-                  {/* Bottom Action Buttons */}
-                  <div className="flex justify-between gap-4">
-                    {/* Download Button */}
-                    <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-2 py-4 h-auto rounded-2xl" onClick={handleDownload}>
-                      <div className="h-16 w-16 flex items-center justify-center rounded-full border border-gray-200">
-                        <Download size={24} />
+                  <div className="flex justify-between gap-3">
+                    <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-2 py-3 h-auto rounded-xl" onClick={handleDownload}>
+                      <div className="h-14 w-14 flex items-center justify-center rounded-full border border-gray-200">
+                        <Download size={20} />
                       </div>
-                      <span className="text-base">Download</span>
+                      <span className="text-sm">Download</span>
                     </Button>
                     
-                    {/* AR Button */}
-                    <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-2 py-4 h-auto rounded-2xl" onClick={handleARView}>
-                      <div className="h-16 w-16 flex items-center justify-center rounded-full border border-gray-200">
-                        <Smartphone size={24} />
+                    <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-2 py-3 h-auto rounded-xl" onClick={handleARView}>
+                      <div className="h-14 w-14 flex items-center justify-center rounded-full border border-gray-200">
+                        <Smartphone size={20} />
                       </div>
-                      <span className="text-base">AR</span>
+                      <span className="text-sm">AR</span>
                     </Button>
                     
-                    {/* See All Button */}
-                    <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-2 py-4 h-auto rounded-2xl" onClick={handleSeeAll}>
-                      <div className="h-16 w-16 flex items-center justify-center rounded-full border border-gray-200">
-                        <MoreHorizontal size={24} />
+                    <Button variant="outline" className="flex-1 flex flex-col items-center justify-center gap-2 py-3 h-auto rounded-xl" onClick={handleSeeAll}>
+                      <div className="h-14 w-14 flex items-center justify-center rounded-full border border-gray-200">
+                        <MoreHorizontal size={20} />
                       </div>
-                      <span className="text-base">See all</span>
+                      <span className="text-sm">See all</span>
                     </Button>
                   </div>
                 </div>
@@ -253,21 +254,18 @@ export const Layout: React.FC<LayoutProps> = ({
       <div className="flex flex-1 overflow-hidden">
         <IconSidebar />
         
-        {/* Show component sidebar only on the Components page */}
         {showComponentSidebar && <div className="w-80 transition-all duration-300 ease-in-out" style={{
         margin: '10px'
       }}>
             <Sidebar onSelectComponent={handleComponentSelected} />
           </div>}
 
-        {/* Show prefab sidebar only on the Prefabs page */}
         {showPrefabSidebar && <div className="w-80 transition-all duration-300 ease-in-out" style={{
         margin: '10px'
       }}>
             <PrefabSidebar onSelectPrefab={handlePrefabSelected} />
           </div>}
 
-        {/* Show saved designs sidebar only on the Saved page */}
         {showSavedSidebar && <div className="w-80 transition-all duration-300 ease-in-out" style={{
         margin: '10px'
       }}>

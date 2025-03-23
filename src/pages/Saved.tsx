@@ -5,7 +5,7 @@ import { Layout } from '@/components/Layout';
 const Saved = () => {
   return (
     <Layout>
-      {/* The main content area will be empty since we're using the sidebar for displaying saved designs */}
+      {/* The main content area is intentionally empty since we're using the sidebar for displaying saved designs */}
     </Layout>
   );
 };
