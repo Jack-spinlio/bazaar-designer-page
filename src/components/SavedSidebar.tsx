@@ -5,40 +5,40 @@ import { Input } from '@/components/ui/input';
 import { Search, Bookmark, Trash2, Clock } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Mock data for saved designs
+// Mock data for saved designs with images from the PrefabSidebar component
 const SAVED_DESIGNS = [
   {
     id: 'design-1',
     name: 'Road Bike Design',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//2.jpg',
     createdAt: '2023-06-15',
     isFavorite: true
   },
   {
     id: 'design-2',
     name: 'Mountain Bike Concept',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//7.jpg',
     createdAt: '2023-07-20',
     isFavorite: false
   },
   {
     id: 'design-3',
     name: 'City Commuter Bike',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Screenshot%202025-03-21%20at%2011.56.01.png',
     createdAt: '2023-08-10',
     isFavorite: true
   },
   {
     id: 'design-4',
     name: 'Racing Bike Setup',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//4.jpg',
     createdAt: '2023-09-05',
     isFavorite: false
   },
   {
     id: 'design-5',
     name: 'Electric Bike Design',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//8.jpg',
     createdAt: '2023-10-12',
     isFavorite: true
   },
