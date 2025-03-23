@@ -63,10 +63,10 @@ export const SharePopover: React.FC = () => {
           <div className="space-y-2">
             <h3 className="text-base font-semibold">Create a link</h3>
             
-            <div className="flex flex-col gap-2 mb-2">
+            <div className="flex gap-2 mb-2">
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-between py-1 h-auto rounded-full text-xs">
+                  <Button variant="outline" className="flex-1 justify-between py-1 h-9 rounded-full text-xs">
                     <span className="truncate">{linkAccess}</span>
                     <ChevronDown size={14} />
                   </Button>
@@ -85,7 +85,7 @@ export const SharePopover: React.FC = () => {
               
               <Popover>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="w-full justify-between py-1 h-auto rounded-full text-xs">
+                  <Button variant="outline" className="flex-1 justify-between py-1 h-9 rounded-full text-xs">
                     <span className="truncate">{viewPermission}</span>
                     <ChevronDown size={14} />
                   </Button>
@@ -103,7 +103,7 @@ export const SharePopover: React.FC = () => {
               </Popover>
             </div>
             
-            <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-1 h-auto rounded-full text-sm" onClick={handleCopyLink}>
+            <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-1 h-9 rounded-full text-sm" onClick={handleCopyLink}>
               <Link size={16} />
               <span>Copy Link</span>
             </Button>
@@ -112,7 +112,7 @@ export const SharePopover: React.FC = () => {
           <div className="space-y-2">
             <h3 className="text-base font-semibold">Ready for a sample?</h3>
             
-            <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-1 h-auto rounded-full text-sm" onClick={handleShareWithProducer}>
+            <Button variant="outline" className="w-full flex items-center justify-center gap-2 py-1 h-9 rounded-full text-sm" onClick={handleShareWithProducer}>
               <User size={16} />
               <span>Share with producer</span>
             </Button>
