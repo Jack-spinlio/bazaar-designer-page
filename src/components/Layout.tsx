@@ -2,6 +2,7 @@
 import React from 'react';
 import { Sidebar, ComponentItem } from './Sidebar';
 import { PrefabSidebar, PrefabItem } from './PrefabSidebar';
+import { SavedSidebar, SavedDesign } from './SavedSidebar';
 import { Viewport } from './Viewport';
 import { StatusBar } from './StatusBar';
 import { Button } from '@/components/ui/button';
@@ -27,6 +28,7 @@ export interface LayoutProps {
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [selectedComponent, setSelectedComponent] = React.useState<ComponentItem | null>(null);
   const [selectedPrefab, setSelectedPrefab] = React.useState<PrefabItem | null>(null);
+  const [selectedDesign, setSelectedDesign] = React.useState<SavedDesign | null>(null);
   const [isEditingTitle, setIsEditingTitle] = React.useState(false);
   const [designTitle, setDesignTitle] = React.useState("Bazaar Road bike");
   const [tempTitle, setTempTitle] = React.useState(designTitle);
@@ -35,6 +37,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const location = useLocation();
   const showComponentSidebar = location.pathname === '/components';
   const showPrefabSidebar = location.pathname === '/prefabs';
+  const showSavedSidebar = location.pathname === '/saved';
   
   const handleComponentSelected = (component: ComponentItem) => {
     setSelectedComponent(component);
@@ -44,6 +47,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const handlePrefabSelected = (prefab: PrefabItem) => {
     setSelectedPrefab(prefab);
     console.log('Prefab selected in Layout:', prefab.name);
+  };
+
+  const handleDesignSelected = (design: SavedDesign) => {
+    setSelectedDesign(design);
+    console.log('Design selected in Layout:', design.name);
   };
   
   const handleComponentPlaced = () => {
@@ -155,7 +163,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
         )}
 
-        <main className={`flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5 ${!showComponentSidebar && !showPrefabSidebar ? 'w-full' : ''}`} style={{ margin: '10px' }}>
+        {/* Show saved designs sidebar only on the Saved page */}
+        {showSavedSidebar && (
+          <div className="w-80 transition-all duration-300 ease-in-out" style={{ margin: '10px' }}>
+            <SavedSidebar onSelectDesign={handleDesignSelected} />
+          </div>
+        )}
+
+        <main className={`flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5 ${!showComponentSidebar && !showPrefabSidebar && !showSavedSidebar ? 'w-full' : ''}`} style={{ margin: '10px' }}>
           <Viewport 
             selectedComponent={selectedComponent} 
             onComponentPlaced={handleComponentPlaced} 

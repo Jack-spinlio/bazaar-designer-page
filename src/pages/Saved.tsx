@@ -5,10 +5,7 @@ import { Layout } from '@/components/Layout';
 const Saved = () => {
   return (
     <Layout>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-4">Saved Designs</h1>
-        <p>View and manage your saved bike designs.</p>
-      </div>
+      {/* The main content area will be empty since we're using the sidebar for displaying saved designs */}
     </Layout>
   );
 };
