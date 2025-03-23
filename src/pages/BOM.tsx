@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Layout } from '@/components/Layout';
 import { 
@@ -129,10 +130,10 @@ const BOM = () => {
 
   return (
     <Layout>
-      <div className="p-6 max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg p-6 shadow-sm mb-6">
+      <div className="p-6 flex">
+        <div className="bg-white rounded-lg p-6 shadow-sm mb-6 w-1/2">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-semibold">Components</h2>
+            <h2 className="text-2xl font-semibold">Bill of materials</h2>
           </div>
 
           <div className="overflow-x-auto">
