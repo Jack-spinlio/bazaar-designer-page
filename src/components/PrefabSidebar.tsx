@@ -13,7 +13,7 @@ const BIKE_PREFABS = [
     id: 'bike-1',
     name: 'Road bike',
     type: 'BIKE',
-    thumbnail: '/lovable-uploads/33ad89d2-1cd4-4d22-b944-fd81eb57fd44.png',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//2.jpg',
     folder: 'Bikes',
     shape: 'box' as const
   },
