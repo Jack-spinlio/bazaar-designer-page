@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -15,6 +14,7 @@ import {
 import { createComponentShape } from '@/utils/threeUtils';
 import { loadModel } from '@/utils/modelLoader';
 import { ComponentItem } from './Sidebar';
+import { useLocation } from 'react-router-dom';
 
 interface PlacedObjectProps {
   component: ComponentItem;
@@ -205,8 +205,9 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
   }>>([]);
   const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null);
   const [hasLoadedCM18, setHasLoadedCM18] = useState(false);
+  const location = useLocation();
+  const isEditPage = location.pathname === '/edit';
   
-  // Default load CM18 model
   useEffect(() => {
     if (!hasLoadedCM18) {
       try {
@@ -337,11 +338,11 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         </div>
       )}
       
-      <div className="absolute left-1/2 bottom-4 transform -translate-x-1/2 w-auto max-w-lg bg-black/70 text-white px-6 py-3 rounded-full text-sm z-10">
-        {selectedComponent ? 
-          `Selected: ${selectedComponent.name} - Click in the viewport to place` : 
-          "Select a component from the library"}
-      </div>
+      {!isEditPage && selectedComponent && (
+        <div className="absolute left-1/2 bottom-4 transform -translate-x-1/2 w-auto max-w-lg bg-black/70 text-white px-6 py-3 rounded-full text-sm z-10">
+          {`Selected: ${selectedComponent.name} - Click in the viewport to place`}
+        </div>
+      )}
       
       <Canvas shadows className="w-full h-full outline-none">
         <Scene 

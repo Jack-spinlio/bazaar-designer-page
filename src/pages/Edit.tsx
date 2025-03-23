@@ -6,7 +6,7 @@ const Edit = () => {
   return (
     <Layout>
       <div className="p-6">
-        {/* Text removed as requested */}
+        {/* Edit page content will go here */}
       </div>
     </Layout>
   );

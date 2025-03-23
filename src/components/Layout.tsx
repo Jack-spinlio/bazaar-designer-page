@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Sidebar, ComponentItem } from './Sidebar';
 import { PrefabSidebar, PrefabItem } from './PrefabSidebar';
@@ -114,7 +115,7 @@ export const Layout: React.FC<LayoutProps> = ({
   };
 
   return <div className="flex flex-col h-screen p-2.5 overflow-hidden bg-[#F5F5F5]">
-      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 z-10 bg-white rounded-2xl mb-2.5 shadow-sm" style={{
+      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 z-10 bg-white rounded-2xl shadow-sm" style={{
       margin: '10px'
     }}>
         <div className="flex items-center gap-4">
