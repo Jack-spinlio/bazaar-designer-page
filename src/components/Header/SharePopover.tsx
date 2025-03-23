@@ -67,16 +67,16 @@ export const SharePopover: React.FC = () => {
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="flex-1 justify-between py-1 h-9 rounded-full text-xs">
-                    <span className="truncate">{linkAccess}</span>
+                    <span className="truncate max-w-[90px]">{linkAccess}</span>
                     <ChevronDown size={14} />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[180px]" align="start">
+                <PopoverContent className="w-[180px] p-1" align="start">
                   <div className="space-y-1">
-                    <Button variant="ghost" size="sm" className="w-full justify-start text-xs" onClick={() => setLinkAccess("Anyone with the link")}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start text-xs h-9" onClick={() => setLinkAccess("Anyone with the link")}>
                       Anyone with the link
                     </Button>
-                    <Button variant="ghost" size="sm" className="w-full justify-start text-xs" onClick={() => setLinkAccess("Specific people")}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start text-xs h-9" onClick={() => setLinkAccess("Specific people")}>
                       Specific people
                     </Button>
                   </div>
@@ -86,16 +86,16 @@ export const SharePopover: React.FC = () => {
               <Popover>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="flex-1 justify-between py-1 h-9 rounded-full text-xs">
-                    <span className="truncate">{viewPermission}</span>
+                    <span className="truncate max-w-[60px]">{viewPermission}</span>
                     <ChevronDown size={14} />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[150px]" align="start" side="bottom">
+                <PopoverContent className="w-[120px] p-1" align="start" side="bottom">
                   <div className="space-y-1">
-                    <Button variant="ghost" size="sm" className="w-full justify-start text-xs" onClick={() => setViewPermission("Can view")}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start text-xs h-9" onClick={() => setViewPermission("Can view")}>
                       Can view
                     </Button>
-                    <Button variant="ghost" size="sm" className="w-full justify-start text-xs" onClick={() => setViewPermission("Can edit")}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start text-xs h-9" onClick={() => setViewPermission("Can edit")}>
                       Can edit
                     </Button>
                   </div>
