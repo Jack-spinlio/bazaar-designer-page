@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -323,7 +324,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <>
                 {!searchQuery && (
                   <>
-                    <h3 className="text-sm font-semibold mb-2">Bike Components</h3>
+                    {/* Removed "Bike Components" heading here */}
                     <div className="grid grid-cols-2 gap-3">
                       {BIKE_COMPONENTS.slice(0, 10).map(component => (
                         <div 
