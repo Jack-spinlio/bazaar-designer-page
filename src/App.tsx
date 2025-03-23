@@ -8,10 +8,11 @@ import Prefabs from './pages/Prefabs';
 import Components from './pages/Components';
 import Saved from './pages/Saved';
 import Timeline from './pages/Timeline';
-import BOM from './pages/BOM';  // Added BOM import
+import BOM from './pages/BOM';
 import Uploads from './pages/Uploads';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
+import Marketplace from './pages/Marketplace';
 import './App.css';
 import { Toaster } from 'sonner';
 import * as THREE from 'three';
@@ -32,16 +33,17 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Navigate to="/edit" replace />} />
+        <Route path="/" element={<Navigate to="/marketplace" replace />} />
         <Route path="/index" element={<Index />} />
         <Route path="/edit" element={<Edit />} />
         <Route path="/prefabs" element={<Prefabs />} />
         <Route path="/components" element={<Components />} />
-        <Route path="/bom" element={<BOM />} />  {/* Added BOM route */}
+        <Route path="/bom" element={<BOM />} />
         <Route path="/saved" element={<Saved />} />
         <Route path="/timeline" element={<Timeline />} />
         <Route path="/uploads" element={<Uploads />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/marketplace" element={<Marketplace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster position="top-right" richColors />
