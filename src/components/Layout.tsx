@@ -113,10 +113,8 @@ export const Layout: React.FC<LayoutProps> = ({
     toast.success("Showing all sharing options");
   };
 
-  return <div className="flex flex-col h-screen p-2.5 overflow-hidden bg-[#F5F5F5]">
-      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 z-10 bg-white rounded-2xl shadow-sm" style={{
-      margin: '10px'
-    }}>
+  return <div className="flex flex-col h-screen overflow-hidden bg-[#F5F5F5] p-2.5">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 z-10 bg-white rounded-2xl shadow-sm">
         <div className="flex items-center gap-4">
           <h1 className="text-3xl font-bold text-gray-900">Bazaar</h1>
         </div>
@@ -252,7 +250,7 @@ export const Layout: React.FC<LayoutProps> = ({
       </header>
       
       <div className="flex flex-1 overflow-hidden mt-2.5">
-        <div className="flex h-full" style={{ marginLeft: '10px' }}>
+        <div className="flex h-full ml-0">
           <IconSidebar />
         </div>
         
