@@ -23,6 +23,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     console.log(`Product clicked: ${product.name}`);
   };
   
+  const handleManufacturerClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // In a real app, this would navigate to the manufacturer's profile
+    console.log(`Manufacturer clicked: ${product.manufacturer}`);
+  };
+  
+  // Determine which logo to use based on manufacturer
+  const manufacturerLogo = product.manufacturer === 'Shimano' 
+    ? 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Shimano-Logo-1990.png'
+    : 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//PHOTO-2025-01-16-17-11-25%202.jpg';
+  
   const manufacturerInitials = product.manufacturer
     .split(' ')
     .map(name => name[0])
@@ -43,12 +54,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </div>
       <div className="p-3">
         <h3 className="font-medium text-sm text-gray-900 line-clamp-1">{product.name}</h3>
-        <div className="flex items-center mt-1 mb-1">
-          <Avatar className="h-5 w-5 mr-1">
-            <AvatarImage src={`https://avatar.vercel.sh/${product.manufacturer}.png`} />
-            <AvatarFallback className="text-[10px]">{manufacturerInitials}</AvatarFallback>
-          </Avatar>
-          <span className="text-xs text-gray-500">Produced by: {product.manufacturer}</span>
+        <div 
+          onClick={handleManufacturerClick}
+          className="flex items-center mt-1 mb-1 cursor-pointer border-b border-gray-300 pb-1 w-fit"
+        >
+          <img 
+            src={manufacturerLogo} 
+            alt={`${product.manufacturer} logo`} 
+            className="h-5 mr-1 object-contain"
+          />
         </div>
         <p className="font-semibold text-sm">${product.price}</p>
       </div>

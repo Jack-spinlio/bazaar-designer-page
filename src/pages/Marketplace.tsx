@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { Layout } from '@/components/Layout';
 import { ProductCategory } from '@/components/marketplace/ProductCategory';
 import { MarketplaceHeader } from '@/components/marketplace/MarketplaceHeader';
 import { MarketplaceSearch } from '@/components/marketplace/MarketplaceSearch';
@@ -104,28 +103,28 @@ const roadBikes = [
     name: 'Racing Bike',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//1.jpg',
     price: 1160,
-    manufacturer: 'Gravity Bikes'
+    manufacturer: 'Vulz'
   },
   {
     id: 'rb-2',
     name: 'Classic Racer',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//6.jpg',
     price: 650,
-    manufacturer: 'Zheju Moby'
+    manufacturer: 'Vulz'
   },
   {
     id: 'rb-3',
     name: 'Mens Road Bike',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//9.jpg',
     price: 430,
-    manufacturer: 'EverGreen'
+    manufacturer: 'Vulz'
   },
   {
     id: 'rb-4',
     name: 'Road Bike -35mm Deep Rim',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//2.jpg',
     price: 810,
-    manufacturer: 'Hangzhou Exp'
+    manufacturer: 'Vulz'
   },
   {
     id: 'rb-5',
@@ -139,7 +138,14 @@ const roadBikes = [
     name: 'Low Cost Road Bike',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//7.jpg',
     price: 511,
-    manufacturer: 'Hangzhou Exp'
+    manufacturer: 'Vulz'
+  },
+  {
+    id: 'rb-7',
+    name: 'Pro Tour Edition',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//4.jpg',
+    price: 899,
+    manufacturer: 'Vulz'
   }
 ];
 
@@ -154,37 +160,37 @@ const eBikeComponents = [
   },
   {
     id: 'ebc-2',
-    name: 'Shimano GRX Brake',
+    name: 'Controller Unit',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//controller.jpg',
     price: 58,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-3',
-    name: 'Shimano GRX Shifter',
+    name: 'E-Shifter ST-E6100',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//shifter.jpg',
     price: 18,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-4',
-    name: 'PW-250W Front Hub',
+    name: 'PW-250W Front Hub Motor',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//motor.jpg',
-    price: 42,
+    price: 142,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-5',
     name: '270x50 HDI Display',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//display.jpg',
-    price: 24,
+    price: 124,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-6',
-    name: 'Di2 Button',
+    name: 'Di2 Power Control Button',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//button.jpg',
-    price: 11,
+    price: 51,
     manufacturer: 'Shimano'
   }
 ];
