@@ -1,11 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Layout } from '@/components/Layout';
-import { FileUploader } from '@/components/FileUploader';
-import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Trash2, Download, Eye } from 'lucide-react';
+import { Trash2, Download, Upload } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 interface FileObject {
   id: string;
@@ -16,10 +15,43 @@ interface FileObject {
   mimetype: string;
 }
 
+// Define a simple FileUploader component for this page
+const SimpleFileUploader = ({ onFileSelect, accept, isUploading }: {
+  onFileSelect: (file: File) => void;
+  accept: string;
+  isUploading: boolean;
+}) => {
+  return (
+    <div className="border-2 border-dashed rounded-lg p-6 text-center">
+      <input
+        type="file"
+        id="file-upload"
+        className="hidden"
+        accept={accept}
+        onChange={(e) => e.target.files && e.target.files[0] && onFileSelect(e.target.files[0])}
+        disabled={isUploading}
+      />
+      <label htmlFor="file-upload" className="cursor-pointer">
+        <div className="flex flex-col items-center justify-center">
+          <Upload className="w-12 h-12 text-gray-400 mb-3" />
+          <p className="text-sm text-gray-500">Drag and drop or click to upload</p>
+          <p className="text-xs text-gray-400 mt-1">
+            Supported formats: .obj, .step, .stp, .stl, .fbx, .gltf, .glb, .3ds
+          </p>
+          {isUploading ? (
+            <Button disabled className="mt-4">Uploading...</Button>
+          ) : (
+            <Button className="mt-4">Select File</Button>
+          )}
+        </div>
+      </label>
+    </div>
+  );
+};
+
 const Uploads = () => {
   const [files, setFiles] = useState<FileObject[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   
   const fetchUserUploads = async () => {
     try {
@@ -54,18 +86,13 @@ const Uploads = () => {
     }
     
     setIsUploading(true);
-    setUploadProgress(0);
     
     try {
       const { error } = await supabase.storage
         .from('models')
         .upload(`${Date.now()}_${file.name}`, file, {
           cacheControl: '3600',
-          upsert: false,
-          onUploadProgress: (progress) => {
-            const percent = Math.round((progress.loaded / progress.total) * 100);
-            setUploadProgress(percent);
-          }
+          upsert: false
         });
         
       if (error) throw error;
@@ -114,11 +141,10 @@ const Uploads = () => {
             Supported file types: .obj, .step, .stp, .stl, .fbx, .gltf, .glb, .3ds
           </p>
           
-          <FileUploader 
+          <SimpleFileUploader 
             onFileSelect={handleUpload}
             accept=".obj,.step,.stp,.stl,.fbx,.gltf,.glb,.3ds"
             isUploading={isUploading}
-            progress={uploadProgress}
           />
         </div>
         

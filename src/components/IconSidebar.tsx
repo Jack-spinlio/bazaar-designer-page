@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { 
   LayoutDashboard, 
@@ -6,7 +5,7 @@ import {
   Bike, 
   Puzzle, 
   Bookmark, 
-  Timeline, 
+  Clock, 
   Upload,
   Settings 
 } from "lucide-react";
@@ -25,7 +24,7 @@ export const IconSidebar = () => {
     { icon: Bike, label: "Prefabs", path: "/prefabs" },
     { icon: Puzzle, label: "Components", path: "/components" },
     { icon: Bookmark, label: "Saved", path: "/saved" },
-    { icon: Timeline, label: "Timeline", path: "/timeline" },
+    { icon: Clock, label: "Timeline", path: "/timeline" },
     { icon: Upload, label: "My Uploads", path: "/uploads" },
   ];
 
