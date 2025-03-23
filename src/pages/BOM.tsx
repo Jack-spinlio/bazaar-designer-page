@@ -137,12 +137,12 @@ const BOM = () => {
 
   return (
     <Layout>
-      <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} h-full`}>
+      <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} h-full w-full`}>
         {/* Left side: Bill of Materials table */}
-        <div className={`${isMobile ? 'w-full h-1/2' : 'w-3/5'} overflow-auto`}>
-          <div className="bg-white rounded-lg p-6 shadow-sm h-full">
+        <div className={`${isMobile ? 'w-full h-1/2' : 'w-3/5 xl:w-2/3'} overflow-auto`}>
+          <div className="bg-white rounded-lg p-4 md:p-6 shadow-sm h-full">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-semibold">Bill of materials</h2>
+              <h2 className="text-xl md:text-2xl font-semibold">Bill of materials</h2>
               <button className="text-gray-500 hover:text-gray-700">
                 See all
               </button>
@@ -154,8 +154,8 @@ const BOM = () => {
                   <TableRow>
                     <TableHead className="w-[40px]"></TableHead>
                     <TableHead>Component</TableHead>
-                    <TableHead className={isMobile ? "hidden" : ""}>Manufacturer</TableHead>
-                    <TableHead className={isMobile ? "hidden" : ""}>Model</TableHead>
+                    <TableHead className={isMobile ? "hidden sm:table-cell" : ""}>Manufacturer</TableHead>
+                    <TableHead className={isMobile ? "hidden sm:table-cell" : ""}>Model</TableHead>
                     <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Production time</TableHead>
                     <TableHead className={isMobile ? "hidden lg:table-cell" : ""}>Country</TableHead>
                     <TableHead>Price</TableHead>
@@ -170,8 +170,8 @@ const BOM = () => {
                         </span>
                       </TableCell>
                       <TableCell className="font-medium">{component.component}</TableCell>
-                      <TableCell className={isMobile ? "hidden" : ""}>{component.manufacturer}</TableCell>
-                      <TableCell className={isMobile ? "hidden" : ""}>{component.model}</TableCell>
+                      <TableCell className={isMobile ? "hidden sm:table-cell" : ""}>{component.manufacturer}</TableCell>
+                      <TableCell className={isMobile ? "hidden sm:table-cell" : ""}>{component.model}</TableCell>
                       <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{component.productionTime}</TableCell>
                       <TableCell className={isMobile ? "hidden lg:table-cell" : ""}>{component.country}</TableCell>
                       <TableCell>{component.price}</TableCell>
@@ -184,7 +184,7 @@ const BOM = () => {
         </div>
         
         {/* Right side: 3D Viewport */}
-        <div className={`${isMobile ? 'w-full h-1/2' : 'w-2/5'} h-full pl-2.5`}>
+        <div className={`${isMobile ? 'w-full h-1/2' : 'w-2/5 xl:w-1/3'} h-full pl-0 md:pl-2.5`}>
           <Viewport 
             selectedComponent={null}
             onComponentPlaced={handleComponentPlaced}
