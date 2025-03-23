@@ -137,7 +137,7 @@ const BOM = () => {
     <Layout>
       <div className="flex h-full">
         {/* Left side: Bill of Materials table */}
-        <div className="w-1/2 p-6 overflow-auto">
+        <div className="w-3/5 p-6 pr-2.5 overflow-auto">
           <div className="bg-white rounded-lg p-6 shadow-sm">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold">Bill of materials</h2>
@@ -186,7 +186,7 @@ const BOM = () => {
         </div>
         
         {/* Right side: 3D Viewport */}
-        <div className="w-1/2 h-full">
+        <div className="w-2/5 h-full pl-2.5">
           <Viewport 
             selectedComponent={null}
             onComponentPlaced={handleComponentPlaced}
