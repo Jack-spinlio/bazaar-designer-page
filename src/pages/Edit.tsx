@@ -15,10 +15,10 @@ const Edit = () => {
   return (
     <Layout>
       <div className="flex h-full">
-        <div className="w-[320px] p-2.5">
+        <div className="w-[320px] h-full">
           <EditToolbar />
         </div>
-        <div className="flex-1 p-2.5">
+        <div className="flex-1 h-full">
           <Viewport 
             selectedComponent={selectedComponent}
             onComponentPlaced={handleComponentPlaced}

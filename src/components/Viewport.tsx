@@ -311,7 +311,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
   };
 
   return (
-    <div className="relative flex-1 bg-white overflow-hidden rounded-2xl">
+    <div className="relative w-full h-full bg-white overflow-hidden rounded-2xl">
       <div className="absolute top-4 right-4 z-10">
         <Button
           variant="outline"
