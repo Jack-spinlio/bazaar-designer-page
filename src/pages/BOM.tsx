@@ -10,6 +10,7 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Viewport } from '@/components/Viewport';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 // Type for component data
 interface ComponentData {
@@ -24,6 +25,8 @@ interface ComponentData {
 }
 
 const BOM = () => {
+  const isMobile = useIsMobile();
+  
   // Sample data for the BOM table - in a real app this would come from your state management
   const components: ComponentData[] = [
     {
@@ -134,10 +137,10 @@ const BOM = () => {
 
   return (
     <Layout>
-      <div className="flex h-full">
+      <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} h-full`}>
         {/* Left side: Bill of Materials table */}
-        <div className="w-3/5 overflow-auto">
-          <div className="bg-white rounded-lg p-6 shadow-sm">
+        <div className={`${isMobile ? 'w-full h-1/2' : 'w-3/5'} overflow-auto`}>
+          <div className="bg-white rounded-lg p-6 shadow-sm h-full">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-semibold">Bill of materials</h2>
               <button className="text-gray-500 hover:text-gray-700">
@@ -151,10 +154,10 @@ const BOM = () => {
                   <TableRow>
                     <TableHead className="w-[40px]"></TableHead>
                     <TableHead>Component</TableHead>
-                    <TableHead>Manufacturer</TableHead>
-                    <TableHead>Model</TableHead>
-                    <TableHead>Production time</TableHead>
-                    <TableHead>Country</TableHead>
+                    <TableHead className={isMobile ? "hidden" : ""}>Manufacturer</TableHead>
+                    <TableHead className={isMobile ? "hidden" : ""}>Model</TableHead>
+                    <TableHead className={isMobile ? "hidden md:table-cell" : ""}>Production time</TableHead>
+                    <TableHead className={isMobile ? "hidden lg:table-cell" : ""}>Country</TableHead>
                     <TableHead>Price</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -167,10 +170,10 @@ const BOM = () => {
                         </span>
                       </TableCell>
                       <TableCell className="font-medium">{component.component}</TableCell>
-                      <TableCell>{component.manufacturer}</TableCell>
-                      <TableCell>{component.model}</TableCell>
-                      <TableCell>{component.productionTime}</TableCell>
-                      <TableCell>{component.country}</TableCell>
+                      <TableCell className={isMobile ? "hidden" : ""}>{component.manufacturer}</TableCell>
+                      <TableCell className={isMobile ? "hidden" : ""}>{component.model}</TableCell>
+                      <TableCell className={isMobile ? "hidden md:table-cell" : ""}>{component.productionTime}</TableCell>
+                      <TableCell className={isMobile ? "hidden lg:table-cell" : ""}>{component.country}</TableCell>
                       <TableCell>{component.price}</TableCell>
                     </TableRow>
                   ))}
@@ -181,7 +184,7 @@ const BOM = () => {
         </div>
         
         {/* Right side: 3D Viewport */}
-        <div className="w-2/5 h-full pl-2.5">
+        <div className={`${isMobile ? 'w-full h-1/2' : 'w-2/5'} h-full pl-2.5`}>
           <Viewport 
             selectedComponent={null}
             onComponentPlaced={handleComponentPlaced}
