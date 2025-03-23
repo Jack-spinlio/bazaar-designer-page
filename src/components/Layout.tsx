@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Sidebar, ComponentItem } from './Sidebar';
 import { PrefabSidebar, PrefabItem } from './PrefabSidebar';
@@ -252,30 +251,24 @@ export const Layout: React.FC<LayoutProps> = ({
         </div>
       </header>
       
-      <div className="flex flex-1 overflow-hidden">
-        <IconSidebar />
+      <div className="flex flex-1 overflow-hidden mt-2.5">
+        <div className="flex h-full" style={{ marginLeft: '10px' }}>
+          <IconSidebar />
+        </div>
         
-        {showComponentSidebar && <div className="w-80 transition-all duration-300 ease-in-out" style={{
-        margin: '10px'
-      }}>
+        {showComponentSidebar && <div className="w-80 transition-all duration-300 ease-in-out ml-2.5">
             <Sidebar onSelectComponent={handleComponentSelected} />
           </div>}
 
-        {showPrefabSidebar && <div className="w-80 transition-all duration-300 ease-in-out" style={{
-        margin: '10px'
-      }}>
+        {showPrefabSidebar && <div className="w-80 transition-all duration-300 ease-in-out ml-2.5">
             <PrefabSidebar onSelectPrefab={handlePrefabSelected} />
           </div>}
 
-        {showSavedSidebar && <div className="w-80 transition-all duration-300 ease-in-out" style={{
-        margin: '10px'
-      }}>
+        {showSavedSidebar && <div className="w-80 transition-all duration-300 ease-in-out ml-2.5">
             <SavedSidebar onSelectDesign={handleDesignSelected} />
           </div>}
 
-        <main className={`flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5 ${!showComponentSidebar && !showPrefabSidebar && !showSavedSidebar ? 'w-full' : ''}`} style={{
-        margin: '10px'
-      }}>
+        <main className={`flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5 ${!showComponentSidebar && !showPrefabSidebar && !showSavedSidebar ? 'w-full' : ''}`}>
           <Viewport selectedComponent={selectedComponent} onComponentPlaced={handleComponentPlaced} />
           {children}
         </main>
