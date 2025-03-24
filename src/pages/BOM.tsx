@@ -11,7 +11,17 @@ import {
 } from "@/components/ui/table";
 import { Viewport } from '@/components/Viewport';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { ChevronRight } from 'lucide-react';
+import { 
+  ChevronRight, 
+  FrameIcon, 
+  Battery, 
+  Cog, 
+  Steering, 
+  Disc, 
+  Utensils, 
+  Puzzle, 
+  Grip 
+} from 'lucide-react';
 
 // Type for component data
 interface ComponentData {
@@ -23,6 +33,7 @@ interface ComponentData {
   productionTime: string;
   country: string;
   price: string;
+  icon: React.ReactNode;
 }
 
 const BOM = () => {
@@ -38,7 +49,8 @@ const BOM = () => {
       model: "Saigon S2",
       productionTime: "90 days",
       country: "Vietnam",
-      price: "$97"
+      price: "$97",
+      icon: <FrameIcon size={16} />
     },
     {
       id: "2",
@@ -48,7 +60,8 @@ const BOM = () => {
       model: "G310",
       productionTime: "42 days",
       country: "China",
-      price: "$52"
+      price: "$52",
+      icon: <Cog size={16} />
     },
     {
       id: "3",
@@ -58,7 +71,8 @@ const BOM = () => {
       model: "SW-LCD",
       productionTime: "35 days",
       country: "Taiwan",
-      price: "$41"
+      price: "$41",
+      icon: <Steering size={16} />
     },
     {
       id: "4",
@@ -68,7 +82,8 @@ const BOM = () => {
       model: "HD-E500",
       productionTime: "40 days",
       country: "Taiwan",
-      price: "$36"
+      price: "$36",
+      icon: <Disc size={16} />
     },
     {
       id: "5",
@@ -78,7 +93,8 @@ const BOM = () => {
       model: "TR CVP",
       productionTime: "60 days",
       country: "Netherlands",
-      price: "$141"
+      price: "$141",
+      icon: <Disc size={16} />
     },
     {
       id: "6",
@@ -88,7 +104,8 @@ const BOM = () => {
       model: "36V 14Ah",
       productionTime: "60 days",
       country: "South Korea",
-      price: "$221"
+      price: "$221",
+      icon: <Battery size={16} />
     },
     {
       id: "7",
@@ -98,7 +115,8 @@ const BOM = () => {
       model: "Marathon",
       productionTime: "12 days",
       country: "Vietnam",
-      price: "$6"
+      price: "$6",
+      icon: <Disc size={16} />
     },
     {
       id: "8",
@@ -108,7 +126,8 @@ const BOM = () => {
       model: "NCX E25",
       productionTime: "40 days",
       country: "China",
-      price: "$37"
+      price: "$37",
+      icon: <Utensils size={16} />
     },
     {
       id: "9",
@@ -118,7 +137,8 @@ const BOM = () => {
       model: "Respiro",
       productionTime: "30 days",
       country: "Vietnam",
-      price: "$3"
+      price: "$3",
+      icon: <Puzzle size={16} />
     },
     {
       id: "10",
@@ -128,7 +148,8 @@ const BOM = () => {
       model: "GP1",
       productionTime: "10 days",
       country: "China",
-      price: "$1.3"
+      price: "$1.3",
+      icon: <Grip size={16} />
     }
   ];
 
@@ -169,10 +190,13 @@ const BOM = () => {
                         <div className="flex items-center">
                           <ChevronRight size={18} className="mr-2 text-gray-400" />
                           <div className="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
+                            <div className="absolute w-6 h-6 flex items-center justify-center">
+                              {component.icon}
+                            </div>
                             <img 
                               src={component.image} 
                               alt={component.component} 
-                              className="w-7 h-7 object-contain"
+                              className="w-7 h-7 object-contain opacity-40"
                             />
                           </div>
                         </div>
@@ -195,7 +219,7 @@ const BOM = () => {
         <div className={`${isMobile ? 'w-full h-1/2' : 'w-2/5 xl:w-1/3'} h-full pl-0 md:pl-2.5`}>
           <Viewport 
             selectedComponent={null}
-            onComponentPlaced={handleComponentPlaced}
+            onComponentPlaced={() => console.log('Component placed in the viewport')}
           />
         </div>
       </div>

@@ -11,8 +11,8 @@ interface TimelineChartProps {
 export const TimelineChart: React.FC<TimelineChartProps> = ({
   components
 }) => {
-  // Generate months for the timeline
-  const months = ['November', 'December', 'January'];
+  // Generate months for the timeline - all November to match the image
+  const months = ['November', 'November', 'November'];
   
   // Generate an array of weeks for 3 months
   const weeks = [];
@@ -97,13 +97,13 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
         
         {/* Current position indicator */}
         <div className="relative flex-1">
-          <div className="absolute h-full w-px bg-gray-800 left-[40%] z-10">
+          <div className="absolute h-full w-px bg-gray-800 left-[33%] z-10">
             <div className="w-3 h-3 rounded-full bg-black -ml-1.5 -mt-1"></div>
           </div>
           
           {/* Total timeline row */}
           <div className="flex items-center mb-3">
-            <div className="w-44 pr-2 font-bold text-left flex-shrink-0 bg-white py-2 pl-2 rounded-l-lg">
+            <div className="w-44 pr-2 font-medium text-left flex-shrink-0 bg-gray-600 py-2 pl-2 rounded-l-lg text-white">
               Total Timeline
             </div>
             
@@ -113,14 +113,12 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
           </div>
           
           {/* Component rows */}
-          <div className="space-y-2 mb-4">
+          <div className="space-y-1">
             {sortedComponents.map(component => (
               <div key={component.id} className="flex items-center h-10">
                 {/* Component info */}
-                <div className="w-44 pr-2 flex-shrink-0 flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                    {component.icon}
-                  </div>
+                <div className="w-44 pr-2 flex-shrink-0 flex items-center">
+                  <ChevronRight className="text-gray-400 mr-1" size={16} />
                   <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">{component.name}</span>
                 </div>
                 
@@ -132,11 +130,9 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
                       width: getWidthFromDays(component.days),
                       minWidth: '50px'
                     }} 
-                    className={`absolute h-8 ${getComponentColor(component.id)} rounded-full flex items-center px-2`}
+                    className={`absolute h-8 ${getComponentColor(component.id)} rounded-full flex items-center px-4`}
                   >
-                    <ChevronRight size={16} className="mr-1 flex-shrink-0" />
-                    <span className="text-xs font-medium whitespace-nowrap overflow-hidden text-ellipsis">{component.name}</span>
-                    <span className="text-xs ml-1 whitespace-nowrap">{component.days} days</span>
+                    <span className="text-xs font-medium">{component.days} days</span>
                   </div>
                 </div>
               </div>

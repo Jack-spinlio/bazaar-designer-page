@@ -16,7 +16,23 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { Pencil, Puzzle, FileSpreadsheet, Bookmark } from "lucide-react";
+import {
+  Pencil,
+  Puzzle,
+  FileSpreadsheet,
+  Bookmark,
+  FrameIcon,
+  Battery,
+  Disc,
+  Grip,
+  Lightbulb,
+  Wrench,
+  Unplug,
+  Steering,
+  Utensils,
+  Shield,
+  Cog
+} from "lucide-react";
 import EditToolbar from '@/components/EditToolbar';
 import { TimelineChart } from '@/components/TimelineChart';
 
@@ -30,7 +46,8 @@ const components = [
     model: "Saigon S2",
     productionTime: "90 days",
     country: "Vietnam",
-    price: "$97"
+    price: "$97",
+    icon: <FrameIcon size={16} />
   },
   {
     id: "2",
@@ -40,7 +57,8 @@ const components = [
     model: "G310",
     productionTime: "42 days",
     country: "China",
-    price: "$52"
+    price: "$52",
+    icon: <Cog size={16} />
   },
   {
     id: "3",
@@ -50,7 +68,8 @@ const components = [
     model: "SW-LCD",
     productionTime: "35 days",
     country: "Taiwan",
-    price: "$41"
+    price: "$41",
+    icon: <Steering size={16} />
   },
   {
     id: "4",
@@ -60,7 +79,8 @@ const components = [
     model: "HD-E500",
     productionTime: "40 days",
     country: "Taiwan",
-    price: "$36"
+    price: "$36",
+    icon: <Disc size={16} />
   },
   {
     id: "5",
@@ -70,7 +90,8 @@ const components = [
     model: "TR CVP",
     productionTime: "60 days",
     country: "Netherlands",
-    price: "$141"
+    price: "$141",
+    icon: <Disc size={16} />
   },
   {
     id: "6",
@@ -80,7 +101,8 @@ const components = [
     model: "36V 14Ah",
     productionTime: "60 days",
     country: "South Korea",
-    price: "$221"
+    price: "$221",
+    icon: <Battery size={16} />
   },
   {
     id: "7",
@@ -90,7 +112,8 @@ const components = [
     model: "Marathon",
     productionTime: "12 days",
     country: "Vietnam",
-    price: "$6"
+    price: "$6",
+    icon: <Disc size={16} />
   },
   {
     id: "8",
@@ -100,7 +123,8 @@ const components = [
     model: "NCX E25",
     productionTime: "40 days",
     country: "China",
-    price: "$37"
+    price: "$37",
+    icon: <Utensils size={16} />
   },
   {
     id: "9",
@@ -110,7 +134,8 @@ const components = [
     model: "Respiro",
     productionTime: "30 days",
     country: "Vietnam",
-    price: "$3"
+    price: "$3",
+    icon: <Puzzle size={16} />
   },
   {
     id: "10",
@@ -120,17 +145,18 @@ const components = [
     model: "GP1",
     productionTime: "10 days",
     country: "China",
-    price: "$1.3"
+    price: "$1.3",
+    icon: <Grip size={16} />
   },
 ];
 
 // Timeline data
 const bikeComponents = [
-  { id: '1', name: 'Frame', icon: <Pencil size={18} />, days: 90, color: 'bg-blue-100', startWeek: 1 },
-  { id: '2', name: 'Fork', icon: <Puzzle size={18} />, days: 42, color: 'bg-purple-100', startWeek: 8 },
-  { id: '3', name: 'Motor', icon: <Pencil size={18} />, days: 35, color: 'bg-green-100', startWeek: 9 },
-  { id: '4', name: 'Rear Hub', icon: <FileSpreadsheet size={18} />, days: 40, color: 'bg-pink-100', startWeek: 9 },
-  { id: '5', name: 'Handlebar', icon: <Bookmark size={18} />, days: 60, color: 'bg-cyan-100', startWeek: 8 },
+  { id: '1', name: 'Frame', icon: <FrameIcon size={18} />, days: 90, color: 'bg-blue-100', startWeek: 1 },
+  { id: '2', name: 'Fork', icon: <Utensils size={18} />, days: 42, color: 'bg-purple-100', startWeek: 8 },
+  { id: '3', name: 'Motor', icon: <Cog size={18} />, days: 35, color: 'bg-green-100', startWeek: 9 },
+  { id: '4', name: 'Rear Hub', icon: <Disc size={18} />, days: 40, color: 'bg-pink-100', startWeek: 9 },
+  { id: '5', name: 'Handlebar', icon: <Steering size={18} />, days: 60, color: 'bg-cyan-100', startWeek: 8 },
 ];
 
 const DesignStudio = () => {
@@ -232,10 +258,13 @@ const DesignStudio = () => {
                       <div className="flex items-center">
                         <ChevronRight size={18} className="mr-2 text-gray-400" />
                         <div className="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
+                          <div className="absolute w-6 h-6 flex items-center justify-center">
+                            {component.icon}
+                          </div>
                           <img 
                             src={component.image} 
                             alt={component.component} 
-                            className="w-7 h-7 object-contain"
+                            className="w-7 h-7 object-contain opacity-40"
                           />
                         </div>
                       </div>

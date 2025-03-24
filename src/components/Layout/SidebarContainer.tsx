@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { Sidebar, ComponentItem } from '@/components/Sidebar';
@@ -14,7 +13,20 @@ import {
 } from "@/components/ui/table";
 import { TimelineChart } from '@/components/TimelineChart';
 import EditToolbar from '@/components/EditToolbar';
-import { ChevronRight } from 'lucide-react';
+import { 
+  ChevronRight, 
+  Pencil, 
+  Puzzle, 
+  FileSpreadsheet, 
+  Bookmark,
+  FrameIcon,
+  Battery,
+  Disc,
+  Grip,
+  Steering,
+  Cog,
+  Utensils
+} from 'lucide-react';
 
 interface SidebarContainerProps {
   activeTab: string | null;
@@ -23,7 +35,6 @@ interface SidebarContainerProps {
   onDesignSelected: (design: SavedDesign) => void;
 }
 
-// Updated BOM data with images to match the screenshot
 const components = [
   {
     id: "1",
@@ -33,7 +44,8 @@ const components = [
     model: "Saigon S2",
     productionTime: "90 days",
     country: "Vietnam",
-    price: "$97"
+    price: "$97",
+    icon: <FrameIcon size={16} />
   },
   {
     id: "2",
@@ -43,7 +55,8 @@ const components = [
     model: "G310",
     productionTime: "42 days",
     country: "China",
-    price: "$52"
+    price: "$52",
+    icon: <Cog size={16} />
   },
   {
     id: "3",
@@ -53,7 +66,8 @@ const components = [
     model: "SW-LCD",
     productionTime: "35 days",
     country: "Taiwan",
-    price: "$41"
+    price: "$41",
+    icon: <Steering size={16} />
   },
   {
     id: "4",
@@ -63,7 +77,8 @@ const components = [
     model: "HD-E500",
     productionTime: "40 days",
     country: "Taiwan",
-    price: "$36"
+    price: "$36",
+    icon: <Disc size={16} />
   },
   {
     id: "5",
@@ -73,7 +88,8 @@ const components = [
     model: "TR CVP",
     productionTime: "60 days",
     country: "Netherlands",
-    price: "$141"
+    price: "$141",
+    icon: <Disc size={16} />
   },
   {
     id: "6",
@@ -83,7 +99,8 @@ const components = [
     model: "36V 14Ah",
     productionTime: "60 days",
     country: "South Korea",
-    price: "$221"
+    price: "$221",
+    icon: <Battery size={16} />
   },
   {
     id: "7",
@@ -93,7 +110,8 @@ const components = [
     model: "Marathon",
     productionTime: "12 days",
     country: "Vietnam",
-    price: "$6"
+    price: "$6",
+    icon: <Disc size={16} />
   },
   {
     id: "8",
@@ -103,7 +121,8 @@ const components = [
     model: "NCX E25",
     productionTime: "40 days",
     country: "China",
-    price: "$37"
+    price: "$37",
+    icon: <Utensils size={16} />
   },
   {
     id: "9",
@@ -113,7 +132,8 @@ const components = [
     model: "Respiro",
     productionTime: "30 days",
     country: "Vietnam",
-    price: "$3"
+    price: "$3",
+    icon: <Puzzle size={16} />
   },
   {
     id: "10",
@@ -123,12 +143,10 @@ const components = [
     model: "GP1",
     productionTime: "10 days",
     country: "China",
-    price: "$1.3"
+    price: "$1.3",
+    icon: <Grip size={16} />
   },
 ];
-
-// Timeline data for sample visualization
-import { Pencil, Puzzle, FileSpreadsheet, Bookmark } from "lucide-react";
 
 const bikeComponents = [
   { id: '1', name: 'Frame', icon: <Pencil size={18} />, days: 90, color: 'bg-blue-100', startWeek: 1 },
@@ -144,24 +162,22 @@ export const SidebarContainer: React.FC<SidebarContainerProps> = ({
   onPrefabSelected,
   onDesignSelected
 }) => {
-  // Get sidebar width based on active tab
   const getSidebarWidth = () => {
     switch (activeTab) {
       case "edit":
       case "components":
       case "prefabs":
       case "saved":
-        return "w-[400px]"; // Increased from 300px to 400px to match screenshot
+        return "w-[400px]";
       case "bom":
-        return "w-[750px]";  // Increased from 600px to 750px to match screenshot
+        return "w-[750px]";
       case "timeline":
-        return "w-[800px]"; // Increased from 650px to 800px to match screenshot
+        return "w-[800px]";
       default:
         return "w-0";
     }
   };
 
-  // Show/hide sidebar content based on active tab
   const renderSidebarContent = () => {
     switch (activeTab) {
       case "edit":
@@ -211,10 +227,13 @@ export const SidebarContainer: React.FC<SidebarContainerProps> = ({
                       <div className="flex items-center">
                         <ChevronRight size={18} className="mr-2 text-gray-400" />
                         <div className="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
+                          <div className="absolute w-6 h-6 flex items-center justify-center">
+                            {component.icon}
+                          </div>
                           <img 
                             src={component.image} 
                             alt={component.component} 
-                            className="w-7 h-7 object-contain"
+                            className="w-7 h-7 object-contain opacity-40"
                           />
                         </div>
                       </div>
