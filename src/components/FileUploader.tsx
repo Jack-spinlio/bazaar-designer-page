@@ -132,13 +132,6 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
 
   return (
     <div className="animate-fade-in">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-medium">Upload 3D Component</h3>
-        <Button variant="ghost" size="icon" onClick={onClose}>
-          <X size={18} />
-        </Button>
-      </div>
-      
       <form onSubmit={handleSubmit} className="space-y-4">
         <div
           className={`border-2 border-dashed rounded-lg p-6 transition-colors flex flex-col items-center justify-center ${

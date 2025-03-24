@@ -348,12 +348,16 @@ const DesignStudio = () => {
         </div>
       </div>
 
-      {/* Upload dialog */}
+      {/* Upload dialog - simplified to remove duplicate headers/buttons */}
       <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
         <DialogContent className="sm:max-w-md">
-          <FileUploader onClose={() => setUploadDialogOpen(false)} onFileUploaded={() => {
-          setUploadDialogOpen(false);
-        }} />
+          <h3 className="text-lg font-medium mb-4">Upload 3D Component</h3>
+          <FileUploader 
+            onClose={() => setUploadDialogOpen(false)} 
+            onFileUploaded={() => {
+              setUploadDialogOpen(false);
+            }} 
+          />
         </DialogContent>
       </Dialog>
     </div>;
