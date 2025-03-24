@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -216,7 +217,8 @@ export const ProductParameters: React.FC = () => {
       return;
     }
     
-    const tolerance = 0.005;
+    // Stricter duplicate detection with smaller tolerance
+    const tolerance = 0.001;
     const isDuplicate = snapPoints.some(existing => {
       return (
         Math.abs(existing.position.x - snapPoint.position.x) < tolerance &&
@@ -231,9 +233,12 @@ export const ProductParameters: React.FC = () => {
       return;
     }
     
+    // Generate a unique ID with timestamp + random value to ensure uniqueness
+    const uniqueId = `snap-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    
     const newPoint = {
       ...snapPoint,
-      id: snapPoint.id || `snap-${Date.now()}`,
+      id: uniqueId,
       name: snapPoint.name || 'New Snap Point',
       type: snapPoint.type || 'point',
       compatibility: snapPoint.compatibility || []

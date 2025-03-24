@@ -19,9 +19,31 @@ const Edit = () => {
   };
 
   const handleAddSnapPoint = (snapPoint: SnapPoint) => {
-    setSnapPoints([...snapPoints, snapPoint]);
-    setSelectedSnapPointId(snapPoint.id);
-    toast.success(`Added snap point${snapPoint.parentId ? ' to component' : ''}`);
+    // Check for duplicates with a tight tolerance
+    const tolerance = 0.001;
+    const isDuplicate = snapPoints.some(existing => {
+      return (
+        Math.abs(existing.position.x - snapPoint.position.x) < tolerance &&
+        Math.abs(existing.position.y - snapPoint.position.y) < tolerance &&
+        Math.abs(existing.position.z - snapPoint.position.z) < tolerance
+      );
+    });
+    
+    if (isDuplicate) {
+      toast.error("Duplicate snap point detected");
+      return;
+    }
+    
+    // Create a unique ID
+    const uniqueId = `snap-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const newPoint = {
+      ...snapPoint,
+      id: uniqueId
+    };
+    
+    setSnapPoints([...snapPoints, newPoint]);
+    setSelectedSnapPointId(newPoint.id);
+    toast.success(`Added snap point${newPoint.parentId ? ' to component' : ''}`);
   };
 
   const handleToggleSnapPointMode = () => {

@@ -36,6 +36,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
   const handleClick = (e: any) => {
     if (!isActive) return;
     
+    // Stop event propagation to prevent duplicate handling
     e.stopPropagation();
     
     // Use raycaster to get intersection with meshes in the scene
@@ -70,7 +71,8 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
 
       // Add a small offset in the normal direction to prevent z-fighting and make the point visible
       if (normal) {
-        position.add(normal.multiplyScalar(0.02));
+        const offsetNormal = normal.clone();
+        position.add(offsetNormal.multiplyScalar(0.02));
       }
       
       console.log("Placing snap point at:", position.toArray());
@@ -82,8 +84,17 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
     }
   };
 
+  // Create a transparent plane that only receives clicks for the snap point editor
+  // and doesn't interfere with other scene interactions
   return (
-    <group onClick={handleClick}>
+    <group>
+      {isActive && (
+        <mesh visible={false} onClick={handleClick}>
+          <boxGeometry args={[100, 100, 100]} />
+          <meshBasicMaterial transparent opacity={0} />
+        </mesh>
+      )}
+      
       {isActive && snapPoints.map((point) => (
         <group key={point.id} position={point.position}>
           {/* Point visualization */}
