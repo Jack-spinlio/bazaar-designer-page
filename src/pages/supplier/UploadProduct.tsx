@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -8,21 +7,29 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Upload } from 'lucide-react';
-
 export const UploadProduct: React.FC = () => {
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  
-  const categories = [
-    { id: 'drivetrain', name: 'Drivetrain' },
-    { id: 'braking', name: 'Braking Systems' },
-    { id: 'wheels', name: 'Wheels & Hubs' },
-    { id: 'pedals', name: 'Pedals' },
-    { id: 'ebike', name: 'eBike Components' },
-    { id: 'frame', name: 'Frames' }
-  ];
-
+  const categories = [{
+    id: 'drivetrain',
+    name: 'Drivetrain'
+  }, {
+    id: 'braking',
+    name: 'Braking Systems'
+  }, {
+    id: 'wheels',
+    name: 'Wheels & Hubs'
+  }, {
+    id: 'pedals',
+    name: 'Pedals'
+  }, {
+    id: 'ebike',
+    name: 'eBike Components'
+  }, {
+    id: 'frame',
+    name: 'Frames'
+  }];
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -33,11 +40,10 @@ export const UploadProduct: React.FC = () => {
       reader.readAsDataURL(file);
     }
   };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
-    
+
     // Simulate upload process
     setTimeout(() => {
       setIsUploading(false);
@@ -45,19 +51,9 @@ export const UploadProduct: React.FC = () => {
       navigate('/supplier');
     }, 1500);
   };
-
-  return (
-    <div className="text-left">
+  return <div className="text-left">
       <div className="flex items-center mb-6">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="mr-2"
-          onClick={() => navigate('/supplier')}
-        >
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          Back
-        </Button>
+        
         <h1 className="text-2xl font-bold">Upload New Product</h1>
       </div>
 
@@ -83,9 +79,7 @@ export const UploadProduct: React.FC = () => {
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map(category => (
-                        <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
-                      ))}
+                      {categories.map(category => <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
@@ -100,12 +94,7 @@ export const UploadProduct: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="description">Product Description</Label>
-                <Textarea 
-                  id="description" 
-                  placeholder="Describe your product in detail..." 
-                  className="h-32 text-left" 
-                  required 
-                />
+                <Textarea id="description" placeholder="Describe your product in detail..." className="h-32 text-left" required />
               </div>
 
               <div>
@@ -113,14 +102,7 @@ export const UploadProduct: React.FC = () => {
                 <div className="mt-1 flex items-center">
                   <label className="block w-full">
                     <div className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
-                      {imagePreview ? (
-                        <img 
-                          src={imagePreview} 
-                          alt="Preview" 
-                          className="h-full object-contain"
-                        />
-                      ) : (
-                        <div className="space-y-1 text-center p-4">
+                      {imagePreview ? <img src={imagePreview} alt="Preview" className="h-full object-contain" /> : <div className="space-y-1 text-center p-4">
                           <Upload className="mx-auto h-8 w-8 text-gray-400" />
                           <div className="text-sm text-gray-600">
                             <span className="text-purple-600 font-medium">Click to upload</span> or drag and drop
@@ -128,16 +110,8 @@ export const UploadProduct: React.FC = () => {
                           <p className="text-xs text-gray-500">
                             PNG, JPG, WEBP up to 10MB
                           </p>
-                        </div>
-                      )}
-                      <Input 
-                        id="product-image" 
-                        type="file" 
-                        accept="image/*" 
-                        className="hidden" 
-                        onChange={handleImageChange}
-                        required
-                      />
+                        </div>}
+                      <Input id="product-image" type="file" accept="image/*" className="hidden" onChange={handleImageChange} required />
                     </div>
                   </label>
                 </div>
@@ -154,12 +128,7 @@ export const UploadProduct: React.FC = () => {
                           <span className="text-purple-600 font-medium">Upload 3D model</span>
                         </div>
                       </div>
-                      <Input 
-                        id="model-file" 
-                        type="file" 
-                        accept=".obj,.glb,.gltf" 
-                        className="hidden" 
-                      />
+                      <Input id="model-file" type="file" accept=".obj,.glb,.gltf" className="hidden" />
                     </div>
                   </label>
                 </div>
@@ -171,12 +140,7 @@ export const UploadProduct: React.FC = () => {
           </div>
 
           <div className="flex justify-end pt-4">
-            <Button 
-              type="button" 
-              variant="outline" 
-              className="mr-2"
-              onClick={() => navigate('/supplier')}
-            >
+            <Button type="button" variant="outline" className="mr-2" onClick={() => navigate('/supplier')}>
               Cancel
             </Button>
             <Button type="submit" disabled={isUploading}>
@@ -185,6 +149,5 @@ export const UploadProduct: React.FC = () => {
           </div>
         </form>
       </div>
-    </div>
-  );
+    </div>;
 };
