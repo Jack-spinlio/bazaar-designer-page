@@ -1,5 +1,6 @@
+
 import React, { useEffect, useState } from 'react';
-import { useThree, ThreeEvent } from '@react-three/fiber';
+import { useThree } from '@react-three/fiber';
 import { Plane, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { toast } from 'sonner';
@@ -91,8 +92,20 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
       if (intersects.length > 0) {
         const intersection = intersects[0];
         
-        const isSnapPoint = (intersection.object.parent as any)?.userData?.isSnapPoint;
-        if (isSnapPoint) return;
+        // Check if we're clicking on a snap point
+        let isSnapPointClick = false;
+        const parent = intersection.object.parent;
+        if (parent && parent.userData && parent.userData.isSnapPoint) {
+          isSnapPointClick = true;
+          
+          // Find the snap point ID
+          const snapPointId = parent.userData.id;
+          if (snapPointId) {
+            onSelectSnapPoint(snapPointId === selectedSnapPointId ? null : snapPointId);
+          }
+          
+          return; // Don't place a new snap point
+        }
         
         const position = intersection.point.clone();
         let normal = null;
@@ -123,7 +136,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerdown', handlePointerDown);
     };
-  }, [isActive, isPendingConfirmation, raycaster, camera, scene]);
+  }, [isActive, isPendingConfirmation, raycaster, camera, scene, onSelectSnapPoint, selectedSnapPointId]);
 
   const handleConfirmSnapPoint = () => {
     if (pendingPosition) {
@@ -145,18 +158,6 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
     return `X: ${vector.x.toFixed(2)}, Y: ${vector.y.toFixed(2)}, Z: ${vector.z.toFixed(2)}`;
   };
 
-  const createArrowHelper = (direction: THREE.Vector3, origin: THREE.Vector3, length: number, color: number, headLength?: number, headWidth?: number) => {
-    const arrowHelper = new THREE.ArrowHelper(
-      direction.clone().normalize(),
-      origin,
-      length,
-      color,
-      headLength,
-      headWidth
-    );
-    return arrowHelper;
-  };
-
   return (
     <group>
       {isActive && !isPendingConfirmation && hoverPoint && (
@@ -172,18 +173,19 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
                 args={[0.2, 0.2]} 
                 rotation={[0, 0, 0]} 
                 position={[0, 0, 0]}
-                onPointerMove={(e) => e.stopPropagation()}
               >
                 <meshBasicMaterial color="#22c55e" transparent opacity={0.5} side={THREE.DoubleSide} />
               </Plane>
-              <primitive object={createArrowHelper(
-                hoverNormal,
-                new THREE.Vector3(0, 0, 0),
-                0.3,
-                0x22c55e,
-                0.07,
-                0.07
-              )} />
+              <primitive 
+                object={new THREE.ArrowHelper(
+                  hoverNormal.clone().normalize(),
+                  new THREE.Vector3(0, 0, 0),
+                  0.3,
+                  0x22c55e,
+                  0.07,
+                  0.07
+                )} 
+              />
             </group>
           )}
           
@@ -209,18 +211,19 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
                 args={[0.25, 0.25]} 
                 rotation={[0, 0, 0]} 
                 position={[0, 0, 0]}
-                onPointerMove={(e) => e.stopPropagation()}
               >
                 <meshBasicMaterial color="#f97316" transparent opacity={0.6} side={THREE.DoubleSide} />
               </Plane>
-              <primitive object={createArrowHelper(
-                pendingNormal,
-                new THREE.Vector3(0, 0, 0),
-                0.35,
-                0xf97316,
-                0.08,
-                0.08
-              )} />
+              <primitive 
+                object={new THREE.ArrowHelper(
+                  pendingNormal.clone().normalize(),
+                  new THREE.Vector3(0, 0, 0),
+                  0.35,
+                  0xf97316,
+                  0.08,
+                  0.08
+                )}
+              />
             </group>
           )}
           
@@ -251,11 +254,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
         <group 
           key={snapPoint.id} 
           position={[snapPoint.position.x, snapPoint.position.y, snapPoint.position.z]}
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelectSnapPoint(snapPoint.id === selectedSnapPointId ? null : snapPoint.id);
-          }}
-          userData={{ isSnapPoint: true }}
+          userData={{ isSnapPoint: true, id: snapPoint.id }}
         >
           {snapPoint.type === 'point' ? (
             <mesh>
@@ -278,14 +277,16 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
               </Plane>
               
               {snapPoint.normal && (
-                <primitive object={createArrowHelper(
-                  snapPoint.normal,
-                  new THREE.Vector3(0, 0, 0),
-                  0.3,
-                  selectedSnapPointId === snapPoint.id ? 0xf97316 : 0x0ea5e9,
-                  0.06,
-                  0.06
-                )} />
+                <primitive 
+                  object={new THREE.ArrowHelper(
+                    snapPoint.normal.clone().normalize(),
+                    new THREE.Vector3(0, 0, 0),
+                    0.3,
+                    selectedSnapPointId === snapPoint.id ? 0xf97316 : 0x0ea5e9,
+                    0.06,
+                    0.06
+                  )} 
+                />
               )}
             </group>
           )}

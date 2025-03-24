@@ -112,12 +112,13 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
 
   const handleClick = (e: any) => {
     if (isSnapPointMode) {
-      // When in snap point mode, let the click event propagate to the snap point editor
+      // When in snap point mode, don't stop propagation
       return;
     }
     
     e.stopPropagation();
     onSelect(id);
+    console.log(`Selected object ID: ${id}`);
   };
 
   return (
