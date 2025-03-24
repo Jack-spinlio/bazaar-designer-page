@@ -6,7 +6,7 @@ import { ProductsList } from './ProductsList';
 import { UploadProduct } from './UploadProduct';
 import { EditProfile } from './EditProfile';
 import { EditProduct } from './EditProduct';
-import ProductParameters from './ProductParameters';
+import { ProductParameters } from './ProductParameters';
 import { Header } from '@/components/Header/Header';
 
 const SupplierPage: React.FC = () => {
