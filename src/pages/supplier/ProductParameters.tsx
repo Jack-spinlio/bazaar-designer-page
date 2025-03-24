@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -25,13 +24,12 @@ const mockForkComponent: ComponentItem = {
   shape: 'box',
   modelUrl: '/path/to/model.obj' // This would be replaced with actual model URL
 };
-
 export const ProductParameters: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSaving, setIsSaving] = useState(false);
   const [selectedComponent] = useState<ComponentItem>(mockForkComponent);
-  
+
   // States for form fields
   const [isPublic, setIsPublic] = useState(true);
   const [steererDiameter, setSteererDiameter] = useState('1 1/8 to 1 1/2');
@@ -48,15 +46,9 @@ export const ProductParameters: React.FC = () => {
   const [countryOfOrigin, setCountryOfOrigin] = useState('Taiwan');
   const [fenderMounts, setFenderMounts] = useState('Yes');
   const [description, setDescription] = useState('Project Bike 3d Configurator created so that you can build your existing or future bike with modern technology and 3D graphics. Bike customization has never been so quick and easy, change components, experiment with colors, see how suspension works, show your friends, create the bike of your dream. In the future, we see the project as a online shop or service with which you can easily build and then purchase your bike. Also plans to add other types of bikes, more hardtail, dirt, dh, cross country bikes, road and city bikes.');
-  
   const handleIntendedUseChange = (value: string) => {
-    setIntendedUse(
-      intendedUse.includes(value)
-        ? intendedUse.filter(item => item !== value)
-        : [...intendedUse, value]
-    );
+    setIntendedUse(intendedUse.includes(value) ? intendedUse.filter(item => item !== value) : [...intendedUse, value]);
   };
-
   const handleSave = () => {
     setIsSaving(true);
     // Mock saving process
@@ -66,9 +58,7 @@ export const ProductParameters: React.FC = () => {
       navigate('/supplier');
     }, 1500);
   };
-  
-  return (
-    <div className="text-left">
+  return <div className="text-left">
       <div className="flex items-center mb-4">
         <h1 className="text-2xl font-bold">Product Parameters</h1>
       </div>
@@ -77,7 +67,7 @@ export const ProductParameters: React.FC = () => {
         {/* Left Column - Parameters (30% width) */}
         <div className="w-[33%] overflow-hidden flex flex-col">
           <Tabs defaultValue="parameters" className="w-full">
-            <TabsList className="bg-black text-white rounded-full w-full">
+            <TabsList className="bg-black text-white w-full rounded-xl">
               <TabsTrigger value="parameters" className="rounded-full">Parameters</TabsTrigger>
               <TabsTrigger value="snap-points" className="rounded-full">Snap points</TabsTrigger>
               <TabsTrigger value="surface" className="rounded-full">Surface</TabsTrigger>
@@ -92,11 +82,7 @@ export const ProductParameters: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <span>Public</span>
-                      <Switch 
-                        checked={isPublic} 
-                        onCheckedChange={setIsPublic} 
-                        id="visibility" 
-                      />
+                      <Switch checked={isPublic} onCheckedChange={setIsPublic} id="visibility" />
                     </div>
                   </div>
 
@@ -119,27 +105,15 @@ export const ProductParameters: React.FC = () => {
                       <Label>Intended Use</Label>
                       <div className="flex flex-col gap-1.5">
                         <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="use-ebike" 
-                            checked={intendedUse.includes('E-bike')} 
-                            onCheckedChange={() => handleIntendedUseChange('E-bike')}
-                          />
+                          <Checkbox id="use-ebike" checked={intendedUse.includes('E-bike')} onCheckedChange={() => handleIntendedUseChange('E-bike')} />
                           <label htmlFor="use-ebike">E-bike</label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="use-city" 
-                            checked={intendedUse.includes('City bike')} 
-                            onCheckedChange={() => handleIntendedUseChange('City bike')}
-                          />
+                          <Checkbox id="use-city" checked={intendedUse.includes('City bike')} onCheckedChange={() => handleIntendedUseChange('City bike')} />
                           <label htmlFor="use-city">City bike</label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <Checkbox 
-                            id="use-road" 
-                            checked={intendedUse.includes('Road bike')} 
-                            onCheckedChange={() => handleIntendedUseChange('Road bike')}
-                          />
+                          <Checkbox id="use-road" checked={intendedUse.includes('Road bike')} onCheckedChange={() => handleIntendedUseChange('Road bike')} />
                           <label htmlFor="use-road">Road bike</label>
                         </div>
                       </div>
@@ -205,63 +179,50 @@ export const ProductParameters: React.FC = () => {
 
                     <div className="space-y-2">
                       <Label htmlFor="steerer-length">Steerer tube max length</Label>
-                      <Input id="steerer-length" value={steererMaxLength} onChange={(e) => setSteererMaxLength(e.target.value)} />
+                      <Input id="steerer-length" value={steererMaxLength} onChange={e => setSteererMaxLength(e.target.value)} />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="crown-race">Crown race diameter</Label>
-                      <Input id="crown-race" value={crownRaceDiameter} onChange={(e) => setCrownRaceDiameter(e.target.value)} />
+                      <Input id="crown-race" value={crownRaceDiameter} onChange={e => setCrownRaceDiameter(e.target.value)} />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="rotor-size">Maximum rotor size</Label>
-                      <Input id="rotor-size" value={maxRotorSize} onChange={(e) => setMaxRotorSize(e.target.value)} />
+                      <Input id="rotor-size" value={maxRotorSize} onChange={e => setMaxRotorSize(e.target.value)} />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="brake-routing">Brake hose routing</Label>
-                      <Input id="brake-routing" value={brakeHoseRouting} onChange={(e) => setBrakeHoseRouting(e.target.value)} />
+                      <Input id="brake-routing" value={brakeHoseRouting} onChange={e => setBrakeHoseRouting(e.target.value)} />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="country">Country of origin</Label>
-                      <Input id="country" value={countryOfOrigin} onChange={(e) => setCountryOfOrigin(e.target.value)} />
+                      <Input id="country" value={countryOfOrigin} onChange={e => setCountryOfOrigin(e.target.value)} />
                     </div>
                     
                     <div className="space-y-2">
                       <Label htmlFor="category">Category</Label>
-                      <Input id="category" value={category} onChange={(e) => setCategory(e.target.value)} />
+                      <Input id="category" value={category} onChange={e => setCategory(e.target.value)} />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="fender-mounts">Fender mounts</Label>
-                      <Input id="fender-mounts" value={fenderMounts} onChange={(e) => setFenderMounts(e.target.value)} />
+                      <Input id="fender-mounts" value={fenderMounts} onChange={e => setFenderMounts(e.target.value)} />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="description">Description</Label>
-                      <Textarea 
-                        id="description" 
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="h-32 text-left"
-                      />
+                      <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} className="h-32 text-left" />
                     </div>
                   </div>
 
                   <div className="flex justify-end pt-2">
-                    <Button 
-                      onClick={() => navigate('/supplier')} 
-                      variant="outline" 
-                      className="mr-2"
-                    >
+                    <Button onClick={() => navigate('/supplier')} variant="outline" className="mr-2">
                       Cancel
                     </Button>
-                    <Button 
-                      onClick={handleSave} 
-                      disabled={isSaving}
-                      className="bg-black hover:bg-black/90"
-                    >
+                    <Button onClick={handleSave} disabled={isSaving} className="bg-black hover:bg-black/90">
                       {isSaving ? 'Saving...' : 'Save Product'}
                     </Button>
                   </div>
@@ -271,18 +232,10 @@ export const ProductParameters: React.FC = () => {
               <TabsContent value="snap-points" className="pt-4">
                 <div className="bg-white rounded-lg shadow-sm p-4">
                   <div className="flex justify-end pt-2">
-                    <Button 
-                      onClick={() => navigate('/supplier')} 
-                      variant="outline" 
-                      className="mr-2"
-                    >
+                    <Button onClick={() => navigate('/supplier')} variant="outline" className="mr-2">
                       Cancel
                     </Button>
-                    <Button 
-                      onClick={handleSave} 
-                      disabled={isSaving}
-                      className="bg-black hover:bg-black/90"
-                    >
+                    <Button onClick={handleSave} disabled={isSaving} className="bg-black hover:bg-black/90">
                       {isSaving ? 'Saving...' : 'Save Product'}
                     </Button>
                   </div>
@@ -292,18 +245,10 @@ export const ProductParameters: React.FC = () => {
               <TabsContent value="surface" className="pt-4">
                 <div className="bg-white rounded-lg shadow-sm p-4">
                   <div className="flex justify-end pt-2">
-                    <Button 
-                      onClick={() => navigate('/supplier')} 
-                      variant="outline" 
-                      className="mr-2"
-                    >
+                    <Button onClick={() => navigate('/supplier')} variant="outline" className="mr-2">
                       Cancel
                     </Button>
-                    <Button 
-                      onClick={handleSave} 
-                      disabled={isSaving}
-                      className="bg-black hover:bg-black/90"
-                    >
+                    <Button onClick={handleSave} disabled={isSaving} className="bg-black hover:bg-black/90">
                       {isSaving ? 'Saving...' : 'Save Product'}
                     </Button>
                   </div>
@@ -333,8 +278,6 @@ export const ProductParameters: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ProductParameters;
