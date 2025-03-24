@@ -8,6 +8,7 @@ import Marketplace from './pages/Marketplace';
 import ProducerProfile from './pages/ProducerProfile';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
+import ProductDetail from './pages/ProductDetail';
 import './App.css';
 import { Toaster } from 'sonner';
 import * as THREE from 'three';
@@ -34,6 +35,7 @@ function App() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/producer/:id" element={<ProducerProfile />} />
+        <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster position="top-right" richColors />

@@ -55,7 +55,7 @@ export const ProductPreviewDialog: React.FC<ProductPreviewDialogProps> = ({
   };
   
   const handleViewDetails = () => {
-    // In the future, this will navigate to a product details page
+    // Navigate to product details page
     navigate(`/product/${product.id}`);
     onOpenChange(false);
   };
