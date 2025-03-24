@@ -6,9 +6,11 @@ import { SupplierSidebar } from '@/components/supplier/SupplierSidebar';
 const Uploads = () => {
   return (
     <Layout sidebar={<SupplierSidebar />}>
-      <div className="flex flex-col h-full w-full">
-        <h1 className="text-2xl font-bold p-6">Uploads Page</h1>
-        {/* We'll add the new content here */}
+      <div className="flex flex-col h-full w-full p-6 bg-white rounded-lg">
+        <h1 className="text-2xl font-bold mb-6">Uploads Page</h1>
+        <div className="flex-1 flex items-center justify-center">
+          <p className="text-gray-500">No content yet</p>
+        </div>
       </div>
     </Layout>
   );
