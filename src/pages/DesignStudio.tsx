@@ -7,7 +7,6 @@ import { SavedSidebar, SavedDesign } from '@/components/SavedSidebar';
 import { FileUploader } from '@/components/FileUploader';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Header } from '@/components/Header/Header';
-import { ChevronRight } from 'lucide-react';
 import { 
   Table, 
   TableBody, 
