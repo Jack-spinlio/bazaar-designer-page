@@ -4,6 +4,14 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
+// Mock user data for development when Auth0 is not configured
+const MOCK_USER = {
+  sub: 'mock-user-123',
+  name: 'Demo User',
+  email: 'demo@example.com',
+  picture: 'https://randomuser.me/api/portraits/lego/1.jpg',
+};
+
 // Check if Auth0 is properly configured with better detection
 const isAuth0Configured = () => {
   const domain = import.meta.env.VITE_AUTH0_DOMAIN;
@@ -18,12 +26,14 @@ const isAuth0Configured = () => {
 
 export const useAuth = () => {
   const [isInitialized, setIsInitialized] = useState(false);
+  const [mockIsAuthenticated, setMockIsAuthenticated] = useState(false);
+  const [mockUser, setMockUser] = useState<typeof MOCK_USER | null>(null);
   
   // Use Auth0 hook with error handling
   const auth0 = useAuth0();
   const {
-    user,
-    isAuthenticated,
+    user: auth0User,
+    isAuthenticated: auth0IsAuthenticated,
     isLoading: auth0IsLoading,
     loginWithRedirect,
     loginWithPopup,
@@ -32,11 +42,21 @@ export const useAuth = () => {
     error: auth0Error,
   } = auth0;
 
-  // Combined loading state
-  const isLoading = auth0IsLoading || !isInitialized;
-
-  // Initialize the hook
+  // Load mock authentication state from localStorage on mount
   useEffect(() => {
+    if (!isAuth0Configured()) {
+      const savedAuth = localStorage.getItem('mockAuth');
+      if (savedAuth) {
+        try {
+          const { isAuthenticated, user } = JSON.parse(savedAuth);
+          setMockIsAuthenticated(isAuthenticated);
+          setMockUser(user);
+        } catch (e) {
+          console.error('Error parsing saved mock auth', e);
+        }
+      }
+    }
+    
     // Mark as initialized after a short delay to prevent UI flickering
     const timer = setTimeout(() => {
       setIsInitialized(true);
@@ -57,10 +77,10 @@ export const useAuth = () => {
     }
   }, [auth0Error]);
 
-  // Set the Supabase JWT when a user authenticates
+  // Set the Supabase JWT when a user authenticates with Auth0
   useEffect(() => {
     const setSupabaseSession = async () => {
-      if (isAuthenticated && user) {
+      if (auth0IsAuthenticated && auth0User) {
         try {
           console.log('Attempting to get Auth0 token for Supabase session');
           
@@ -104,13 +124,31 @@ export const useAuth = () => {
     if (isAuth0Configured()) {
       setSupabaseSession();
     }
-  }, [isAuthenticated, user, getAccessTokenSilently]);
+  }, [auth0IsAuthenticated, auth0User, getAccessTokenSilently]);
+
+  // Mock login function for development
+  const mockLogin = () => {
+    console.log('Using mock login');
+    setMockIsAuthenticated(true);
+    setMockUser(MOCK_USER);
+    localStorage.setItem('mockAuth', JSON.stringify({ isAuthenticated: true, user: MOCK_USER }));
+    toast.success('Successfully signed in as Demo User');
+  };
+
+  // Mock logout function for development
+  const mockLogout = () => {
+    console.log('Using mock logout');
+    setMockIsAuthenticated(false);
+    setMockUser(null);
+    localStorage.removeItem('mockAuth');
+    toast.info('Signed out');
+  };
 
   const login = async () => {
-    // If Auth0 is not configured, show a message and return a mock login
+    // If Auth0 is not configured, use mock login
     if (!isAuth0Configured()) {
-      console.warn('Auth0 is not configured. Skipping login.');
-      toast.error('Authentication is not configured. Please contact the administrator.');
+      console.log('Auth0 is not configured. Using mock login.');
+      mockLogin();
       return;
     }
     
@@ -132,22 +170,22 @@ export const useAuth = () => {
   };
 
   const logout = () => {
-    console.log('Logging out user');
+    console.log('Logout called');
     if (isAuth0Configured()) {
       auth0Logout({ logoutParams: { returnTo: window.location.origin } });
     } else {
       // Mock logout for development when Auth0 is not configured
-      console.log('Auth0 not configured, mocking logout');
-      window.location.reload();
+      mockLogout();
     }
   };
 
   // Provide a mock auth object if Auth0 is not configured
   if (!isAuth0Configured() && isInitialized) {
     console.log('Using mock auth implementation');
+    
     return {
-      user: null,
-      isAuthenticated: false,
+      user: mockUser,
+      isAuthenticated: mockIsAuthenticated,
       isLoading: false,
       login,
       logout,
@@ -155,9 +193,9 @@ export const useAuth = () => {
   }
 
   return {
-    user,
-    isAuthenticated,
-    isLoading,
+    user: auth0User,
+    isAuthenticated: auth0IsAuthenticated,
+    isLoading: auth0IsLoading || !isInitialized,
     login,
     logout,
   };

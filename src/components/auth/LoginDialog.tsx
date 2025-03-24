@@ -10,7 +10,7 @@ import {
   DialogFooter
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { LogIn, AlertCircle } from 'lucide-react';
+import { LogIn, AlertCircle, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface LoginDialogProps {
@@ -75,8 +75,8 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
             <div className="bg-yellow-100 text-yellow-800 p-3 rounded-md flex items-start gap-2">
               <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium">Auth0 is not configured</p>
-                <p className="text-sm">Please configure Auth0 environment variables to enable authentication.</p>
+                <p className="font-medium">Using demo mode</p>
+                <p className="text-sm">Auth0 is not configured. You'll be logged in with a demo account.</p>
               </div>
             </div>
           )}
@@ -94,14 +94,16 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
           <Button 
             className="w-full flex items-center justify-center gap-2 bg-black hover:bg-black/90"
             onClick={handleLogin}
-            disabled={isLoggingIn || isLoading || !isAuth0Configured}
+            disabled={isLoggingIn || isLoading}
           >
             {isLoggingIn || isLoading ? (
               <div className="w-5 h-5 border-t-2 border-b-2 border-white rounded-full animate-spin" />
-            ) : (
+            ) : isAuth0Configured ? (
               <LogIn className="h-5 w-5" />
+            ) : (
+              <User className="h-5 w-5" />
             )}
-            {isLoggingIn || isLoading ? 'Signing in...' : 'Sign in with Auth0'}
+            {isLoggingIn || isLoading ? 'Signing in...' : isAuth0Configured ? 'Sign in with Auth0' : 'Sign in with Demo Account'}
           </Button>
         </div>
         
