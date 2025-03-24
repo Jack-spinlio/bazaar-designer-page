@@ -49,6 +49,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
         </div>
         
         <SidebarContainer 
+          activeTab={activeTab}
           onComponentSelected={handleComponentSelected}
           onPrefabSelected={handlePrefabSelected}
           onDesignSelected={handleDesignSelected}
