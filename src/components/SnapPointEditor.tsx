@@ -1,4 +1,3 @@
-
 import React, { useRef, useState } from 'react';
 import * as THREE from 'three';
 import { useThree } from '@react-three/fiber';
@@ -33,7 +32,6 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
   const { raycaster, camera, scene } = useThree();
   const [hoverPoint, setHoverPoint] = useState<string | null>(null);
 
-  // Handle clicks in snap point mode
   const handleClick = (e: any) => {
     if (!isActive) return;
     
@@ -47,7 +45,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
       const position = intersection.point.clone();
       
       // Get the normal at the intersection point if available
-      const normal = intersection.face?.normal.clone();
+      let normal = intersection.face?.normal?.clone();
       
       // Apply the object's transformation to the normal if needed
       if (normal && intersection.object.parent) {
@@ -69,23 +67,20 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
         if (!current.parent) break;
         current = current.parent;
       }
+
+      // Add a small offset in the normal direction to avoid z-fighting
+      if (normal) {
+        position.add(normal.multiplyScalar(0.01));
+      }
       
-      console.log("Placing snap point at:", position);
+      console.log("Placing snap point at:", position.toArray());
       console.log("Object clicked:", clickedObject.type);
-      console.log("Object name:", clickedObject.name);
-      console.log("Object userData:", clickedObject.userData);
       console.log("Parent object:", parentObject ? parentObject.userData.componentName : "null");
       
-      // Call onAddSnapPoint with the position, normal, and parent object
       onAddSnapPoint(position, normal, parentObject);
-    } else {
-      // If no intersection, add a snap point at some distance from the camera
-      const position = new THREE.Vector3(0, 0, -5).applyMatrix4(camera.matrixWorld);
-      onAddSnapPoint(position);
     }
   };
 
-  // Render snap points
   return (
     <group onClick={handleClick}>
       {isActive && snapPoints.map((point) => (
