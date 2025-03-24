@@ -100,11 +100,11 @@ export const SidebarContainer: React.FC<SidebarContainerProps> = ({
       case "components":
       case "prefabs":
       case "saved":
-        return "w-[300px]"; // 300px for standard sidebars
+        return "w-[400px]"; // Increased from 300px to 400px to match screenshot
       case "bom":
-        return "w-[600px]";  // 600px for BOM
+        return "w-[750px]";  // Increased from 600px to 750px to match screenshot
       case "timeline":
-        return "w-[650px]"; // 650px for timeline
+        return "w-[800px]"; // Increased from 650px to 800px to match screenshot
       default:
         return "w-0";
     }
