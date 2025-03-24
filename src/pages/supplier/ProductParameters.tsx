@@ -20,6 +20,7 @@ export const ProductParameters: React.FC = () => {
   const location = useLocation();
   const [isSaving, setIsSaving] = useState(false);
   const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
+  const [modelLoaded, setModelLoaded] = useState(false);
 
   // States for form fields
   const [isPublic, setIsPublic] = useState(true);
@@ -44,17 +45,40 @@ export const ProductParameters: React.FC = () => {
     if (storedProduct) {
       try {
         const productData = JSON.parse(storedProduct);
-        setSelectedComponent(productData);
+        console.log("Loaded product data:", productData);
+        
+        // Create a proper ComponentItem object with all needed properties
+        const component: ComponentItem = {
+          id: productData.id || `product-${Date.now()}`,
+          name: productData.name || 'New Product',
+          type: productData.type || 'STL',
+          thumbnail: productData.thumbnail || '/placeholder.svg',
+          folder: productData.folder || 'Default',
+          shape: productData.shape || 'box',
+          modelUrl: productData.modelUrl || null
+        };
+        
+        setSelectedComponent(component);
+        setModelLoaded(true);
         
         // Set description if available
         if (productData.description) {
           setDescription(productData.description);
         }
+        
+        console.log("Created component object:", component);
+        toast.success("Product data loaded successfully");
       } catch (error) {
         console.error('Error parsing product data:', error);
+        toast.error("Failed to load product data");
       }
+    } else {
+      console.log("No product data found in local storage");
+      toast.error("No product data found. Please upload a product first.");
+      // Navigate back to upload page if no product data is found
+      navigate('/supplier/upload');
     }
-  }, []);
+  }, [navigate]);
 
   const handleIntendedUseChange = (value: string) => {
     setIntendedUse(intendedUse.includes(value) 
@@ -277,7 +301,19 @@ export const ProductParameters: React.FC = () => {
         <div className="w-[70%]">
           <div className="bg-white rounded-lg shadow-sm h-full overflow-hidden relative">
             <div className="h-full">
-              <Viewport selectedComponent={selectedComponent} onComponentPlaced={() => {}} />
+              {selectedComponent && (
+                <>
+                  <Viewport selectedComponent={selectedComponent} onComponentPlaced={() => {}} />
+                  {!modelLoaded && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-white/70">
+                      <div className="flex flex-col items-center gap-2">
+                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black"></div>
+                        <div>Loading 3D Model...</div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
             <div className="absolute bottom-4 right-8 flex space-x-2">
               <Button variant="outline" size="sm">

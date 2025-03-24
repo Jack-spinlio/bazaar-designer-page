@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -43,7 +44,14 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
       }
       
       // Check if we have a model URL to load
-      if (component.modelUrl && (component.type === 'STL' || component.type === 'OBJ' || component.type === 'STP' || component.type === 'STEP')) {
+      if (component.modelUrl && (
+          component.type === 'STL' || 
+          component.type === 'OBJ' || 
+          component.type === 'STP' || 
+          component.type === 'STEP' ||
+          component.type === 'GLB' ||
+          component.type === 'GLTF'
+        )) {
         console.log(`Loading ${component.type} model from ${component.modelUrl}`);
         setIsLoading(true);
         setLoadError(null);
@@ -64,16 +72,19 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
                 model.scale.set(scale, scale, scale);
               }
               
+              // Position the model
+              model.position.set(0, 0, 0);
+              
               // Add to the group
               componentRef.current.add(model);
-              // Removed success toast
+              toast.success(`Model ${component.name} loaded successfully`);
             }
             setIsLoading(false);
           })
           .catch(error => {
             console.error('Error loading model:', error);
             setLoadError(`Failed to load ${component.type} model`);
-            // Removed error toast
+            toast.error(`Failed to load model: ${error.message || 'Unknown error'}`);
             
             // Fallback to basic shape if model loading fails
             const componentMesh = createComponentShape(component.shape);
@@ -84,7 +95,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
           });
       } else {
         // Create the standard component mesh for basic shapes
-        const componentMesh = createComponentShape(component.shape);
+        const componentMesh = createComponentShape(component.shape || 'box');
         componentRef.current.add(componentMesh);
         console.log(`Created basic shape "${component.shape}" for component "${component.name}"`);
       }
@@ -94,7 +105,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
       
       console.log(`Placed component "${component.name}" at position (${position.join(', ')})`);
     }
-  }, [position, component]);
+  }, [component, position]);
 
   const handleClick = (e: any) => {
     e.stopPropagation();
@@ -204,30 +215,41 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
     position: [number, number, number];
   }>>([]);
   const [selectedObjectId, setSelectedObjectId] = useState<string | null>(null);
-  const [hasLoadedCM18, setHasLoadedCM18] = useState(false);
+  const [hasLoadedModel, setHasLoadedModel] = useState(false);
   const location = useLocation();
   const isEditPage = location.pathname === '/edit';
   const isSupplierParameters = location.pathname === '/supplier/parameters';
   
   useEffect(() => {
-    if (!hasLoadedCM18) {
+    // Check if we're on the supplier parameters page and have a model to display
+    if (isSupplierParameters && selectedComponent && !hasLoadedModel) {
+      console.log("Loading product model in parameters page:", selectedComponent);
+      
+      // Place it at the center position
+      setPlacedObjects([
+        { 
+          id: `model-${Date.now()}`, 
+          component: selectedComponent, 
+          position: [0, 0, 0] 
+        }
+      ]);
+      
+      setHasLoadedModel(true);
+      
+    } else if (!hasLoadedModel) {
       try {
-        // Create a simple cube component instead of trying to load a potentially problematic STL
-        const cm18Component: ComponentItem = {
+        // Create a simple cube component as a default
+        const defaultComponent: ComponentItem = {
           id: 'cm18-default',
           name: 'CM18 3D Model',
-          type: 'box', // Use a basic shape type instead of STL
+          type: 'box',
           thumbnail: '/placeholder.svg',
           folder: 'Default Models',
-          shape: 'box', // Basic cube shape is more reliable than loading a file
-          // No modelUrl - we'll use the basic shape instead
+          shape: 'box',
         };
         
-        // If we have a selectedComponent and we're on the supplier parameters page,
-        // use that component instead of the default CM18
-        const componentToPlace = isSupplierParameters && selectedComponent 
-          ? selectedComponent 
-          : cm18Component;
+        // If we have a selectedComponent, use that instead of the default
+        const componentToPlace = selectedComponent || defaultComponent;
         
         // Place it at a default position
         setPlacedObjects([
@@ -238,10 +260,10 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
           }
         ]);
         
-        setHasLoadedCM18(true);
+        setHasLoadedModel(true);
         
-        // Also load a sample box component to demonstrate working Three.js rendering
-        if (!isSupplierParameters) {
+        // Also load a sample box component if needed
+        if (!isSupplierParameters && !selectedComponent) {
           const boxComponent: ComponentItem = {
             id: 'sample-box',
             name: 'Sample Box',
@@ -251,7 +273,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
             shape: 'box',
           };
           
-          // Place it next to the CM18 model
+          // Place it next to the default model
           setPlacedObjects(prev => [
             ...prev,
             { 
@@ -265,11 +287,13 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         console.error('Error loading default models:', error);
       }
     }
-  }, [hasLoadedCM18, selectedComponent, isSupplierParameters]);
+  }, [hasLoadedModel, selectedComponent, isSupplierParameters]);
   
+  // Reset the state when the component changes
   useEffect(() => {
     if (selectedComponent) {
       console.log('Viewport: Selected component changed:', selectedComponent.name);
+      setHasLoadedModel(false);
     }
   }, [selectedComponent]);
 
@@ -309,6 +333,12 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
     }
   };
 
+  const handleFitToView = () => {
+    // This would normally adjust the camera to fit all objects
+    // This is a placeholder for that functionality
+    console.log("Fit to view action requested");
+  };
+
   return (
     <div className="relative w-full h-full bg-white overflow-hidden rounded-2xl">
       <div className="absolute top-4 right-4 z-10">
@@ -316,9 +346,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
           variant="outline"
           size="sm"
           className="flex items-center gap-2 bg-white/90 backdrop-blur-sm"
-          onClick={() => {
-            // Fit to view action
-          }}
+          onClick={handleFitToView}
         >
           <Maximize size={16} />
           <span>Fit to View</span>

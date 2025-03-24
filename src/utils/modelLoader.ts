@@ -1,7 +1,8 @@
-
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { toast } from 'sonner';
 
 // Load an STL file from a URL and return a mesh
 export const loadSTLModel = (
@@ -73,7 +74,7 @@ export const loadSTLModel = (
         },
         (error) => {
           console.error('Error loading STL:', error);
-          // Removed toast error notification
+          toast.error(`Error loading STL model: ${error.message || 'Unknown error'}`);
           if (onError) onError(error);
           resolve(fallbackMesh);
         }
@@ -141,13 +142,78 @@ export const loadOBJModel = (
         },
         (error) => {
           console.error('Error loading OBJ:', error);
-          // Removed toast error notification
+          toast.error(`Error loading OBJ model: ${error.message || 'Unknown error'}`);
           if (onError) onError(error);
           resolve(fallbackMesh);
         }
       );
     } catch (initError) {
       console.error('Error initializing OBJ loader:', initError);
+      if (onError) onError(initError);
+      resolve(fallbackMesh);
+    }
+  });
+};
+
+// Load a GLB/GLTF file from a URL
+export const loadGLTFModel = (
+  url: string,
+  onLoad?: (model: THREE.Group) => void,
+  onProgress?: (event: ProgressEvent) => void,
+  onError?: (error: unknown) => void
+): Promise<THREE.Group> => {
+  return new Promise((resolve, reject) => {
+    console.log(`Starting to load GLTF/GLB model from URL: ${url}`);
+    
+    // Create a fallback mesh in case loading fails
+    const fallbackMesh = createFallbackGroup('GLTF', url);
+    
+    try {
+      const loader = new GLTFLoader();
+      
+      loader.load(
+        url,
+        (gltf) => {
+          console.log(`GLTF/GLB model loaded successfully from ${url}`);
+          try {
+            const model = gltf.scene;
+            
+            // Apply materials to all meshes
+            model.traverse((child) => {
+              if (child instanceof THREE.Mesh) {
+                // Keep original materials for GLTF/GLB as they often have textures
+                if (!child.material) {
+                  child.material = new THREE.MeshStandardMaterial({
+                    color: 0x22c55e,
+                    metalness: 0.3,
+                    roughness: 0.4
+                  });
+                }
+              }
+            });
+            
+            if (onLoad) onLoad(model);
+            resolve(model);
+            console.log('GLTF/GLB model processed successfully');
+          } catch (processingError) {
+            console.error('Error processing GLTF/GLB model:', processingError);
+            if (onError) onError(processingError);
+            resolve(fallbackMesh);
+          }
+        },
+        (progressEvent) => {
+          console.log(`Loading progress: ${progressEvent.loaded} / ${progressEvent.total}`);
+          if (onProgress) onProgress(progressEvent);
+        },
+        (error) => {
+          console.error('Error loading GLTF/GLB:', error);
+          toast.error(`Error loading GLTF/GLB model: ${error.message || 'Unknown error'}`);
+          if (onError) onError(error);
+          resolve(fallbackMesh);
+        }
+      );
+    } catch (initError) {
+      console.error('Error initializing GLTF/GLB loader:', initError);
       if (onError) onError(initError);
       resolve(fallbackMesh);
     }
@@ -185,7 +251,7 @@ export const loadSTPModel = (
     
     if (onLoad) onLoad(group);
     
-    // Removed toast info notification
+    toast.info(`STP/STEP file format can only be displayed as a placeholder`);
     
     resolve(group);
   });
@@ -205,7 +271,7 @@ const createFallbackMesh = (fileType: string, url: string): THREE.Mesh => {
   
   const mesh = new THREE.Mesh(geometry, material);
   
-  // Removed toast error notification
+  toast.error(`Failed to load ${fileType} model from ${url}`);
   
   return mesh;
 };
@@ -227,7 +293,7 @@ const createFallbackGroup = (fileType: string, url: string): THREE.Group => {
   const mesh = new THREE.Mesh(geometry, material);
   group.add(mesh);
   
-  // Removed toast error notification
+  toast.error(`Failed to load ${fileType} model from ${url}`);
   
   return group;
 };
@@ -247,6 +313,9 @@ export const loadModel = async (
     } else if (lowerType === 'obj') {
       console.log('Using OBJ loader for', url);
       return await loadOBJModel(url);
+    } else if (lowerType === 'glb' || lowerType === 'gltf') {
+      console.log('Using GLTF loader for', url);
+      return await loadGLTFModel(url);
     } else if (lowerType === 'step' || lowerType === 'stp') {
       console.log('Using STP placeholder for', url);
       return await loadSTPModel(url);
@@ -268,7 +337,7 @@ export const loadModel = async (
       wireframe: true
     });
     
-    // Removed toast error notification
+    toast.error(`Failed to load 3D model: ${error instanceof Error ? error.message : 'Unknown error'}`);
     
     return new THREE.Mesh(geometry, material);
   }
