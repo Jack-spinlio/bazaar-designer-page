@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -217,6 +216,21 @@ export const ProductParameters: React.FC = () => {
       return;
     }
     
+    const tolerance = 0.01;
+    const isDuplicate = snapPoints.some(existing => {
+      return (
+        Math.abs(existing.position.x - snapPoint.position.x) < tolerance &&
+        Math.abs(existing.position.y - snapPoint.position.y) < tolerance &&
+        Math.abs(existing.position.z - snapPoint.position.z) < tolerance
+      );
+    });
+    
+    if (isDuplicate) {
+      console.log("Duplicate snap point detected, ignoring");
+      toast.error("Duplicate snap point detected at this position");
+      return;
+    }
+    
     setSnapPoints([...snapPoints, snapPoint]);
     setSelectedSnapPointId(snapPoint.id);
     setActiveSnapPoint(snapPoint);
@@ -231,6 +245,8 @@ export const ProductParameters: React.FC = () => {
         console.log(`- Local position: (${snapPoint.localPosition.x.toFixed(3)}, ${snapPoint.localPosition.y.toFixed(3)}, ${snapPoint.localPosition.z.toFixed(3)})`);
       }
     }
+    
+    toast.success("Snap point added successfully");
   };
 
   const handleSnapPointDeleted = (id: string) => {
@@ -483,5 +499,4 @@ export const ProductParameters: React.FC = () => {
   );
 };
 
-// Add this line to provide both named and default exports
 export default ProductParameters;

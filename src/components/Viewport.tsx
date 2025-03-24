@@ -72,6 +72,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
               
               model.position.set(0, 0, 0);
               
+              // Set userData on the model and all its children to enable snap point placement
               model.userData = { 
                 ...model.userData, 
                 componentId: id, 
@@ -136,7 +137,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
 
   const handleClick = (e: any) => {
     if (isSnapPointMode) {
-      console.log("Click in snap point mode, not capturing");
+      // In snap point mode, don't select the object - let the snap point editor handle the click
       return;
     }
     
@@ -212,6 +213,54 @@ const Scene: React.FC<SceneProps> = ({
     }
   };
 
+  const handleSnapPointAdded = (position: THREE.Vector3, normal?: THREE.Vector3, parentObject?: THREE.Object3D) => {
+    if (onSnapPointAdded) {
+      const id = `snap-${Date.now()}`;
+      
+      let parentId: string | undefined = undefined;
+      let localPosition: THREE.Vector3 | undefined = undefined;
+      let localNormal: THREE.Vector3 | undefined = undefined;
+      
+      if (parentObject && parentObject.userData?.componentId) {
+        parentId = parentObject.userData.componentId;
+        
+        // Calculate local position relative to parent
+        const invMatrix = new THREE.Matrix4().copy(parentObject.matrixWorld).invert();
+        localPosition = position.clone().applyMatrix4(invMatrix);
+        
+        if (normal) {
+          // Calculate local normal relative to parent
+          const invNormalMatrix = new THREE.Matrix3().getNormalMatrix(invMatrix);
+          localNormal = normal.clone().applyMatrix3(invNormalMatrix).normalize();
+        }
+        
+        console.log(`Attached snap point to parent: ${parentId}`);
+        console.log(`Local position: ${localPosition.x.toFixed(3)}, ${localPosition.y.toFixed(3)}, ${localPosition.z.toFixed(3)}`);
+      }
+      
+      const newSnapPoint: SnapPoint = {
+        id,
+        name: 'New Snap Point',
+        type: normal ? 'plane' : 'point',
+        position: position,
+        compatibility: [],
+        parentId,
+        localPosition,
+      };
+      
+      if (normal) {
+        newSnapPoint.normal = normal;
+      }
+      
+      if (localNormal) {
+        newSnapPoint.localNormal = localNormal;
+      }
+      
+      onSnapPointAdded(newSnapPoint);
+      console.log("Added snap point:", newSnapPoint);
+    }
+  };
+
   return (
     <>
       <PerspectiveCamera makeDefault position={[5, 5, 5]} />
@@ -245,7 +294,7 @@ const Scene: React.FC<SceneProps> = ({
       <SnapPointEditor
         isActive={isSnapPointMode}
         snapPoints={snapPoints}
-        onAddSnapPoint={onSnapPointAdded}
+        onAddSnapPoint={handleSnapPointAdded}
         selectedSnapPointId={selectedSnapPointId}
         onSelectSnapPoint={onSelectSnapPoint}
       />
@@ -399,49 +448,9 @@ export const Viewport: React.FC<ViewportProps> = ({
     console.log("Fit to view action requested");
   };
 
-  const handleSnapPointAdded = (position: THREE.Vector3, normal?: THREE.Vector3, parentObject?: THREE.Object3D) => {
+  const handleSnapPointAdded = (snapPoint: SnapPoint) => {
     if (onSnapPointAdded) {
-      const id = `snap-${Date.now()}`;
-      
-      let parentId: string | undefined = undefined;
-      let localPosition: THREE.Vector3 | undefined = undefined;
-      let localNormal: THREE.Vector3 | undefined = undefined;
-      
-      if (parentObject && parentObject.userData?.componentId) {
-        parentId = parentObject.userData.componentId;
-        
-        const invMatrix = new THREE.Matrix4().copy(parentObject.matrixWorld).invert();
-        localPosition = position.clone().applyMatrix4(invMatrix);
-        
-        if (normal) {
-          const invNormalMatrix = new THREE.Matrix3().getNormalMatrix(invMatrix);
-          localNormal = normal.clone().applyMatrix3(invNormalMatrix).normalize();
-        }
-        
-        console.log(`Attached snap point to parent: ${parentId}`);
-        console.log(`Local position: ${localPosition.x.toFixed(3)}, ${localPosition.y.toFixed(3)}, ${localPosition.z.toFixed(3)}`);
-      }
-      
-      const newSnapPoint: SnapPoint = {
-        id,
-        name: 'New Snap Point',
-        type: normal ? 'plane' : 'point',
-        position: position,
-        compatibility: [],
-        parentId,
-        localPosition,
-      };
-      
-      if (normal) {
-        newSnapPoint.normal = normal;
-      }
-      
-      if (localNormal) {
-        newSnapPoint.localNormal = localNormal;
-      }
-      
-      onSnapPointAdded(newSnapPoint);
-      console.log("Added snap point:", newSnapPoint);
+      onSnapPointAdded(snapPoint);
     }
   };
 
