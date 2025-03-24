@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { BrowserRouter as Router } from 'react-router-dom';
 import DesignStudio from './pages/DesignStudio';
 import Marketplace from './pages/Marketplace';
 import ProducerProfile from './pages/ProducerProfile';
@@ -11,6 +10,7 @@ import SupplierPage from './pages/supplier/SupplierPage';
 import './App.css';
 import { Toaster } from 'sonner';
 import * as THREE from 'three';
+import Edit from './pages/Edit';
 
 // Augment the window interface to include THREE
 declare global {
@@ -30,6 +30,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/marketplace" replace />} />
         <Route path="/design" element={<DesignStudio />} />
+        <Route path="/edit" element={<Edit />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/producer/:id" element={<ProducerProfile />} />
         <Route path="/product/:id" element={<ProductDetail />} />
