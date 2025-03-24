@@ -14,7 +14,6 @@ import {
 import { TimelineChart } from '@/components/TimelineChart';
 import EditToolbar from '@/components/EditToolbar';
 import { 
-  ChevronRight, 
   Pencil, 
   Puzzle, 
   FileSpreadsheet, 
@@ -229,7 +228,7 @@ export const SidebarContainer: React.FC<SidebarContainerProps> = ({
                   <TableHead>Component</TableHead>
                   <TableHead>Manufacturer</TableHead>
                   <TableHead>Model</TableHead>
-                  <TableHead>Production time</TableHead>
+                  <TableHead className="whitespace-nowrap">Production Time</TableHead>
                   <TableHead>Country</TableHead>
                   <TableHead>Price</TableHead>
                 </TableRow>
@@ -239,7 +238,6 @@ export const SidebarContainer: React.FC<SidebarContainerProps> = ({
                   <TableRow key={component.id} className="cursor-pointer hover:bg-gray-50">
                     <TableCell className="w-[40px]">
                       <div className="flex items-center">
-                        <ChevronRight size={18} className="mr-2 text-gray-400" />
                         <div className="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
                           <div className="absolute w-6 h-6 flex items-center justify-center">
                             {component.icon}

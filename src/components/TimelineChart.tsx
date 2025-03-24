@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { BikeComponent } from '@/pages/Timeline';
-import { ChevronRight } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface TimelineChartProps {
@@ -11,8 +10,8 @@ interface TimelineChartProps {
 export const TimelineChart: React.FC<TimelineChartProps> = ({
   components
 }) => {
-  // Generate months for the timeline - all November to match the image
-  const months = ['November', 'November', 'November'];
+  // Generate months for the timeline - now using three different months
+  const months = ['November', 'December', 'January'];
   
   // Generate an array of weeks for 3 months
   const weeks = [];
@@ -118,8 +117,7 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
               <div key={component.id} className="flex items-center h-10">
                 {/* Component info */}
                 <div className="w-44 pr-2 flex-shrink-0 flex items-center">
-                  <ChevronRight className="text-gray-400 mr-1" size={16} />
-                  <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">{component.name}</span>
+                  <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis pl-2">{component.name}</span>
                 </div>
                 
                 {/* Timeline bar */}

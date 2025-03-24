@@ -50,7 +50,7 @@ export const Header: React.FC = () => {
                 <Link to="/marketplace">Marketplace</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link to="/design">Design Interface</Link>
+                <Link to="/design">Design</Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link to="/saved">Saved Designs</Link>

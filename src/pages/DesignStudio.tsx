@@ -258,6 +258,7 @@ const bikeComponents = [
     startWeek: 8
   }
 ];
+
 const DesignStudio = () => {
   // State for active tab
   const [activeTab, setActiveTab] = useState<string | null>("edit");
@@ -352,7 +353,7 @@ const DesignStudio = () => {
                   <TableRow key={component.id} className="cursor-pointer hover:bg-gray-50">
                     <TableCell className="w-[40px]">
                       <div className="flex items-center">
-                        <div className="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center">
+                        <div className="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
                           {component.icon}
                         </div>
                       </div>
