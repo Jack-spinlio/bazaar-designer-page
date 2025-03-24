@@ -16,6 +16,7 @@ import { ComponentItem } from '@/components/Sidebar';
 import { SnapPointTools } from '@/components/SnapPointTools';
 import { SnapPoint } from '@/components/SnapPointEditor';
 import * as THREE from 'three';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 
 export const ProductParameters: React.FC = () => {
   const navigate = useNavigate();
@@ -45,6 +46,13 @@ export const ProductParameters: React.FC = () => {
   const [isSnapPointMode, setIsSnapPointMode] = useState(false);
   const [selectedSnapPointId, setSelectedSnapPointId] = useState<string | null>(null);
   const [activeSnapPoint, setActiveSnapPoint] = useState<SnapPoint | null>(null);
+
+  const [showSnapPointDialog, setShowSnapPointDialog] = useState(false);
+  const [snapPointX, setSnapPointX] = useState("0");
+  const [snapPointY, setSnapPointY] = useState("0");
+  const [snapPointZ, setSnapPointZ] = useState("0");
+  const [snapPointType, setSnapPointType] = useState<'point' | 'plane'>('point');
+  const [snapPointName, setSnapPointName] = useState("New Snap Point");
 
   useEffect(() => {
     const storedProduct = localStorage.getItem('currentUploadedProduct');
@@ -291,6 +299,110 @@ export const ProductParameters: React.FC = () => {
     }
   };
 
+  const handleOpenSnapPointDialog = () => {
+    setShowSnapPointDialog(true);
+  };
+
+  const handleAddManualSnapPoint = () => {
+    try {
+      const x = parseFloat(snapPointX);
+      const y = parseFloat(snapPointY);
+      const z = parseFloat(snapPointZ);
+      
+      if (isNaN(x) || isNaN(y) || isNaN(z)) {
+        toast.error("Please enter valid numbers for coordinates");
+        return;
+      }
+      
+      const newSnapPoint: SnapPoint = {
+        id: `snap-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+        name: snapPointName || "New Snap Point",
+        type: snapPointType,
+        position: new THREE.Vector3(x, y, z),
+        compatibility: []
+      };
+      
+      handleSnapPointAdded(newSnapPoint);
+      setShowSnapPointDialog(false);
+      
+      setSnapPointX("0");
+      setSnapPointY("0");
+      setSnapPointZ("0");
+      setSnapPointName("New Snap Point");
+    } catch (error) {
+      console.error("Error adding manual snap point:", error);
+      toast.error("Failed to add snap point");
+    }
+  };
+
+  const handleAddPredefinedSnapPoints = (positions: Array<[number, number, number]>) => {
+    let addedCount = 0;
+    
+    positions.forEach(([x, y, z]) => {
+      const newSnapPoint: SnapPoint = {
+        id: `snap-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
+        name: `Point ${addedCount + 1}`,
+        type: 'point',
+        position: new THREE.Vector3(x, y, z),
+        compatibility: []
+      };
+      
+      const tolerance = 0.001;
+      const isDuplicate = snapPoints.some(existing => 
+        Math.abs(existing.position.x - x) < tolerance &&
+        Math.abs(existing.position.y - y) < tolerance &&
+        Math.abs(existing.position.z - z) < tolerance
+      );
+      
+      if (!isDuplicate) {
+        handleSnapPointAdded(newSnapPoint);
+        addedCount++;
+      }
+    });
+    
+    if (addedCount > 0) {
+      toast.success(`Added ${addedCount} predefined snap points`);
+    } else {
+      toast.info("No new snap points were added (duplicates detected)");
+    }
+  };
+
+  const handleAddCornerSnapPoints = () => {
+    const halfLength = 1.0;
+    const halfHeight = 0.65;
+    const halfWidth = 0.45;
+    
+    const cornerPositions: Array<[number, number, number]> = [
+      [-halfWidth, -halfHeight, -halfLength],
+      [halfWidth, -halfHeight, -halfLength],
+      [-halfWidth, halfHeight, -halfLength],
+      [halfWidth, halfHeight, -halfLength],
+      [-halfWidth, -halfHeight, halfLength],
+      [halfWidth, -halfHeight, halfLength],
+      [-halfWidth, halfHeight, halfLength],
+      [halfWidth, halfHeight, halfLength]
+    ];
+    
+    handleAddPredefinedSnapPoints(cornerPositions);
+  };
+
+  const handleAddAxisSnapPoints = () => {
+    const halfLength = 1.0;
+    const halfHeight = 0.65;
+    const halfWidth = 0.45;
+    
+    const axisPositions: Array<[number, number, number]> = [
+      [0, 0, -halfLength],
+      [0, 0, halfLength],
+      [-halfWidth, 0, 0],
+      [halfWidth, 0, 0],
+      [0, -halfHeight, 0],
+      [0, halfHeight, 0]
+    ];
+    
+    handleAddPredefinedSnapPoints(axisPositions);
+  };
+
   return (
     <div className="text-left">
       <div className="flex items-center mb-4">
@@ -477,17 +589,45 @@ export const ProductParameters: React.FC = () => {
 
               <TabsContent value="snap-points" className="pt-2">
                 {activeTab === 'snap-points' && (
-                  <SnapPointTools 
-                    onClose={() => setActiveTab('parameters')}
-                    onSetActiveSnapPointMode={setIsSnapPointMode}
-                    onSnapPointAdded={handleSnapPointAdded}
-                    onSnapPointDeleted={handleSnapPointDeleted}
-                    onSnapPointUpdated={handleSnapPointUpdated}
-                    activeSnapPoint={activeSnapPoint}
-                    setActiveSnapPoint={setActiveSnapPoint}
-                    snapPoints={snapPoints}
-                    setSnapPoints={setSnapPoints}
-                  />
+                  <>
+                    <SnapPointTools 
+                      onClose={() => setActiveTab('parameters')}
+                      onSetActiveSnapPointMode={setIsSnapPointMode}
+                      onSnapPointAdded={handleSnapPointAdded}
+                      onSnapPointDeleted={handleSnapPointDeleted}
+                      onSnapPointUpdated={handleSnapPointUpdated}
+                      activeSnapPoint={activeSnapPoint}
+                      setActiveSnapPoint={setActiveSnapPoint}
+                      snapPoints={snapPoints}
+                      setSnapPoints={setSnapPoints}
+                    />
+                    
+                    <div className="mt-4 p-4 bg-white rounded-lg shadow-sm space-y-2">
+                      <h3 className="font-medium">Add Snap Points</h3>
+                      <Button 
+                        onClick={handleOpenSnapPointDialog} 
+                        className="w-full"
+                      >
+                        Add Point Manually
+                      </Button>
+                      
+                      <Button 
+                        onClick={handleAddCornerSnapPoints} 
+                        className="w-full"
+                        variant="outline"
+                      >
+                        Add Corner Points
+                      </Button>
+                      
+                      <Button 
+                        onClick={handleAddAxisSnapPoints} 
+                        className="w-full"
+                        variant="outline"
+                      >
+                        Add Center Points
+                      </Button>
+                    </div>
+                  </>
                 )}
               </TabsContent>
 
@@ -520,6 +660,83 @@ export const ProductParameters: React.FC = () => {
           />
         </div>
       </div>
+      
+      <Dialog open={showSnapPointDialog} onOpenChange={setShowSnapPointDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add Snap Point</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="snapPointName">Name</Label>
+              <Input
+                id="snapPointName"
+                value={snapPointName}
+                onChange={(e) => setSnapPointName(e.target.value)}
+              />
+            </div>
+            
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="snapPointX">X Position</Label>
+                <Input
+                  id="snapPointX"
+                  value={snapPointX}
+                  onChange={(e) => setSnapPointX(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="snapPointY">Y Position</Label>
+                <Input
+                  id="snapPointY"
+                  value={snapPointY}
+                  onChange={(e) => setSnapPointY(e.target.value)}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="snapPointZ">Z Position</Label>
+                <Input
+                  id="snapPointZ"
+                  value={snapPointZ}
+                  onChange={(e) => setSnapPointZ(e.target.value)}
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Type</Label>
+              <div className="flex space-x-4">
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    checked={snapPointType === 'point'}
+                    onChange={() => setSnapPointType('point')}
+                  />
+                  <span>Point</span>
+                </label>
+                <label className="flex items-center space-x-2">
+                  <input
+                    type="radio"
+                    checked={snapPointType === 'plane'}
+                    onChange={() => setSnapPointType('plane')}
+                  />
+                  <span>Plane</span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSnapPointDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleAddManualSnapPoint}>
+              Add Snap Point
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
