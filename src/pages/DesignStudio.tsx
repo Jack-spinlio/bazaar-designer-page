@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Viewport } from '@/components/Viewport';
 import { IconSidebar } from '@/components/IconSidebar';
@@ -18,6 +17,8 @@ import {
   TableRow 
 } from "@/components/ui/table";
 import { Pencil, Puzzle, FileSpreadsheet, Bookmark } from "lucide-react";
+import EditToolbar from '@/components/EditToolbar';
+import { TimelineChart } from '@/components/TimelineChart';
 
 // BOM data
 const components = [
