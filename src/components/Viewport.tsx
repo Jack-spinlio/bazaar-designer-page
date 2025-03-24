@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -217,8 +216,6 @@ const Scene: React.FC<SceneProps> = ({
   const handleSnapPointAdded = (position: THREE.Vector3, normal?: THREE.Vector3, parentObject?: THREE.Object3D) => {
     if (!onSnapPointAdded) return;
     
-    const id = `snap-${Date.now()}`;
-    
     let parentId: string | undefined = undefined;
     let localPosition: THREE.Vector3 | undefined = undefined;
     let localNormal: THREE.Vector3 | undefined = undefined;
@@ -241,7 +238,7 @@ const Scene: React.FC<SceneProps> = ({
     }
     
     const newSnapPoint: SnapPoint = {
-      id,
+      id: '', // Will be set by parent component
       name: 'New Snap Point',
       type: normal ? 'plane' : 'point',
       position: position,
@@ -509,4 +506,3 @@ export const Viewport: React.FC<ViewportProps> = ({
     </div>
   );
 };
-

@@ -1,3 +1,4 @@
+
 import React, { useRef, useState, useEffect } from 'react';
 import * as THREE from 'three';
 import { useThree } from '@react-three/fiber';
@@ -49,19 +50,13 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
     };
   }, [isActive]);
 
-  const handleClick = (e: any) => {
-    // Guard conditions
-    if (!isActive || isProcessingClick) return;
-    
-    // Prevent duplicate clicks by setting a processing flag
-    setIsProcessingClick(true);
-    
+  // Find the closest intersection point on any mesh
+  const findClosestMeshIntersection = (e: any): THREE.Intersection | null => {
     // Stop event propagation to prevent duplicate handling
     e.stopPropagation();
     
-    // Use raycaster to get intersection with meshes in the scene
-    // Skip the click handler mesh itself and any snap point visualization meshes
-    const intersects = raycaster.intersectObjects(
+    // Use raycaster to get intersections with all meshes in the scene
+    const intersections = raycaster.intersectObjects(
       scene.children.filter(obj => {
         // Filter out snap point visualizations and the click plane
         const isSnapPointViz = obj.userData && obj.userData.isSnapPointVisualization;
@@ -73,12 +68,29 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
       true
     );
     
-    if (intersects.length > 0) {
-      const intersection = intersects[0];
-      // Get the exact click position without any offset initially
+    // Return the closest intersection (first one)
+    if (intersections.length > 0) {
+      return intersections[0];
+    }
+    
+    return null;
+  };
+
+  const handleClick = (e: any) => {
+    // Guard conditions
+    if (!isActive || isProcessingClick) return;
+    
+    // Prevent duplicate clicks by setting a processing flag
+    setIsProcessingClick(true);
+    
+    // Find the closest mesh intersection
+    const intersection = findClosestMeshIntersection(e);
+    
+    if (intersection) {
+      // Get the exact intersection point on the mesh surface
       const position = intersection.point.clone();
       
-      // Get the normal at the intersection point if available
+      // Get the normal at the intersection point
       let normal = intersection.face?.normal ? intersection.face.normal.clone() : undefined;
       
       // Transform the normal from local object space to world space if needed
@@ -102,27 +114,21 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
         current = current.parent;
       }
       
-      // We'll apply a MUCH smaller offset to prevent z-fighting but maintain accuracy
-      // Only apply offset if we have a normal, otherwise keep the exact position
-      const offsetPosition = position.clone();
-      if (normal) {
-        const offsetNormal = normal.clone();
-        offsetPosition.add(offsetNormal.multiplyScalar(0.005)); // Much smaller offset (0.005 instead of 0.02)
-      }
-      
-      console.log("Placing snap point at:", offsetPosition.toArray());
+      // No offset needed now as we're using the exact intersection point
+      console.log("Placing snap point at exact intersection:", position.toArray());
       console.log("Object clicked:", clickedObject.type);
       console.log("Parent object:", parentObject ? parentObject.userData.componentName : "null");
+      console.log("Distance from camera:", camera.position.distanceTo(position));
       
-      // Use the offsetPosition for the snap point
-      onAddSnapPoint(offsetPosition, normal, parentObject);
+      // Use the exact intersection point for the snap point
+      onAddSnapPoint(position, normal, parentObject);
       
       // Reset processing flag after a short delay
       clickTimeout.current = setTimeout(() => {
         setIsProcessingClick(false);
       }, 300);
     } else {
-      // Reset processing flag if no intersection
+      console.log("No mesh intersection found");
       setIsProcessingClick(false);
     }
   };
@@ -149,7 +155,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
         >
           {/* Point visualization - smaller size for more precise positioning */}
           <mesh
-            scale={selectedSnapPointId === point.id ? 0.1 : 0.07}
+            scale={selectedSnapPointId === point.id ? 0.08 : 0.05}
             onClick={(e) => {
               e.stopPropagation();
               onSelectSnapPoint(point.id);
