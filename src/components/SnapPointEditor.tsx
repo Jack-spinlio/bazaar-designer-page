@@ -131,6 +131,19 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
     return `X: ${vector.x.toFixed(2)}, Y: ${vector.y.toFixed(2)}, Z: ${vector.z.toFixed(2)}`;
   };
 
+  // Fix: Create arrow helper manually instead of using the JSX element
+  const createArrowHelper = (direction: THREE.Vector3, origin: THREE.Vector3, length: number, color: number, headLength?: number, headWidth?: number) => {
+    const arrowHelper = new THREE.ArrowHelper(
+      direction.clone().normalize(),
+      origin,
+      length,
+      color,
+      headLength,
+      headWidth
+    );
+    return arrowHelper;
+  };
+
   return (
     <group>
       {/* Hover indicator */}
@@ -152,16 +165,14 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
               >
                 <meshBasicMaterial color="#22c55e" transparent opacity={0.5} side={THREE.DoubleSide} />
               </Plane>
-              <arrowHelper 
-                args={[
-                  hoverNormal, 
-                  new THREE.Vector3(0, 0, 0), 
-                  0.25, // Longer arrow 
-                  0x22c55e,
-                  0.05, // Larger head
-                  0.05  // Larger head width
-                ]} 
-              />
+              <primitive object={createArrowHelper(
+                hoverNormal,
+                new THREE.Vector3(0, 0, 0),
+                0.25,
+                0x22c55e,
+                0.05,
+                0.05
+              )} />
             </group>
           )}
           
@@ -193,16 +204,14 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
               >
                 <meshBasicMaterial color="#f97316" transparent opacity={0.6} side={THREE.DoubleSide} />
               </Plane>
-              <arrowHelper 
-                args={[
-                  pendingNormal, 
-                  new THREE.Vector3(0, 0, 0), 
-                  0.3, // Longer arrow
-                  0xf97316,
-                  0.06, // Larger head
-                  0.06  // Larger head width
-                ]} 
-              />
+              <primitive object={createArrowHelper(
+                pendingNormal,
+                new THREE.Vector3(0, 0, 0),
+                0.3,
+                0xf97316,
+                0.06,
+                0.06
+              )} />
             </group>
           )}
           
@@ -261,16 +270,14 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
               </Plane>
               
               {snapPoint.normal && (
-                <arrowHelper 
-                  args={[
-                    snapPoint.normal, 
-                    new THREE.Vector3(0, 0, 0), 
-                    0.25, // Longer arrow
-                    selectedSnapPointId === snapPoint.id ? 0xf97316 : 0x0ea5e9,
-                    0.05, // Larger head
-                    0.05  // Larger head width
-                  ]} 
-                />
+                <primitive object={createArrowHelper(
+                  snapPoint.normal,
+                  new THREE.Vector3(0, 0, 0),
+                  0.25,
+                  selectedSnapPointId === snapPoint.id ? 0xf97316 : 0x0ea5e9,
+                  0.05,
+                  0.05
+                )} />
               )}
             </group>
           )}
@@ -279,7 +286,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
           {selectedSnapPointId === snapPoint.id && (
             <mesh>
               <boxGeometry args={[0.25, 0.25, 0.25]} />
-              <meshBasicMaterial color="#ff3d00" wireframe={true} wireframeLinewidth={2} />
+              <meshBasicMaterial color="#FF5733" wireframe={true} wireframeLinewidth={2} />
             </mesh>
           )}
           
