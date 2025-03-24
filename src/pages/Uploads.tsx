@@ -3,13 +3,20 @@ import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { Upload, X, FileType } from 'lucide-react';
+import { Upload, X, FileType, Download, Trash2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useNavigate } from 'react-router-dom';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle,
+  DialogClose
+} from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
 const Uploads = () => {
-  const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [dragging, setDragging] = useState(false);
   const [componentName, setComponentName] = useState('');
@@ -62,10 +69,6 @@ const Uploads = () => {
     setComponentName(nameWithoutExtension);
   };
   
-  const handleClose = () => {
-    navigate('/edit');
-  };
-  
   const handleUpload = async () => {
     if (!file) {
       toast.error('Please select a file to upload');
@@ -116,129 +119,131 @@ const Uploads = () => {
 
   return (
     <Layout>
-      <div className="p-6 max-w-4xl mx-auto">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold">Supplier Dashboard</h1>
-          <p className="text-gray-600">Upload and manage your components for the marketplace</p>
-        </div>
-        
-        <div className="bg-white p-6 rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-4">Upload New Component</h2>
-          
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">What are you uploading?</label>
-              <input 
-                type="text" 
-                value={componentName}
-                onChange={(e) => setComponentName(e.target.value)}
-                className="w-full p-2 border rounded"
-                placeholder="Enter product name"
-              />
-            </div>
+      <div className="h-screen w-full bg-gradient-to-br from-gray-800 to-black">
+        <div className="max-w-2xl mx-auto pt-24">
+          <Card className="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+            <DialogHeader className="p-6 border-b">
+              <DialogTitle className="text-xl font-semibold text-center">List a Product</DialogTitle>
+              <p className="text-gray-500 text-sm text-center">What are you uploading?</p>
+              <DialogClose className="absolute right-4 top-4">
+                <X className="h-4 w-4" />
+              </DialogClose>
+            </DialogHeader>
             
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Category</label>
-              <select 
-                className="w-full p-2 border rounded" 
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              >
-                <option value="">Select category</option>
-                <option value="fork">Fork</option>
-                <option value="frame">Frame</option>
-                <option value="handlebar">Handlebar</option>
-                <option value="wheel">Wheel</option>
-                <option value="saddle">Saddle</option>
-              </select>
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Sub Category</label>
-              <select 
-                className="w-full p-2 border rounded"
-                value={subCategory}
-                onChange={(e) => setSubCategory(e.target.value)}
-              >
-                <option value="">Select sub-category</option>
-                <option value="rigid">Rigid</option>
-                <option value="suspension">Suspension</option>
-                <option value="carbon">Carbon</option>
-                <option value="aluminum">Aluminum</option>
-              </select>
-            </div>
-            
-            <div
-              className={`border-2 border-dashed rounded-lg p-6 transition-colors flex flex-col items-center justify-center ${
-                dragging
-                  ? 'border-blue-500 bg-blue-50'
-                  : file
-                  ? 'border-green-500 bg-green-50'
-                  : 'border-gray-300 hover:border-blue-400 hover:bg-blue-50'
-              }`}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-            >
-              {file ? (
-                <div className="text-center">
-                  <FileType size={40} className="mx-auto mb-2 text-green-500" />
-                  <p className="font-medium text-gray-800">{file.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {(file.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                  <div className="flex justify-center space-x-2 mt-2">
-                    <button
-                      type="button"
-                      className="flex items-center text-red-500 hover:text-red-700"
-                      onClick={handleRemoveFile}
-                    >
-                      <X size={16} className="mr-1" />
-                      Remove
-                    </button>
-                  </div>
+            <CardContent className="p-6 space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Category</label>
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Fork" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fork">Fork</SelectItem>
+                    <SelectItem value="frame">Frame</SelectItem>
+                    <SelectItem value="handlebar">Handlebar</SelectItem>
+                    <SelectItem value="wheel">Wheel</SelectItem>
+                    <SelectItem value="saddle">Saddle</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">Sub Category</label>
+                <Select value={subCategory} onValueChange={setSubCategory}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Rigid" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="rigid">Rigid</SelectItem>
+                    <SelectItem value="suspension">Suspension</SelectItem>
+                    <SelectItem value="carbon">Carbon</SelectItem>
+                    <SelectItem value="aluminum">Aluminum</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="mt-6">
+                <div
+                  className={`border-2 border-dashed rounded-xl p-8 transition-colors flex flex-col items-center justify-center ${
+                    dragging
+                      ? 'border-gray-400 bg-gray-50'
+                      : file
+                      ? 'border-gray-300 bg-gray-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                >
+                  {!file ? (
+                    <>
+                      <div className="bg-gray-100 p-4 rounded-full mb-4">
+                        <Upload size={24} className="text-gray-400" />
+                      </div>
+                      <p className="text-sm font-medium text-gray-700 mb-1 text-center">
+                        Drag and drop or click to choose your .gh or .ghx file here
+                      </p>
+                      <p className="text-xs text-gray-500 text-center">
+                        Max file size: 10 MB
+                      </p>
+                      <input
+                        type="file"
+                        id="file-upload"
+                        className="hidden"
+                        accept={allowedTypes.join(',')}
+                        onChange={handleFileChange}
+                      />
+                      <label htmlFor="file-upload">
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          size="sm"
+                          className="mt-4"
+                        >
+                          Browse Files
+                        </Button>
+                      </label>
+                    </>
+                  ) : (
+                    <div className="w-full">
+                      <div className="flex items-center border rounded-lg p-3 bg-white">
+                        <div className="bg-red-100 p-2 rounded mr-3">
+                          <FileType size={20} className="text-red-500" />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-sm font-medium">{file.name}</p>
+                          <p className="text-xs text-gray-500">{Math.round(file.size / 1024)}kb</p>
+                        </div>
+                        <div className="flex space-x-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-gray-500 hover:text-gray-700">
+                            <Download size={16} />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8 rounded-full text-gray-500 hover:text-red-600"
+                            onClick={handleRemoveFile}
+                          >
+                            <Trash2 size={16} />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <>
-                  <div className="text-center">
-                    <Upload size={40} className="mx-auto mb-2 text-gray-400" />
-                    <p className="text-sm font-medium text-gray-700 mb-1">
-                      Drag and drop or click to choose your .gh or .ghx file here
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Max file size: 10 MB
-                    </p>
-                    <input
-                      type="file"
-                      id="file-upload"
-                      className="hidden"
-                      accept={allowedTypes.join(',')}
-                      onChange={handleFileChange}
-                    />
-                    <label htmlFor="file-upload">
-                      <Button 
-                        type="button" 
-                        variant="outline" 
-                        size="sm"
-                        className="mt-3"
-                      >
-                        Select File
-                      </Button>
-                    </label>
-                  </div>
-                </>
-              )}
-            </div>
+              </div>
+            </CardContent>
             
-            <div className="flex justify-end space-x-2 pt-3">
+            <CardFooter className="flex justify-center p-6 pt-0">
               <Button 
+                className="w-full bg-black hover:bg-gray-800 text-white rounded-full py-6"
                 onClick={handleUpload} 
                 disabled={!file || !componentName || isUploading}
               >
                 {isUploading ? 'Uploading...' : 'Upload'}
               </Button>
-            </div>
-          </div>
+            </CardFooter>
+          </Card>
         </div>
       </div>
     </Layout>

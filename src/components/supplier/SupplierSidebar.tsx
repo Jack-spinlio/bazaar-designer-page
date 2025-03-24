@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Sidebar,
@@ -8,8 +8,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
-  SidebarTrigger,
-  SidebarHeader
 } from '@/components/ui/sidebar';
 import {
   LayoutDashboard,
@@ -18,56 +16,34 @@ import {
   ShoppingCart,
   MessageSquare,
   Settings,
-  ChevronLeft,
-  ChevronRight
+  Monitor,
+  Wrench
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 export const SupplierSidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [minimized, setMinimized] = useState(false);
   
   const isActive = (path: string) => {
     return location.pathname === path || location.pathname.startsWith(`${path}/`);
   };
   
-  const toggleMinimize = () => {
-    setMinimized(!minimized);
-  };
-  
   return (
     <SidebarProvider>
       <Sidebar 
-        className={`bg-white text-gray-800 shadow-lg rounded-xl ml-0 mt-40
-                    ${minimized ? 'w-[70px]' : 'w-fit'}`}
+        className="bg-white border-r border-gray-100 shadow-sm h-screen fixed left-0 top-0 z-30 w-[90px]"
         variant="floating"
       >
-        <SidebarHeader className="flex items-center justify-between px-4 pt-4 pb-2 relative">
-          <div className="flex items-center">
-            {/* Logo removed as requested */}
-          </div>
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            onClick={toggleMinimize} 
-            className="absolute -right-4 top-0 bg-white rounded-full shadow-md h-8 w-8 flex items-center justify-center p-0"
-          >
-            {minimized ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-          </Button>
-          <SidebarTrigger className="hidden" />
-        </SidebarHeader>
-        <SidebarContent>
-          <SidebarMenu className="gap-2 px-2">
+        <SidebarContent className="pt-24">
+          <SidebarMenu className="flex flex-col items-center gap-6">
             <SidebarMenuItem>
               <SidebarMenuButton 
                 isActive={isActive('/supplier/dashboard')}
                 tooltip="Dashboard" 
                 onClick={() => navigate('/supplier/dashboard')}
-                className={`rounded-full py-3 px-4 ${isActive('/supplier/dashboard') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-start`}
+                className={`flex flex-col items-center justify-center p-3 rounded-xl h-14 w-14 ${isActive('/supplier/dashboard') ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'}`}
               >
-                <LayoutDashboard className={`w-5 h-5 ${minimized ? 'mx-auto' : 'mr-2'}`} />
-                {!minimized && <span>Dashboard</span>}
+                <Monitor className="w-6 h-6" />
               </SidebarMenuButton>
             </SidebarMenuItem>
             
@@ -76,22 +52,20 @@ export const SupplierSidebar: React.FC = () => {
                 isActive={isActive('/supplier/products')}
                 tooltip="Products" 
                 onClick={() => navigate('/supplier/products')}
-                className={`rounded-full py-3 px-4 ${isActive('/supplier/products') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-start`}
+                className={`flex flex-col items-center justify-center p-3 rounded-xl h-14 w-14 ${isActive('/supplier/products') ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'}`}
               >
-                <Package className={`w-5 h-5 ${minimized ? 'mx-auto' : 'mr-2'}`} />
-                {!minimized && <span>My Products</span>}
+                <Package className="w-6 h-6" />
               </SidebarMenuButton>
             </SidebarMenuItem>
             
             <SidebarMenuItem>
               <SidebarMenuButton 
                 isActive={isActive('/supplier/uploads')}
-                tooltip="Upload Components" 
+                tooltip="Upload" 
                 onClick={() => navigate('/supplier/uploads')}
-                className={`rounded-full py-3 px-4 ${isActive('/supplier/uploads') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-start`}
+                className={`flex flex-col items-center justify-center p-3 rounded-xl h-14 w-14 ${isActive('/supplier/uploads') ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'}`}
               >
-                <Upload className={`w-5 h-5 ${minimized ? 'mx-auto' : 'mr-2'}`} />
-                {!minimized && <span>Upload</span>}
+                <Upload className="w-6 h-6" />
               </SidebarMenuButton>
             </SidebarMenuItem>
             
@@ -100,22 +74,20 @@ export const SupplierSidebar: React.FC = () => {
                 isActive={isActive('/supplier/orders')}
                 tooltip="Orders" 
                 onClick={() => navigate('/supplier/orders')}
-                className={`rounded-full py-3 px-4 ${isActive('/supplier/orders') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-start`}
+                className={`flex flex-col items-center justify-center p-3 rounded-xl h-14 w-14 ${isActive('/supplier/orders') ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'}`}
               >
-                <ShoppingCart className={`w-5 h-5 ${minimized ? 'mx-auto' : 'mr-2'}`} />
-                {!minimized && <span>Orders</span>}
+                <ShoppingCart className="w-6 h-6" />
               </SidebarMenuButton>
             </SidebarMenuItem>
             
             <SidebarMenuItem>
               <SidebarMenuButton 
                 isActive={isActive('/supplier/enquiries')}
-                tooltip="Enquiries" 
+                tooltip="Messages" 
                 onClick={() => navigate('/supplier/enquiries')}
-                className={`rounded-full py-3 px-4 ${isActive('/supplier/enquiries') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-start`}
+                className={`flex flex-col items-center justify-center p-3 rounded-xl h-14 w-14 ${isActive('/supplier/enquiries') ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'}`}
               >
-                <MessageSquare className={`w-5 h-5 ${minimized ? 'mx-auto' : 'mr-2'}`} />
-                {!minimized && <span>Enquiries</span>}
+                <MessageSquare className="w-6 h-6" />
               </SidebarMenuButton>
             </SidebarMenuItem>
             
@@ -124,10 +96,9 @@ export const SupplierSidebar: React.FC = () => {
                 isActive={isActive('/supplier/settings')}
                 tooltip="Settings" 
                 onClick={() => navigate('/supplier/settings')}
-                className={`rounded-full py-3 px-4 ${isActive('/supplier/settings') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-start`}
+                className={`flex flex-col items-center justify-center p-3 rounded-xl h-14 w-14 ${isActive('/supplier/settings') ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-100'}`}
               >
-                <Settings className={`w-5 h-5 ${minimized ? 'mx-auto' : 'mr-2'}`} />
-                {!minimized && <span>Settings</span>}
+                <Wrench className="w-6 h-6" />
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
