@@ -13,8 +13,6 @@ const EnquiriesPage = () => <div className="p-6"><h1 className="text-2xl font-bo
 const SettingsPage = () => <div className="p-6"><h1 className="text-2xl font-bold">Settings</h1></div>;
 
 const SupplierDashboard = () => {
-  const location = useLocation();
-  
   return (
     <Layout sidebar={<SupplierSidebar />}>
       <Routes>
