@@ -39,7 +39,7 @@ export const SupplierSidebar: React.FC = () => {
   return (
     <SidebarProvider>
       <Sidebar 
-        className={`bg-white text-gray-800 shadow-lg rounded-xl ml-0 mt-24
+        className={`bg-white text-gray-800 shadow-lg rounded-xl ml-0 mt-40
                     ${minimized ? 'w-[70px]' : 'w-fit'}`}
         variant="floating"
       >
