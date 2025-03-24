@@ -41,12 +41,10 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
   
   useEffect(() => {
     if (componentRef.current) {
-      // Clear any existing children
       while (componentRef.current.children.length > 0) {
         componentRef.current.remove(componentRef.current.children[0]);
       }
       
-      // Check if we have a model URL to load
       if (component.modelUrl && (
           component.type === 'STL' || 
           component.type === 'OBJ' || 
@@ -59,26 +57,21 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
         setIsLoading(true);
         setLoadError(null);
         
-        // Load the model
         loadModel(component.modelUrl, component.type)
           .then(model => {
             if (componentRef.current) {
-              // Center and scale the model
               const box = new THREE.Box3().setFromObject(model);
               const size = new THREE.Vector3();
               box.getSize(size);
               
-              // Scale to a reasonable size (about 1 unit)
               const maxDim = Math.max(size.x, size.y, size.z);
               if (maxDim > 0) {
                 const scale = 1 / maxDim;
                 model.scale.set(scale, scale, scale);
               }
               
-              // Position the model
               model.position.set(0, 0, 0);
               
-              // Set component userData on the model and all its children for snap point selection
               model.userData = { 
                 ...model.userData, 
                 componentId: id, 
@@ -96,7 +89,6 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
                 }
               });
               
-              // Add to the group
               componentRef.current.add(model);
               toast.success(`Model ${component.name} loaded successfully`);
             }
@@ -107,8 +99,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
             setLoadError(`Failed to load ${component.type} model`);
             toast.error(`Failed to load model: ${error.message || 'Unknown error'}`);
             
-            // Fallback to basic shape if model loading fails
-            const componentMesh = createComponentShape(component.shape);
+            const componentMesh = createComponentShape(component.shape || 'box');
             componentMesh.userData = { 
               componentId: id, 
               componentName: component.name,
@@ -120,18 +111,18 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
             setIsLoading(false);
           });
       } else {
-        // Create the standard component mesh for basic shapes
         const componentMesh = createComponentShape(component.shape || 'box');
         componentMesh.userData = { 
           componentId: id, 
           componentName: component.name,
           isComponent: true
         };
-        componentRef.current.add(componentMesh);
+        if (componentRef.current) {
+          componentRef.current.add(componentMesh);
+        }
         console.log(`Created basic shape "${component.shape}" for component "${component.name}"`);
       }
       
-      // Set the position
       componentRef.current.position.set(position[0], position[1], position[2]);
       componentRef.current.userData = {
         componentId: id,
@@ -145,8 +136,6 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
 
   const handleClick = (e: any) => {
     if (isSnapPointMode) {
-      // When in snap point mode, don't stop propagation
-      // This allows the click to be handled by SnapPointEditor
       console.log("Click in snap point mode, not capturing");
       return;
     }
@@ -209,7 +198,7 @@ const Scene: React.FC<SceneProps> = ({
   useHelper(directionalLightRef, THREE.DirectionalLightHelper, 1, 'red');
 
   const handleClick = (event: any) => {
-    if (isSnapPointMode) return; // Don't place objects in snap point mode
+    if (isSnapPointMode) return;
     
     if (event.point) {
       event.stopPropagation();
@@ -228,7 +217,7 @@ const Scene: React.FC<SceneProps> = ({
       <PerspectiveCamera makeDefault position={[5, 5, 5]} />
       <OrbitControls 
         makeDefault 
-        enabled={!isSnapPointMode} // Disable controls in snap point mode
+        enabled={!isSnapPointMode}
       />
       
       <ambientLight intensity={0.5} />
@@ -241,7 +230,6 @@ const Scene: React.FC<SceneProps> = ({
       
       <gridHelper args={[10, 10]} position={[0, -0.01, 0]} />
       
-      {/* Render all placed objects */}
       {placedObjects.map((object) => (
         <PlacedObject
           key={object.id}
@@ -254,7 +242,6 @@ const Scene: React.FC<SceneProps> = ({
         />
       ))}
       
-      {/* Snap Point Editor */}
       <SnapPointEditor
         isActive={isSnapPointMode}
         snapPoints={snapPoints}
@@ -263,7 +250,6 @@ const Scene: React.FC<SceneProps> = ({
         onSelectSnapPoint={onSelectSnapPoint}
       />
       
-      {/* Add a mesh to capture clicks for adding objects */}
       <mesh onClick={handleClick} visible={false}>
         <boxGeometry args={[50, 50, 50]} />
         <meshBasicMaterial transparent opacity={0} />
@@ -305,11 +291,9 @@ export const Viewport: React.FC<ViewportProps> = ({
   const isSupplierParameters = location.pathname === '/supplier/parameters';
   
   useEffect(() => {
-    // Check if we're on the supplier parameters page and have a model to display
     if (isSupplierParameters && selectedComponent && !hasLoadedModel) {
       console.log("Loading product model in parameters page:", selectedComponent);
       
-      // Place it at the center position
       setPlacedObjects([
         { 
           id: `model-${Date.now()}`, 
@@ -322,7 +306,6 @@ export const Viewport: React.FC<ViewportProps> = ({
       
     } else if (!hasLoadedModel) {
       try {
-        // Create a simple cube component as a default
         const defaultComponent: ComponentItem = {
           id: 'cm18-default',
           name: 'CM18 3D Model',
@@ -332,10 +315,8 @@ export const Viewport: React.FC<ViewportProps> = ({
           shape: 'box',
         };
         
-        // If we have a selectedComponent, use that instead of the default
         const componentToPlace = selectedComponent || defaultComponent;
         
-        // Place it at a default position
         setPlacedObjects([
           { 
             id: `model-${Date.now()}`, 
@@ -346,7 +327,6 @@ export const Viewport: React.FC<ViewportProps> = ({
         
         setHasLoadedModel(true);
         
-        // Also load a sample box component if needed
         if (!isSupplierParameters && !selectedComponent) {
           const boxComponent: ComponentItem = {
             id: 'sample-box',
@@ -357,7 +337,6 @@ export const Viewport: React.FC<ViewportProps> = ({
             shape: 'box',
           };
           
-          // Place it next to the default model
           setPlacedObjects(prev => [
             ...prev,
             { 
@@ -373,7 +352,6 @@ export const Viewport: React.FC<ViewportProps> = ({
     }
   }, [hasLoadedModel, selectedComponent, isSupplierParameters]);
   
-  // Reset the state when the component changes
   useEffect(() => {
     if (selectedComponent) {
       console.log('Viewport: Selected component changed:', selectedComponent.name);
@@ -418,29 +396,23 @@ export const Viewport: React.FC<ViewportProps> = ({
   };
 
   const handleFitToView = () => {
-    // This would normally adjust the camera to fit all objects
     console.log("Fit to view action requested");
   };
 
   const handleSnapPointAdded = (position: THREE.Vector3, normal?: THREE.Vector3, parentObject?: THREE.Object3D) => {
     if (onSnapPointAdded) {
-      // Generate a new id for the snap point
       const id = `snap-${Date.now()}`;
       
-      let localPosition: THREE.Vector3 | undefined;
-      let localNormal: THREE.Vector3 | undefined;
-      let parentId: string | undefined;
+      let parentId: string | undefined = undefined;
+      let localPosition: THREE.Vector3 | undefined = undefined;
+      let localNormal: THREE.Vector3 | undefined = undefined;
       
-      // If we have a parent object, calculate local coordinates
-      if (parentObject) {
-        // Get the parent's componentId
-        parentId = parentObject.userData?.componentId;
+      if (parentObject && parentObject.userData?.componentId) {
+        parentId = parentObject.userData.componentId;
         
-        // Calculate local position
         const invMatrix = new THREE.Matrix4().copy(parentObject.matrixWorld).invert();
         localPosition = position.clone().applyMatrix4(invMatrix);
         
-        // Calculate local normal if provided
         if (normal) {
           const invNormalMatrix = new THREE.Matrix3().getNormalMatrix(invMatrix);
           localNormal = normal.clone().applyMatrix3(invNormalMatrix).normalize();
@@ -455,12 +427,18 @@ export const Viewport: React.FC<ViewportProps> = ({
         name: 'New Snap Point',
         type: normal ? 'plane' : 'point',
         position: position,
-        normal: normal,
         compatibility: [],
         parentId,
         localPosition,
-        localNormal,
       };
+      
+      if (normal) {
+        newSnapPoint.normal = normal;
+      }
+      
+      if (localNormal) {
+        newSnapPoint.localNormal = localNormal;
+      }
       
       onSnapPointAdded(newSnapPoint);
       console.log("Added snap point:", newSnapPoint);

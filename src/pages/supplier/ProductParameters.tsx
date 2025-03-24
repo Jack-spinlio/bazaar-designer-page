@@ -24,7 +24,6 @@ export const ProductParameters: React.FC = () => {
   const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
   const [modelLoaded, setModelLoaded] = useState(false);
 
-  // States for form fields
   const [isPublic, setIsPublic] = useState(true);
   const [steererDiameter, setSteererDiameter] = useState('1 1/8 to 1 1/2');
   const [intendedUse, setIntendedUse] = useState<string[]>(['E-bike', 'City bike']);
@@ -41,14 +40,12 @@ export const ProductParameters: React.FC = () => {
   const [fenderMounts, setFenderMounts] = useState('Yes');
   const [description, setDescription] = useState('');
 
-  // Snap point related states
   const [activeTab, setActiveTab] = useState('parameters');
   const [snapPoints, setSnapPoints] = useState<SnapPoint[]>([]);
   const [isSnapPointMode, setIsSnapPointMode] = useState(false);
   const [selectedSnapPointId, setSelectedSnapPointId] = useState<string | null>(null);
   const [activeSnapPoint, setActiveSnapPoint] = useState<SnapPoint | null>(null);
 
-  // Load the product data from local storage
   useEffect(() => {
     const storedProduct = localStorage.getItem('currentUploadedProduct');
     if (storedProduct) {
@@ -56,7 +53,6 @@ export const ProductParameters: React.FC = () => {
         const productData = JSON.parse(storedProduct);
         console.log("Loaded product data:", productData);
         
-        // Create a proper ComponentItem object with all needed properties
         const component: ComponentItem = {
           id: productData.id || `product-${Date.now()}`,
           name: productData.name || 'New Product',
@@ -70,38 +66,60 @@ export const ProductParameters: React.FC = () => {
         setSelectedComponent(component);
         setModelLoaded(true);
         
-        // Set description if available
         if (productData.description) {
           setDescription(productData.description);
         }
         
-        // Load snap points if available
         if (productData.snapPoints && Array.isArray(productData.snapPoints)) {
-          // Convert positions from arrays to THREE.Vector3
-          const formattedSnapPoints: SnapPoint[] = productData.snapPoints.map((point: any) => ({
-            ...point,
-            position: new THREE.Vector3(
-              point.position.x || 0,
-              point.position.y || 0,
-              point.position.z || 0
-            ),
-            normal: point.normal ? new THREE.Vector3(
-              point.normal.x || 0,
-              point.normal.y || 0,
-              point.normal.z || 0
-            ) : undefined,
-            localPosition: point.localPosition ? new THREE.Vector3(
-              point.localPosition.x || 0,
-              point.localPosition.y || 0,
-              point.localPosition.z || 0
-            ) : undefined,
-            localNormal: point.localNormal ? new THREE.Vector3(
-              point.localNormal.x || 0,
-              point.localNormal.y || 0,
-              point.localNormal.z || 0
-            ) : undefined
-          }));
-          setSnapPoints(formattedSnapPoints);
+          try {
+            const formattedSnapPoints: SnapPoint[] = productData.snapPoints.map((point: any) => {
+              const snapPoint: SnapPoint = {
+                id: point.id || `snap-${Date.now()}`,
+                name: point.name || 'Snap Point',
+                type: point.type || 'point',
+                position: new THREE.Vector3(
+                  point.position?.x || 0,
+                  point.position?.y || 0,
+                  point.position?.z || 0
+                ),
+                compatibility: point.compatibility || []
+              };
+              
+              if (point.parentId) {
+                snapPoint.parentId = point.parentId;
+              }
+              
+              if (point.normal && point.normal.x !== undefined) {
+                snapPoint.normal = new THREE.Vector3(
+                  point.normal.x,
+                  point.normal.y,
+                  point.normal.z
+                );
+              }
+              
+              if (point.localPosition && point.localPosition.x !== undefined) {
+                snapPoint.localPosition = new THREE.Vector3(
+                  point.localPosition.x,
+                  point.localPosition.y,
+                  point.localPosition.z
+                );
+              }
+              
+              if (point.localNormal && point.localNormal.x !== undefined) {
+                snapPoint.localNormal = new THREE.Vector3(
+                  point.localNormal.x,
+                  point.localNormal.y,
+                  point.localNormal.z
+                );
+              }
+              
+              return snapPoint;
+            });
+            
+            setSnapPoints(formattedSnapPoints);
+          } catch (error) {
+            console.error('Error formatting snap points:', error);
+          }
         }
         
         console.log("Created component object:", component);
@@ -113,7 +131,6 @@ export const ProductParameters: React.FC = () => {
     } else {
       console.log("No product data found in local storage");
       toast.error("No product data found. Please upload a product first.");
-      // Navigate back to upload page if no product data is found
       navigate('/supplier/upload');
     }
   }, [navigate]);
@@ -129,7 +146,6 @@ export const ProductParameters: React.FC = () => {
     setIsSaving(true);
     
     try {
-      // Prepare snap points for storage by converting Vector3 to plain objects
       const snapPointsForStorage = snapPoints.map(point => ({
         ...point,
         position: {
@@ -154,7 +170,6 @@ export const ProductParameters: React.FC = () => {
         } : undefined
       }));
       
-      // Get existing product data and update it
       const storedProduct = localStorage.getItem('currentUploadedProduct');
       if (storedProduct) {
         const productData = JSON.parse(storedProduct);
@@ -180,11 +195,9 @@ export const ProductParameters: React.FC = () => {
           }
         };
         
-        // Save back to localStorage
         localStorage.setItem('currentUploadedProduct', JSON.stringify(updatedProduct));
       }
       
-      // Mock saving process
       setTimeout(() => {
         setIsSaving(false);
         toast.success('Product parameters saved successfully');
@@ -198,11 +211,15 @@ export const ProductParameters: React.FC = () => {
   };
 
   const handleSnapPointAdded = (snapPoint: SnapPoint) => {
+    if (!snapPoint.position) {
+      console.error("Invalid snap point - missing position");
+      return;
+    }
+    
     setSnapPoints([...snapPoints, snapPoint]);
     setSelectedSnapPointId(snapPoint.id);
     setActiveSnapPoint(snapPoint);
     
-    // Log detailed info about the snap point
     console.log(`Added snap point ${snapPoint.id}:`);
     console.log(`- Position: (${snapPoint.position.x.toFixed(3)}, ${snapPoint.position.y.toFixed(3)}, ${snapPoint.position.z.toFixed(3)})`);
     
@@ -238,14 +255,12 @@ export const ProductParameters: React.FC = () => {
       </div>
 
       <div className="flex h-[calc(100vh-150px)] gap-1">
-        {/* Left Column - Parameters (30% width) */}
         <div className="w-[30%] overflow-hidden flex flex-col">
           <Tabs 
             defaultValue="parameters" 
             value={activeTab}
             onValueChange={(value) => {
               setActiveTab(value);
-              // Disable snap point mode when switching away from snap-points tab
               if (value !== 'snap-points') {
                 setIsSnapPointMode(false);
               }
@@ -449,47 +464,4 @@ export const ProductParameters: React.FC = () => {
           </Tabs>
         </div>
 
-        {/* Right Column - 3D Viewport (70% width) */}
-        <div className="w-[70%]">
-          <div className="bg-white rounded-lg shadow-sm h-full overflow-hidden relative">
-            <div className="h-full">
-              {selectedComponent && (
-                <>
-                  <Viewport 
-                    selectedComponent={selectedComponent} 
-                    onComponentPlaced={() => {}} 
-                    snapPoints={snapPoints}
-                    setSnapPoints={setSnapPoints}
-                    isSnapPointMode={isSnapPointMode}
-                    onSnapPointAdded={handleSnapPointAdded}
-                    selectedSnapPointId={selectedSnapPointId}
-                    onSelectSnapPoint={setSelectedSnapPointId}
-                  />
-                  {!modelLoaded && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/70">
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black"></div>
-                        <div>Loading 3D Model...</div>
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-            <div className="absolute bottom-4 right-8 flex space-x-2">
-              <Button variant="outline" size="sm">
-                <ZoomIn size={16} />
-              </Button>
-              <Button variant="outline" size="sm">
-                <ZoomOut size={16} />
-              </Button>
-              <Button variant="outline" size="sm">
-                <Maximize2 size={16} />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>;
-};
-export default ProductParameters;
+        <
