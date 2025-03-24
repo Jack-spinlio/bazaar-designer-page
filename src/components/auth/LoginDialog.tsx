@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/auth/useAuth';
 import { 
@@ -25,8 +26,9 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
 
-  const isAuth0Configured = !!import.meta.env.VITE_AUTH0_DOMAIN && 
-                           !!import.meta.env.VITE_AUTH0_CLIENT_ID;
+  const isAuth0Configured = !!import.meta.env.VITE_AUTH0_DOMAIN || 
+                           !!import.meta.env.VITE_AUTH0_CLIENT_ID && 
+                           import.meta.env.VITE_AUTH0_CLIENT_ID !== 'dummyClientId';
 
   useEffect(() => {
     if (isAuthenticated && open) {

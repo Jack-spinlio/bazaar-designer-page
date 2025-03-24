@@ -14,16 +14,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Auth0 configuration
   // Using a standard auth0.com domain format as a fallback if custom domain isn't configured properly
   const domain = import.meta.env.VITE_AUTH0_DOMAIN || 'dev-example.us.auth0.com'; 
-  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID || 'dummyClientId';
+  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID || 'buzvq3JLo9qwHqQusnlkqWkldLKMQjAu';
   const redirectUri = window.location.origin;
 
   const onRedirectCallback = (appState?: AppState) => {
     navigate(appState?.returnTo || '/marketplace');
-  };
-
-  const onError = (error: Error) => {
-    console.error('Auth0 error:', error);
-    toast.error(`Authentication error: ${error.message}`);
   };
 
   // Check if provider is configured
@@ -50,7 +45,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         redirect_uri: redirectUri,
       }}
       onRedirectCallback={onRedirectCallback}
-      onError={onError}
       cacheLocation="localstorage"
     >
       {children}

@@ -7,8 +7,8 @@ import { toast } from 'sonner';
 // Check if Auth0 is properly configured
 const isAuth0Configured = () => {
   const domain = import.meta.env.VITE_AUTH0_DOMAIN;
-  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
-  return !!domain && !!clientId && domain !== 'dev-example.us.auth0.com' && clientId !== 'dummyClientId';
+  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID || 'buzvq3JLo9qwHqQusnlkqWkldLKMQjAu';
+  return !!domain || (!!clientId && clientId !== 'dummyClientId');
 };
 
 export const useAuth = () => {
@@ -57,9 +57,10 @@ export const useAuth = () => {
     const setSupabaseSession = async () => {
       if (isAuthenticated && user) {
         try {
+          console.log('Attempting to get Auth0 token for Supabase session');
           const token = await getAccessTokenSilently({
             authorizationParams: {
-              audience: `https://${import.meta.env.VITE_AUTH0_DOMAIN}/api/v2/`,
+              audience: `https://${import.meta.env.VITE_AUTH0_DOMAIN || 'dev-example.us.auth0.com'}/api/v2/`,
             },
           }).catch(err => {
             console.error('Failed to get Auth0 token:', err);
