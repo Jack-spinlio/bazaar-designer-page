@@ -249,7 +249,8 @@ export const ProductParameters: React.FC = () => {
     }
   };
 
-  return <div className="text-left">
+  return (
+    <div className="text-left">
       <div className="flex items-center mb-4">
         <h1 className="text-2xl font-bold">Product Parameters</h1>
       </div>
@@ -464,4 +465,19 @@ export const ProductParameters: React.FC = () => {
           </Tabs>
         </div>
 
-        <
+        <div className="w-[70%] rounded-lg overflow-hidden">
+          <Viewport 
+            selectedComponent={selectedComponent}
+            onComponentPlaced={() => {}}
+            snapPoints={snapPoints}
+            setSnapPoints={setSnapPoints}
+            isSnapPointMode={isSnapPointMode}
+            onSnapPointAdded={handleSnapPointAdded}
+            selectedSnapPointId={selectedSnapPointId}
+            onSelectSnapPoint={setSelectedSnapPointId}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
