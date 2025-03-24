@@ -92,7 +92,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
         .from('models')
         .upload(filePath, file, {
           cacheControl: '3600',
-          upsert: true  // Changed from false to true to prevent RLS policy violations
+          upsert: true
         });
       
       if (error) {
