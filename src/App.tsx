@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import DesignStudio from './pages/DesignStudio';
 import Marketplace from './pages/Marketplace';
 import ProducerProfile from './pages/ProducerProfile';
@@ -25,7 +26,7 @@ function App() {
   }
   
   return (
-    <Router>
+    <>
       <Routes>
         <Route path="/" element={<Navigate to="/marketplace" replace />} />
         <Route path="/design" element={<DesignStudio />} />
@@ -36,7 +37,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster position="top-right" richColors />
-    </Router>
+    </>
   );
 }
 
