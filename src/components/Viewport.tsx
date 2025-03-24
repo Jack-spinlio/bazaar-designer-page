@@ -82,11 +82,12 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
               model.userData = { 
                 ...model.userData, 
                 componentId: id, 
-                componentName: component.name 
+                componentName: component.name,
+                isComponent: true
               };
               
               model.traverse(child => {
-                if (child instanceof THREE.Mesh) {
+                if (child instanceof THREE.Object3D) {
                   child.userData = { 
                     ...child.userData, 
                     componentId: id, 
@@ -110,7 +111,8 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
             const componentMesh = createComponentShape(component.shape);
             componentMesh.userData = { 
               componentId: id, 
-              componentName: component.name 
+              componentName: component.name,
+              isComponent: true
             };
             if (componentRef.current) {
               componentRef.current.add(componentMesh);
@@ -122,7 +124,8 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
         const componentMesh = createComponentShape(component.shape || 'box');
         componentMesh.userData = { 
           componentId: id, 
-          componentName: component.name 
+          componentName: component.name,
+          isComponent: true
         };
         componentRef.current.add(componentMesh);
         console.log(`Created basic shape "${component.shape}" for component "${component.name}"`);
@@ -130,6 +133,11 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
       
       // Set the position
       componentRef.current.position.set(position[0], position[1], position[2]);
+      componentRef.current.userData = {
+        componentId: id,
+        componentName: component.name,
+        isComponent: true
+      };
       
       console.log(`Placed component "${component.name}" at position (${position.join(', ')})`);
     }
@@ -152,7 +160,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
     <group 
       ref={componentRef} 
       onClick={handleClick}
-      userData={{ id }}
+      userData={{ id, componentId: id, componentName: component.name, isComponent: true }}
     >
       {isSelected && !isSnapPointMode && (
         <mesh position={[0, 0, 0]}>
@@ -181,7 +189,7 @@ interface SceneProps {
   onPlaceObject: (position: [number, number, number]) => void;
   snapPoints: SnapPoint[];
   isSnapPointMode: boolean;
-  onSnapPointAdded: (position: THREE.Vector3, normal?: THREE.Vector3) => void;
+  onSnapPointAdded: (position: THREE.Vector3, normal?: THREE.Vector3, parentObject?: THREE.Object3D) => void;
   selectedSnapPointId: string | null;
   onSelectSnapPoint: (id: string | null) => void;
 }
@@ -414,15 +422,44 @@ export const Viewport: React.FC<ViewportProps> = ({
     console.log("Fit to view action requested");
   };
 
-  const handleSnapPointAdded = (position: THREE.Vector3, normal?: THREE.Vector3) => {
+  const handleSnapPointAdded = (position: THREE.Vector3, normal?: THREE.Vector3, parentObject?: THREE.Object3D) => {
     if (onSnapPointAdded) {
+      // Generate a new id for the snap point
+      const id = `snap-${Date.now()}`;
+      
+      let localPosition: THREE.Vector3 | undefined;
+      let localNormal: THREE.Vector3 | undefined;
+      let parentId: string | undefined;
+      
+      // If we have a parent object, calculate local coordinates
+      if (parentObject) {
+        // Get the parent's componentId
+        parentId = parentObject.userData?.componentId;
+        
+        // Calculate local position
+        const invMatrix = new THREE.Matrix4().copy(parentObject.matrixWorld).invert();
+        localPosition = position.clone().applyMatrix4(invMatrix);
+        
+        // Calculate local normal if provided
+        if (normal) {
+          const invNormalMatrix = new THREE.Matrix3().getNormalMatrix(invMatrix);
+          localNormal = normal.clone().applyMatrix3(invNormalMatrix).normalize();
+        }
+        
+        console.log(`Attached snap point to parent: ${parentId}`);
+        console.log(`Local position: ${localPosition.x.toFixed(3)}, ${localPosition.y.toFixed(3)}, ${localPosition.z.toFixed(3)}`);
+      }
+      
       const newSnapPoint: SnapPoint = {
-        id: `snap-${Date.now()}`,
+        id,
         name: 'New Snap Point',
         type: normal ? 'plane' : 'point',
         position: position,
         normal: normal,
         compatibility: [],
+        parentId,
+        localPosition,
+        localNormal,
       };
       
       onSnapPointAdded(newSnapPoint);

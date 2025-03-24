@@ -89,6 +89,16 @@ export const ProductParameters: React.FC = () => {
               point.normal.x || 0,
               point.normal.y || 0,
               point.normal.z || 0
+            ) : undefined,
+            localPosition: point.localPosition ? new THREE.Vector3(
+              point.localPosition.x || 0,
+              point.localPosition.y || 0,
+              point.localPosition.z || 0
+            ) : undefined,
+            localNormal: point.localNormal ? new THREE.Vector3(
+              point.localNormal.x || 0,
+              point.localNormal.y || 0,
+              point.localNormal.z || 0
             ) : undefined
           }));
           setSnapPoints(formattedSnapPoints);
@@ -131,6 +141,16 @@ export const ProductParameters: React.FC = () => {
           x: point.normal.x,
           y: point.normal.y,
           z: point.normal.z
+        } : undefined,
+        localPosition: point.localPosition ? {
+          x: point.localPosition.x,
+          y: point.localPosition.y,
+          z: point.localPosition.z
+        } : undefined,
+        localNormal: point.localNormal ? {
+          x: point.localNormal.x,
+          y: point.localNormal.y,
+          z: point.localNormal.z
         } : undefined
       }));
       
@@ -181,6 +201,18 @@ export const ProductParameters: React.FC = () => {
     setSnapPoints([...snapPoints, snapPoint]);
     setSelectedSnapPointId(snapPoint.id);
     setActiveSnapPoint(snapPoint);
+    
+    // Log detailed info about the snap point
+    console.log(`Added snap point ${snapPoint.id}:`);
+    console.log(`- Position: (${snapPoint.position.x.toFixed(3)}, ${snapPoint.position.y.toFixed(3)}, ${snapPoint.position.z.toFixed(3)})`);
+    
+    if (snapPoint.parentId) {
+      console.log(`- Attached to component: ${snapPoint.parentId}`);
+      
+      if (snapPoint.localPosition) {
+        console.log(`- Local position: (${snapPoint.localPosition.x.toFixed(3)}, ${snapPoint.localPosition.y.toFixed(3)}, ${snapPoint.localPosition.z.toFixed(3)})`);
+      }
+    }
   };
 
   const handleSnapPointDeleted = (id: string) => {

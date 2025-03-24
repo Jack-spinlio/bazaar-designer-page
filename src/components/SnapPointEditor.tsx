@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { useThree } from '@react-three/fiber';
 import { Plane, Html } from '@react-three/drei';
@@ -12,12 +13,16 @@ export interface SnapPoint {
   position: THREE.Vector3;
   normal?: THREE.Vector3;
   compatibility: string[];
+  // New properties to track parent mesh and local position
+  parentId?: string;
+  localPosition?: THREE.Vector3;
+  localNormal?: THREE.Vector3;
 }
 
 interface SnapPointEditorProps {
   isActive: boolean;
   snapPoints: SnapPoint[];
-  onAddSnapPoint: (position: THREE.Vector3, normal?: THREE.Vector3) => void;
+  onAddSnapPoint: (position: THREE.Vector3, normal?: THREE.Vector3, parentObject?: THREE.Object3D) => void;
   selectedSnapPointId: string | null;
   onSelectSnapPoint: (id: string | null) => void;
 }
@@ -32,9 +37,11 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
   const { raycaster, camera, scene } = useThree();
   const [hoverPoint, setHoverPoint] = useState<THREE.Vector3 | null>(null);
   const [hoverNormal, setHoverNormal] = useState<THREE.Vector3 | null>(null);
+  const [hoverObject, setHoverObject] = useState<THREE.Object3D | null>(null);
   const [isPendingConfirmation, setIsPendingConfirmation] = useState(false);
   const [pendingPosition, setPendingPosition] = useState<THREE.Vector3 | null>(null);
   const [pendingNormal, setPendingNormal] = useState<THREE.Vector3 | null>(null);
+  const [pendingObject, setPendingObject] = useState<THREE.Object3D | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -58,6 +65,23 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
         const intersection = intersects[0];
         setHoverPoint(intersection.point.clone());
         
+        // Find the top-level mesh parent
+        let currentObject: THREE.Object3D | null = intersection.object;
+        let topParent: THREE.Object3D | null = null;
+        
+        // Traverse up the hierarchy to find a mesh with componentId in userData
+        while (currentObject) {
+          if (currentObject.userData && 
+              (currentObject.userData.componentId || 
+               currentObject.userData.isComponent)) {
+            topParent = currentObject;
+            break;
+          }
+          currentObject = currentObject.parent;
+        }
+        
+        setHoverObject(topParent);
+        
         if (intersection.face?.normal) {
           const normal = intersection.face.normal.clone();
           
@@ -73,6 +97,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
       } else {
         setHoverPoint(null);
         setHoverNormal(null);
+        setHoverObject(null);
       }
     };
 
@@ -115,6 +140,24 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
           return; // Don't place a new snap point
         }
         
+        // Find the parent mesh/component object
+        let parentObject: THREE.Object3D | null = intersection.object;
+        let foundParent = false;
+        
+        while (parentObject && !foundParent) {
+          if (parentObject.userData && 
+              (parentObject.userData.componentId || 
+               parentObject.userData.isComponent)) {
+            foundParent = true;
+            break;
+          }
+          parentObject = parentObject.parent;
+        }
+        
+        if (!foundParent) {
+          parentObject = null;
+        }
+        
         // Not a snap point click, so place a new one
         const position = intersection.point.clone();
         let normal = null;
@@ -130,12 +173,14 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
         
         setPendingPosition(position);
         setPendingNormal(normal);
+        setPendingObject(parentObject);
         setIsPendingConfirmation(true);
         
         console.log("Placing snap point at:", position);
         console.log("Object clicked:", intersection.object.type);
         console.log("Object name:", intersection.object.name);
         console.log("Object userData:", intersection.object.userData);
+        console.log("Parent object:", parentObject);
         if (normal) console.log("Normal:", normal);
       }
     };
@@ -151,10 +196,34 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
 
   const handleConfirmSnapPoint = () => {
     if (pendingPosition) {
-      onAddSnapPoint(pendingPosition, pendingNormal || undefined);
+      let localPosition: THREE.Vector3 | undefined;
+      let localNormal: THREE.Vector3 | undefined;
+      
+      // Calculate local position and normal if we have a parent object
+      if (pendingObject) {
+        // Ensure parent's matrix is up to date
+        pendingObject.updateMatrixWorld(true);
+        
+        // Convert world position to local position
+        const worldPos = pendingPosition.clone();
+        const invMatrix = new THREE.Matrix4().copy(pendingObject.matrixWorld).invert();
+        localPosition = worldPos.clone().applyMatrix4(invMatrix);
+        
+        // Convert world normal to local normal
+        if (pendingNormal) {
+          const invNormalMatrix = new THREE.Matrix3().getNormalMatrix(invMatrix);
+          localNormal = pendingNormal.clone().applyMatrix3(invNormalMatrix).normalize();
+        }
+        
+        console.log("Local position:", localPosition);
+        if (localNormal) console.log("Local normal:", localNormal);
+      }
+      
+      onAddSnapPoint(pendingPosition, pendingNormal || undefined, pendingObject || undefined);
       setIsPendingConfirmation(false);
       setPendingPosition(null);
       setPendingNormal(null);
+      setPendingObject(null);
       toast.success('Snap point added');
     }
   };
@@ -163,6 +232,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
     setIsPendingConfirmation(false);
     setPendingPosition(null);
     setPendingNormal(null);
+    setPendingObject(null);
   };
 
   const formatCoordinates = (vector: THREE.Vector3): string => {
@@ -203,7 +273,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
         <group position={hoverPoint}>
           <mesh>
             <sphereGeometry args={[0.12, 24, 24]} />
-            <meshBasicMaterial color="#22c55e" transparent opacity={0.7} />
+            <meshBasicMaterial color={hoverObject ? "#22c55e" : "#f97316"} transparent opacity={0.7} />
           </mesh>
           
           {hoverNormal && (
@@ -213,14 +283,14 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
                 rotation={[0, 0, 0]} 
                 position={[0, 0, 0]}
               >
-                <meshBasicMaterial color="#22c55e" transparent opacity={0.5} side={THREE.DoubleSide} />
+                <meshBasicMaterial color={hoverObject ? "#22c55e" : "#f97316"} transparent opacity={0.5} side={THREE.DoubleSide} />
               </Plane>
               <primitive 
                 object={new THREE.ArrowHelper(
                   hoverNormal.clone().normalize(),
                   new THREE.Vector3(0, 0, 0),
                   0.3,
-                  0x22c55e,
+                  hoverObject ? 0x22c55e : 0xf97316,
                   0.07,
                   0.07
                 )} 
@@ -230,8 +300,9 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
           
           <Html distanceFactor={10}>
             <div className="bg-black/90 text-white px-3 py-2 text-sm rounded-lg whitespace-nowrap shadow-lg flex flex-col">
-              <div className="font-medium">Click to place snap point</div>
+              <div className="font-medium">{hoverObject ? "Click to place snap point on mesh" : "No mesh detected"}</div>
               <div className="text-xs opacity-80">{formatCoordinates(hoverPoint)}</div>
+              {hoverObject && <div className="text-xs opacity-80">Parent: {hoverObject.name || hoverObject.uuid.substring(0, 8)}</div>}
             </div>
           </Html>
         </group>
@@ -270,6 +341,11 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
             <div className="flex flex-col items-center bg-black/90 text-white px-4 py-3 rounded-lg whitespace-nowrap shadow-lg">
               <div className="text-sm font-semibold mb-1">Confirm snap point placement</div>
               <div className="text-xs opacity-80 mb-2">{formatCoordinates(pendingPosition)}</div>
+              {pendingObject && (
+                <div className="text-xs opacity-80 mb-2">
+                  Will be attached to: {pendingObject.name || pendingObject.uuid.substring(0, 8)}
+                </div>
+              )}
               <div className="flex space-x-2">
                 <button 
                   className="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-md font-medium"
@@ -347,6 +423,14 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
             >
               <div className="font-medium">{snapPoint.name}</div>
               <div className="text-xs opacity-90 mt-0.5">{formatCoordinates(snapPoint.position)}</div>
+              {snapPoint.parentId && (
+                <div className="text-xs opacity-90 mt-0.5">Attached to: {snapPoint.parentId}</div>
+              )}
+              {snapPoint.localPosition && (
+                <div className="text-xs opacity-90 mt-0.5">
+                  Local: {formatCoordinates(snapPoint.localPosition)}
+                </div>
+              )}
             </div>
           </Html>
         </group>
