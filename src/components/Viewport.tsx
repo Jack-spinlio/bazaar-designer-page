@@ -1,5 +1,5 @@
 
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
 import * as THREE from 'three';
@@ -10,7 +10,8 @@ import {
   Maximize,
   Layers,
   Box,
-  Trash2
+  Trash2,
+  Crosshair
 } from 'lucide-react';
 import { createComponentShape } from '@/utils/threeUtils';
 import { loadModel } from '@/utils/modelLoader';
