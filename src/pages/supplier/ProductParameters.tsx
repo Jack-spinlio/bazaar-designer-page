@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -6,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { CheckIcon, Plus, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
+import { CheckIcon, Plus, ZoomIn, ZoomOut, Maximize2, MapPin } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,6 +13,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Viewport } from '@/components/Viewport';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ComponentItem } from '@/components/Sidebar';
+import { SnapPointTools } from '@/components/SnapPointTools';
+import { SnapPoint } from '@/components/SnapPointEditor';
+import * as THREE from 'three';
 
 export const ProductParameters: React.FC = () => {
   const navigate = useNavigate();
@@ -38,6 +40,13 @@ export const ProductParameters: React.FC = () => {
   const [countryOfOrigin, setCountryOfOrigin] = useState('Taiwan');
   const [fenderMounts, setFenderMounts] = useState('Yes');
   const [description, setDescription] = useState('');
+
+  // Snap point related states
+  const [activeTab, setActiveTab] = useState('parameters');
+  const [snapPoints, setSnapPoints] = useState<SnapPoint[]>([]);
+  const [isSnapPointMode, setIsSnapPointMode] = useState(false);
+  const [selectedSnapPointId, setSelectedSnapPointId] = useState<string | null>(null);
+  const [activeSnapPoint, setActiveSnapPoint] = useState<SnapPoint | null>(null);
 
   // Load the product data from local storage
   useEffect(() => {
@@ -66,6 +75,25 @@ export const ProductParameters: React.FC = () => {
           setDescription(productData.description);
         }
         
+        // Load snap points if available
+        if (productData.snapPoints && Array.isArray(productData.snapPoints)) {
+          // Convert positions from arrays to THREE.Vector3
+          const formattedSnapPoints: SnapPoint[] = productData.snapPoints.map((point: any) => ({
+            ...point,
+            position: new THREE.Vector3(
+              point.position.x || 0,
+              point.position.y || 0,
+              point.position.z || 0
+            ),
+            normal: point.normal ? new THREE.Vector3(
+              point.normal.x || 0,
+              point.normal.y || 0,
+              point.normal.z || 0
+            ) : undefined
+          }));
+          setSnapPoints(formattedSnapPoints);
+        }
+        
         console.log("Created component object:", component);
         toast.success("Product data loaded successfully");
       } catch (error) {
@@ -89,12 +117,87 @@ export const ProductParameters: React.FC = () => {
 
   const handleSave = () => {
     setIsSaving(true);
-    // Mock saving process
-    setTimeout(() => {
+    
+    try {
+      // Prepare snap points for storage by converting Vector3 to plain objects
+      const snapPointsForStorage = snapPoints.map(point => ({
+        ...point,
+        position: {
+          x: point.position.x,
+          y: point.position.y,
+          z: point.position.z
+        },
+        normal: point.normal ? {
+          x: point.normal.x,
+          y: point.normal.y,
+          z: point.normal.z
+        } : undefined
+      }));
+      
+      // Get existing product data and update it
+      const storedProduct = localStorage.getItem('currentUploadedProduct');
+      if (storedProduct) {
+        const productData = JSON.parse(storedProduct);
+        const updatedProduct = {
+          ...productData,
+          description,
+          snapPoints: snapPointsForStorage,
+          parameters: {
+            isPublic,
+            steererDiameter,
+            intendedUse,
+            brakeMount,
+            axleType,
+            axleWidth,
+            axleDiameter,
+            steererMaxLength,
+            crownRaceDiameter,
+            maxRotorSize,
+            brakeHoseRouting,
+            category,
+            countryOfOrigin,
+            fenderMounts
+          }
+        };
+        
+        // Save back to localStorage
+        localStorage.setItem('currentUploadedProduct', JSON.stringify(updatedProduct));
+      }
+      
+      // Mock saving process
+      setTimeout(() => {
+        setIsSaving(false);
+        toast.success('Product parameters saved successfully');
+        navigate('/supplier');
+      }, 1500);
+    } catch (error) {
+      console.error('Error saving product data:', error);
+      toast.error('Failed to save product parameters');
       setIsSaving(false);
-      toast.success('Product parameters saved successfully');
-      navigate('/supplier');
-    }, 1500);
+    }
+  };
+
+  const handleSnapPointAdded = (snapPoint: SnapPoint) => {
+    setSnapPoints([...snapPoints, snapPoint]);
+    setSelectedSnapPointId(snapPoint.id);
+    setActiveSnapPoint(snapPoint);
+  };
+
+  const handleSnapPointDeleted = (id: string) => {
+    setSnapPoints(snapPoints.filter(point => point.id !== id));
+    if (selectedSnapPointId === id) {
+      setSelectedSnapPointId(null);
+      setActiveSnapPoint(null);
+    }
+  };
+
+  const handleSnapPointUpdated = (updatedPoint: SnapPoint) => {
+    setSnapPoints(
+      snapPoints.map(point => point.id === updatedPoint.id ? updatedPoint : point)
+    );
+    if (selectedSnapPointId === updatedPoint.id) {
+      setActiveSnapPoint(updatedPoint);
+    }
   };
 
   return <div className="text-left">
@@ -105,10 +208,24 @@ export const ProductParameters: React.FC = () => {
       <div className="flex h-[calc(100vh-150px)] gap-1">
         {/* Left Column - Parameters (30% width) */}
         <div className="w-[30%] overflow-hidden flex flex-col">
-          <Tabs defaultValue="parameters" className="w-full">
+          <Tabs 
+            defaultValue="parameters" 
+            value={activeTab}
+            onValueChange={(value) => {
+              setActiveTab(value);
+              // Disable snap point mode when switching away from snap-points tab
+              if (value !== 'snap-points') {
+                setIsSnapPointMode(false);
+              }
+            }}
+            className="w-full"
+          >
             <TabsList className="bg-black text-white w-full rounded-xl">
               <TabsTrigger value="parameters" className="rounded-full">Parameters</TabsTrigger>
-              <TabsTrigger value="snap-points" className="rounded-full">Snap points</TabsTrigger>
+              <TabsTrigger value="snap-points" className="rounded-full">
+                <MapPin size={14} className="mr-1" />
+                Snap points
+              </TabsTrigger>
               <TabsTrigger value="surface" className="rounded-full">Surface</TabsTrigger>
             </TabsList>
 
@@ -269,16 +386,17 @@ export const ProductParameters: React.FC = () => {
               </TabsContent>
 
               <TabsContent value="snap-points" className="pt-2">
-                <div className="bg-white rounded-lg shadow-sm p-3">
-                  <div className="flex justify-end pt-2">
-                    <Button onClick={() => navigate('/supplier')} variant="outline" className="mr-2">
-                      Cancel
-                    </Button>
-                    <Button onClick={handleSave} disabled={isSaving} className="bg-black hover:bg-black/90">
-                      {isSaving ? 'Saving...' : 'Save Product'}
-                    </Button>
-                  </div>
-                </div>
+                <SnapPointTools 
+                  onClose={() => setActiveTab('parameters')}
+                  onSetActiveSnapPointMode={setIsSnapPointMode}
+                  onSnapPointAdded={handleSnapPointAdded}
+                  onSnapPointDeleted={handleSnapPointDeleted}
+                  onSnapPointUpdated={handleSnapPointUpdated}
+                  activeSnapPoint={activeSnapPoint}
+                  setActiveSnapPoint={setActiveSnapPoint}
+                  snapPoints={snapPoints}
+                  setSnapPoints={setSnapPoints}
+                />
               </TabsContent>
 
               <TabsContent value="surface" className="pt-2">
@@ -303,7 +421,16 @@ export const ProductParameters: React.FC = () => {
             <div className="h-full">
               {selectedComponent && (
                 <>
-                  <Viewport selectedComponent={selectedComponent} onComponentPlaced={() => {}} />
+                  <Viewport 
+                    selectedComponent={selectedComponent} 
+                    onComponentPlaced={() => {}} 
+                    snapPoints={snapPoints}
+                    setSnapPoints={setSnapPoints}
+                    isSnapPointMode={isSnapPointMode}
+                    onSnapPointAdded={handleSnapPointAdded}
+                    selectedSnapPointId={selectedSnapPointId}
+                    onSelectSnapPoint={setSelectedSnapPointId}
+                  />
                   {!modelLoaded && (
                     <div className="absolute inset-0 flex items-center justify-center bg-white/70">
                       <div className="flex flex-col items-center gap-2">

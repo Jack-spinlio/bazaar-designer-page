@@ -16,6 +16,7 @@ import { createComponentShape } from '@/utils/threeUtils';
 import { loadModel } from '@/utils/modelLoader';
 import { ComponentItem } from './Sidebar';
 import { useLocation } from 'react-router-dom';
+import { SnapPointEditor, SnapPoint } from './SnapPointEditor';
 
 interface PlacedObjectProps {
   component: ComponentItem;
@@ -143,18 +144,30 @@ interface SceneProps {
   onSelectObject: (id: string) => void;
   selectedObjectId: string | null;
   onPlaceObject: (position: [number, number, number]) => void;
+  snapPoints: SnapPoint[];
+  isSnapPointMode: boolean;
+  onSnapPointAdded: (position: THREE.Vector3, normal?: THREE.Vector3) => void;
+  selectedSnapPointId: string | null;
+  onSelectSnapPoint: (id: string | null) => void;
 }
 
 const Scene: React.FC<SceneProps> = ({ 
   placedObjects, 
   onSelectObject,
   selectedObjectId,
-  onPlaceObject
+  onPlaceObject,
+  snapPoints,
+  isSnapPointMode,
+  onSnapPointAdded,
+  selectedSnapPointId,
+  onSelectSnapPoint
 }) => {
   const directionalLightRef = useRef<THREE.DirectionalLight>(null);
   useHelper(directionalLightRef, THREE.DirectionalLightHelper, 1, 'red');
 
   const handleClick = (event: any) => {
+    if (isSnapPointMode) return; // Don't place objects in snap point mode
+    
     if (event.point) {
       event.stopPropagation();
       const position: [number, number, number] = [
@@ -194,6 +207,15 @@ const Scene: React.FC<SceneProps> = ({
         />
       ))}
       
+      {/* Snap Point Editor */}
+      <SnapPointEditor
+        isActive={isSnapPointMode}
+        snapPoints={snapPoints}
+        onAddSnapPoint={onSnapPointAdded}
+        selectedSnapPointId={selectedSnapPointId}
+        onSelectSnapPoint={onSelectSnapPoint}
+      />
+      
       {/* Add a mesh to capture clicks for adding objects */}
       <mesh onClick={handleClick} visible={false}>
         <boxGeometry args={[50, 50, 50]} />
@@ -206,9 +228,24 @@ const Scene: React.FC<SceneProps> = ({
 interface ViewportProps {
   selectedComponent: ComponentItem | null;
   onComponentPlaced: () => void;
+  snapPoints?: SnapPoint[];
+  setSnapPoints?: (snapPoints: SnapPoint[]) => void;
+  isSnapPointMode?: boolean;
+  onSnapPointAdded?: (snapPoint: SnapPoint) => void;
+  selectedSnapPointId?: string | null;
+  onSelectSnapPoint?: (id: string | null) => void;
 }
 
-export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onComponentPlaced }) => {
+export const Viewport: React.FC<ViewportProps> = ({ 
+  selectedComponent, 
+  onComponentPlaced,
+  snapPoints = [],
+  setSnapPoints = () => {},
+  isSnapPointMode = false,
+  onSnapPointAdded = () => {},
+  selectedSnapPointId = null,
+  onSelectSnapPoint = () => {}
+}) => {
   const [placedObjects, setPlacedObjects] = useState<Array<{
     id: string;
     component: ComponentItem;
@@ -335,8 +372,22 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
 
   const handleFitToView = () => {
     // This would normally adjust the camera to fit all objects
-    // This is a placeholder for that functionality
     console.log("Fit to view action requested");
+  };
+
+  const handleSnapPointAdded = (position: THREE.Vector3, normal?: THREE.Vector3) => {
+    if (onSnapPointAdded) {
+      const newSnapPoint: SnapPoint = {
+        id: `snap-${Date.now()}`,
+        name: 'New Snap Point',
+        type: normal ? 'plane' : 'point',
+        position: position,
+        normal: normal,
+        compatibility: [],
+      };
+      
+      onSnapPointAdded(newSnapPoint);
+    }
   };
 
   return (
@@ -353,7 +404,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         </Button>
       </div>
       
-      {selectedObjectId && (
+      {selectedObjectId && !isSnapPointMode && (
         <div className="absolute top-4 left-4 z-10">
           <Button
             variant="destructive"
@@ -367,12 +418,26 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         </div>
       )}
       
+      {isSnapPointMode && (
+        <div className="absolute top-4 left-4 z-10">
+          <div className="bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm flex items-center gap-1">
+            <Crosshair size={16} className="animate-pulse" />
+            <span>Click on model to add snap point</span>
+          </div>
+        </div>
+      )}
+      
       <Canvas shadows className="w-full h-full outline-none">
         <Scene 
           placedObjects={placedObjects}
           onSelectObject={handleSelectObject}
           selectedObjectId={selectedObjectId}
           onPlaceObject={handlePlaceObject}
+          snapPoints={snapPoints}
+          isSnapPointMode={isSnapPointMode}
+          onSnapPointAdded={handleSnapPointAdded}
+          selectedSnapPointId={selectedSnapPointId}
+          onSelectSnapPoint={onSelectSnapPoint}
         />
       </Canvas>
     </div>
