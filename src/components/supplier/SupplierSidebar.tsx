@@ -34,7 +34,7 @@ export const SupplierSidebar = () => {
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
   return (
-    <div className={`min-h-screen pt-10 ${isCollapsed ? 'w-20' : 'w-64'} transition-all duration-300 ease-in-out relative`}>
+    <div className={`min-h-screen pt-2.5 ${isCollapsed ? 'w-20' : 'w-64'} transition-all duration-300 ease-in-out relative`}>
       <div className="bg-white rounded-lg p-4 shadow-sm h-full">
         {/* Toggle Button */}
         <button 
@@ -54,7 +54,7 @@ export const SupplierSidebar = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center ${isCollapsed ? 'justify-center' : 'px-4'} py-3 rounded-lg transition-colors ${
+                className={`flex items-center ${isCollapsed ? 'justify-center' : 'px-4'} py-3 rounded-[50px] transition-colors ${
                   isActive
                     ? 'bg-black text-white font-medium'
                     : 'bg-[#f5f5f5] text-black hover:bg-gray-200'
