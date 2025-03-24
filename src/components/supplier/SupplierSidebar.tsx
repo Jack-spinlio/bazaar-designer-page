@@ -62,7 +62,7 @@ export const SupplierSidebar = () => {
               >
                 <span className={`${isActive ? 'text-white' : 'text-gray-700'} ${isCollapsed ? 'mr-0' : 'mr-3'}`}>
                   {isCollapsed ? 
-                    <div className={`p-2 rounded-full ${isActive ? 'bg-black' : 'bg-[#f5f5f5]'}`}>
+                    <div className={`w-8 h-8 flex items-center justify-center rounded-full ${isActive ? 'bg-black' : 'bg-[#f5f5f5]'}`}>
                       {item.icon}
                     </div> : 
                     item.icon
