@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Header } from '@/components/Header/Header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -152,7 +151,7 @@ const ProducerProfile = () => {
   };
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="min-h-screen">
       <Header />
       
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
