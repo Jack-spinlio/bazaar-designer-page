@@ -30,7 +30,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/marketplace" replace />} />
         <Route path="/index" element={<Index />} />
-        <Route path="/studio" element={<DesignStudio />} />
+        <Route path="/design" element={<DesignStudio />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/producer/:id" element={<ProducerProfile />} />

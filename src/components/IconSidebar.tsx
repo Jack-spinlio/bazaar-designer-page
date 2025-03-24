@@ -34,8 +34,8 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
       }
     }
     
-    if (location.pathname !== '/studio') {
-      navigate('/studio');
+    if (location.pathname !== '/design') {
+      navigate('/design');
     }
   };
   
