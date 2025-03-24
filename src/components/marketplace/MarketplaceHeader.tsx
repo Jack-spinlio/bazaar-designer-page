@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,7 @@ export const MarketplaceHeader: React.FC = () => {
   const handleRoleChange = (value: string) => {
     setUserRole(value);
     if (value === 'supplier') {
-      navigate('/uploads');
+      navigate('/supplier/dashboard');
       toast.success('Switched to Supplier mode');
     } else {
       toast.success('Switched to Designer mode');
@@ -78,7 +77,7 @@ export const MarketplaceHeader: React.FC = () => {
             </DropdownMenuItem>
             {userRole === 'supplier' && (
               <DropdownMenuItem asChild>
-                <Link to="/uploads">Upload Components</Link>
+                <Link to="/supplier/uploads">Upload Components</Link>
               </DropdownMenuItem>
             )}
             <DropdownMenuItem asChild>

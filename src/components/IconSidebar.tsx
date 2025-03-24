@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { 
   Pencil, 
@@ -50,8 +49,7 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
 
   const handleUploadClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    // Instead of opening a dialog, navigate to the uploads page
-    navigate('/uploads');
+    navigate('/supplier/uploads');
   };
 
   return (
@@ -59,8 +57,6 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
       <div className="w-16 border-r border-gray-200 flex flex-col items-center py-4 bg-white rounded-2xl h-full shadow-sm">
         <TooltipProvider>
           <div className="flex-1 flex flex-col gap-6 items-center">
-            {/* Design Studio tab removed */}
-            
             {sidebarItems.map((item) => (
               <Tooltip key={item.id}>
                 <TooltipTrigger asChild>
@@ -86,10 +82,10 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
-                  variant={location.pathname === "/uploads" ? "default" : "ghost"} 
+                  variant={location.pathname.startsWith("/supplier") ? "default" : "ghost"} 
                   size="icon" 
                   className={
-                    location.pathname === "/uploads"
+                    location.pathname.startsWith("/supplier")
                       ? "bg-black text-white hover:bg-black hover:text-white" 
                       : "text-gray-400 hover:text-gray-600"
                   }
