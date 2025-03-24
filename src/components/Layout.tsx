@@ -10,9 +10,10 @@ import { MainContent } from './Layout/MainContent';
 
 export interface LayoutProps {
   children?: React.ReactNode;
+  sidebar?: React.ReactNode;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children }) => {
+export const Layout: React.FC<LayoutProps> = ({ children, sidebar }) => {
   const [activeTab, setActiveTab] = useState<string | null>("edit");
   const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
   const [selectedPrefab, setSelectedPrefab] = useState<PrefabItem | null>(null);
@@ -44,16 +45,22 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       <Header />
       
       <div className="flex flex-1 overflow-hidden mt-2.5">
-        <div className="flex h-full ml-0">
-          <IconSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-        </div>
+        {sidebar ? (
+          <div className="h-full">{sidebar}</div>
+        ) : (
+          <div className="flex h-full ml-0">
+            <IconSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+          </div>
+        )}
         
-        <SidebarContainer 
-          activeTab={activeTab}
-          onComponentSelected={handleComponentSelected}
-          onPrefabSelected={handlePrefabSelected}
-          onDesignSelected={handleDesignSelected}
-        />
+        {!sidebar && (
+          <SidebarContainer 
+            activeTab={activeTab}
+            onComponentSelected={handleComponentSelected}
+            onPrefabSelected={handlePrefabSelected}
+            onDesignSelected={handleDesignSelected}
+          />
+        )}
 
         <MainContent 
           selectedComponent={selectedComponent} 
