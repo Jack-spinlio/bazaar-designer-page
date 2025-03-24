@@ -122,13 +122,23 @@ const Uploads = () => {
       <div className="h-screen w-full bg-gradient-to-br from-gray-800 to-black">
         <div className="max-w-2xl mx-auto pt-24">
           <Card className="w-full max-w-md mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
-            <DialogHeader className="p-6 border-b">
-              <DialogTitle className="text-xl font-semibold text-center">List a Product</DialogTitle>
-              <p className="text-gray-500 text-sm text-center">What are you uploading?</p>
-              <DialogClose className="absolute right-4 top-4">
-                <X className="h-4 w-4" />
-              </DialogClose>
-            </DialogHeader>
+            <Dialog>
+              <DialogContent className="hidden">
+                {/* This is a dummy DialogContent to prevent context errors */}
+              </DialogContent>
+              
+              <div className="p-6 border-b">
+                <h2 className="text-xl font-semibold text-center">List a Product</h2>
+                <p className="text-gray-500 text-sm text-center">What are you uploading?</p>
+                <button 
+                  className="absolute right-4 top-4 rounded-sm opacity-70 hover:opacity-100 focus:outline-none"
+                  onClick={() => {}}
+                >
+                  <X className="h-4 w-4" />
+                  <span className="sr-only">Close</span>
+                </button>
+              </div>
+            </Dialog>
             
             <CardContent className="p-6 space-y-4">
               <div className="space-y-2">
