@@ -1,9 +1,9 @@
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useThree } from '@react-three/fiber';
 import { Plane, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { toast } from 'sonner';
+import { Crosshair } from 'lucide-react';
 
 export interface SnapPoint {
   id: string;
@@ -35,6 +35,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
   const [isPendingConfirmation, setIsPendingConfirmation] = useState(false);
   const [pendingPosition, setPendingPosition] = useState<THREE.Vector3 | null>(null);
   const [pendingNormal, setPendingNormal] = useState<THREE.Vector3 | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     if (!isActive) return;
@@ -170,6 +171,34 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
 
   return (
     <group>
+      {isActive && !isPendingConfirmation && (
+        <Html 
+          style={{ 
+            position: 'fixed', 
+            top: 0, 
+            left: 0, 
+            width: '100%', 
+            height: '100%', 
+            pointerEvents: 'none', 
+            zIndex: 10 
+          }}
+        >
+          {hoverPoint && (
+            <div 
+              style={{ 
+                position: 'absolute', 
+                left: '50%', 
+                top: '50%', 
+                transform: 'translate(-50%, -50%)',
+                color: '#F97316', // Bright Orange crosshair
+                opacity: 0.7 
+              }}
+            >
+              <Crosshair size={32} strokeWidth={1.5} />
+            </div>
+          )}
+        </Html>
+      )}
       {isActive && !isPendingConfirmation && hoverPoint && (
         <group position={hoverPoint}>
           <mesh>
