@@ -19,8 +19,8 @@ const Edit = () => {
   };
 
   const handleAddSnapPoint = (snapPoint: SnapPoint) => {
-    // More strict duplicate detection with a very small tolerance
-    const tolerance = 0.0001;
+    // Very strict duplicate detection with tiny tolerance
+    const tolerance = 0.00001; // Extremely small tolerance
     const isDuplicate = snapPoints.some(existing => {
       return (
         Math.abs(existing.position.x - snapPoint.position.x) < tolerance &&
@@ -30,7 +30,7 @@ const Edit = () => {
     });
     
     if (isDuplicate) {
-      toast.error("Duplicate snap point detected");
+      toast.error("A snap point already exists at this position");
       return;
     }
     
@@ -41,9 +41,25 @@ const Edit = () => {
       id: uniqueId
     };
     
-    setSnapPoints(prevPoints => [...prevPoints, newPoint]);
+    // Before adding, one final check to avoid duplicates
+    setSnapPoints(prevPoints => {
+      // Check for duplicates with the latest state
+      const alreadyExists = prevPoints.some(point => 
+        Math.abs(point.position.x - newPoint.position.x) < tolerance &&
+        Math.abs(point.position.y - newPoint.position.y) < tolerance &&
+        Math.abs(point.position.z - newPoint.position.z) < tolerance
+      );
+      
+      if (alreadyExists) {
+        toast.error("A snap point already exists at this position");
+        return prevPoints; // Return unchanged if duplicate
+      }
+      
+      toast.success(`Added snap point${newPoint.parentId ? ' to component' : ''}`);
+      return [...prevPoints, newPoint]; // Add the new point
+    });
+    
     setSelectedSnapPointId(newPoint.id);
-    toast.success(`Added snap point${newPoint.parentId ? ' to component' : ''}`);
   };
 
   const handleToggleSnapPointMode = () => {
@@ -52,6 +68,8 @@ const Edit = () => {
       toast.info('Snap point mode activated. Click on meshes to add snap points.');
     } else {
       toast.info('Snap point mode deactivated.');
+      // Clear selected snap point when exiting mode
+      setSelectedSnapPointId(null);
     }
   };
 

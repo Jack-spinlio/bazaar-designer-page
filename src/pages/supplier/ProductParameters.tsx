@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -217,8 +216,7 @@ export const ProductParameters: React.FC = () => {
       return;
     }
     
-    // Stricter duplicate detection with smaller tolerance
-    const tolerance = 0.0001;
+    const tolerance = 0.00001;
     const isDuplicate = snapPoints.some(existing => {
       return (
         Math.abs(existing.position.x - snapPoint.position.x) < tolerance &&
@@ -229,11 +227,10 @@ export const ProductParameters: React.FC = () => {
     
     if (isDuplicate) {
       console.log("Duplicate snap point detected, ignoring");
-      toast.error("Duplicate snap point detected at this position");
+      toast.error("A snap point already exists at this position");
       return;
     }
     
-    // Generate a unique ID with timestamp + random value to ensure uniqueness
     const uniqueId = `snap-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
     
     const newPoint: SnapPoint = {
@@ -244,34 +241,37 @@ export const ProductParameters: React.FC = () => {
       compatibility: snapPoint.compatibility || []
     };
     
-    // Ensure no duplicates in state update
     setSnapPoints(prevPoints => {
-      // Double-check for duplicates one more time
       const alreadyExists = prevPoints.some(point => 
         Math.abs(point.position.x - newPoint.position.x) < tolerance &&
         Math.abs(point.position.y - newPoint.position.y) < tolerance &&
         Math.abs(point.position.z - newPoint.position.z) < tolerance
       );
       
-      if (alreadyExists) return prevPoints;
-      return [...prevPoints, newPoint];
-    });
-    
-    setSelectedSnapPointId(newPoint.id);
-    setActiveSnapPoint(newPoint);
-    
-    console.log(`Added snap point ${newPoint.id}:`);
-    console.log(`- Position: (${newPoint.position.x.toFixed(3)}, ${newPoint.position.y.toFixed(3)}, ${newPoint.position.z.toFixed(3)})`);
-    
-    if (newPoint.parentId) {
-      console.log(`- Attached to component: ${newPoint.parentId}`);
-      
-      if (newPoint.localPosition) {
-        console.log(`- Local position: (${newPoint.localPosition.x.toFixed(3)}, ${newPoint.localPosition.y.toFixed(3)}, ${newPoint.localPosition.z.toFixed(3)})`);
+      if (alreadyExists) {
+        toast.error("A snap point already exists at this position");
+        return prevPoints;
       }
-    }
-    
-    toast.success("Snap point added successfully");
+      
+      const updatedPoints = [...prevPoints, newPoint];
+      
+      setSelectedSnapPointId(newPoint.id);
+      setActiveSnapPoint(newPoint);
+      
+      console.log(`Added snap point ${newPoint.id}:`);
+      console.log(`- Position: (${newPoint.position.x.toFixed(3)}, ${newPoint.position.y.toFixed(3)}, ${newPoint.position.z.toFixed(3)})`);
+      
+      if (newPoint.parentId) {
+        console.log(`- Attached to component: ${newPoint.parentId}`);
+        
+        if (newPoint.localPosition) {
+          console.log(`- Local position: (${newPoint.localPosition.x.toFixed(3)}, ${newPoint.localPosition.y.toFixed(3)}, ${newPoint.localPosition.z.toFixed(3)})`);
+        }
+      }
+      
+      toast.success("Snap point added successfully");
+      return updatedPoints;
+    });
   };
 
   const handleSnapPointDeleted = (id: string) => {
@@ -525,4 +525,3 @@ export const ProductParameters: React.FC = () => {
 };
 
 export default ProductParameters;
-
