@@ -7,7 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { ChevronDown, ChevronUp, Plus, Cog, Bike, LayoutGrid } from 'lucide-react';
+import { ChevronDown, ChevronUp, Plus, Cog, Bike, LayoutGrid, Crosshair } from 'lucide-react';
 import { Label } from './ui/label';
 
 interface ColorOption {
@@ -20,7 +20,15 @@ interface ShapeOption {
   shape: string;
 }
 
-export const EditToolbar = () => {
+interface EditToolbarProps {
+  isSnapPointMode?: boolean;
+  onToggleSnapPointMode?: () => void;
+}
+
+export const EditToolbar: React.FC<EditToolbarProps> = ({ 
+  isSnapPointMode = false,
+  onToggleSnapPointMode = () => {}
+}) => {
   const [selectedTab, setSelectedTab] = useState('tubing');
   const [selectedColor, setSelectedColor] = useState('blue');
   const [selectedFinish, setSelectedFinish] = useState('glossy');
@@ -182,6 +190,19 @@ export const EditToolbar = () => {
   return <div className="bg-white rounded-2xl shadow-sm w-full h-full overflow-hidden">
       <ScrollArea className="h-full">
         <div className="p-4">
+          {onToggleSnapPointMode && (
+            <div className="mb-4">
+              <Button 
+                onClick={onToggleSnapPointMode}
+                variant={isSnapPointMode ? "default" : "outline"}
+                className="w-full flex items-center justify-center gap-2"
+              >
+                <Crosshair size={16} />
+                {isSnapPointMode ? "Exit Snap Point Mode" : "Enter Snap Point Mode"}
+              </Button>
+            </div>
+          )}
+          
           <Tabs value={selectedTab} defaultValue="tubing" className="mb-6" onValueChange={setSelectedTab}>
             <TabsList className="grid grid-cols-3 mb-4 w-full">
               <TabsTrigger value="tubing" className={selectedTab === 'tubing' ? 'bg-black text-white' : ''}>
