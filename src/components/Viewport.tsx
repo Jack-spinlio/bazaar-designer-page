@@ -179,7 +179,7 @@ interface SceneProps {
   onPlaceObject: (position: [number, number, number]) => void;
   snapPoints: SnapPoint[];
   isSnapPointMode: boolean;
-  onSnapPointAdded: (position: THREE.Vector3, normal?: THREE.Vector3, parentObject?: THREE.Object3D) => void;
+  onSnapPointAdded: (snapPoint: SnapPoint) => void;
   selectedSnapPointId: string | null;
   onSelectSnapPoint: (id: string | null) => void;
 }
@@ -299,10 +299,12 @@ const Scene: React.FC<SceneProps> = ({
         onSelectSnapPoint={onSelectSnapPoint}
       />
       
-      <mesh onClick={handleClick} visible={false}>
-        <boxGeometry args={[50, 50, 50]} />
-        <meshBasicMaterial transparent opacity={0} />
-      </mesh>
+      {!isSnapPointMode && (
+        <mesh onClick={handleClick} visible={false}>
+          <boxGeometry args={[50, 50, 50]} />
+          <meshBasicMaterial transparent opacity={0} />
+        </mesh>
+      )}
     </>
   );
 };
@@ -507,3 +509,4 @@ export const Viewport: React.FC<ViewportProps> = ({
     </div>
   );
 };
+

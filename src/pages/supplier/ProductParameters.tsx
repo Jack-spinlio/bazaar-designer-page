@@ -216,7 +216,7 @@ export const ProductParameters: React.FC = () => {
       return;
     }
     
-    const tolerance = 0.01;
+    const tolerance = 0.005;
     const isDuplicate = snapPoints.some(existing => {
       return (
         Math.abs(existing.position.x - snapPoint.position.x) < tolerance &&
@@ -231,18 +231,26 @@ export const ProductParameters: React.FC = () => {
       return;
     }
     
-    setSnapPoints([...snapPoints, snapPoint]);
-    setSelectedSnapPointId(snapPoint.id);
-    setActiveSnapPoint(snapPoint);
+    const newPoint = {
+      ...snapPoint,
+      id: snapPoint.id || `snap-${Date.now()}`,
+      name: snapPoint.name || 'New Snap Point',
+      type: snapPoint.type || 'point',
+      compatibility: snapPoint.compatibility || []
+    };
     
-    console.log(`Added snap point ${snapPoint.id}:`);
-    console.log(`- Position: (${snapPoint.position.x.toFixed(3)}, ${snapPoint.position.y.toFixed(3)}, ${snapPoint.position.z.toFixed(3)})`);
+    setSnapPoints([...snapPoints, newPoint]);
+    setSelectedSnapPointId(newPoint.id);
+    setActiveSnapPoint(newPoint);
     
-    if (snapPoint.parentId) {
-      console.log(`- Attached to component: ${snapPoint.parentId}`);
+    console.log(`Added snap point ${newPoint.id}:`);
+    console.log(`- Position: (${newPoint.position.x.toFixed(3)}, ${newPoint.position.y.toFixed(3)}, ${newPoint.position.z.toFixed(3)})`);
+    
+    if (newPoint.parentId) {
+      console.log(`- Attached to component: ${newPoint.parentId}`);
       
-      if (snapPoint.localPosition) {
-        console.log(`- Local position: (${snapPoint.localPosition.x.toFixed(3)}, ${snapPoint.localPosition.y.toFixed(3)}, ${snapPoint.localPosition.z.toFixed(3)})`);
+      if (newPoint.localPosition) {
+        console.log(`- Local position: (${newPoint.localPosition.x.toFixed(3)}, ${newPoint.localPosition.y.toFixed(3)}, ${newPoint.localPosition.z.toFixed(3)})`);
       }
     }
     
@@ -500,3 +508,4 @@ export const ProductParameters: React.FC = () => {
 };
 
 export default ProductParameters;
+

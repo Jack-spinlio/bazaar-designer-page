@@ -65,19 +65,19 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
           parentObject = current;
           break;
         }
-        if (!current.parent) break;
         current = current.parent;
       }
 
-      // Add a small offset in the normal direction to avoid z-fighting
+      // Add a small offset in the normal direction to prevent z-fighting and make the point visible
       if (normal) {
-        position.add(normal.multiplyScalar(0.01));
+        position.add(normal.multiplyScalar(0.02));
       }
       
       console.log("Placing snap point at:", position.toArray());
       console.log("Object clicked:", clickedObject.type);
       console.log("Parent object:", parentObject ? parentObject.userData.componentName : "null");
       
+      // Only add snap point if we have a valid intersection
       onAddSnapPoint(position, normal, parentObject);
     }
   };
