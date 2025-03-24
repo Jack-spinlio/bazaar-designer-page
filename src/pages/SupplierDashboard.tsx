@@ -10,6 +10,7 @@ import { SupplierSidebar } from '@/components/supplier/SupplierSidebar';
 const ProductsPage = () => <div className="p-6"><h1 className="text-2xl font-bold">Products</h1></div>;
 const OrdersPage = () => <div className="p-6"><h1 className="text-2xl font-bold">Orders</h1></div>;
 const EnquiriesPage = () => <div className="p-6"><h1 className="text-2xl font-bold">Enquiries</h1></div>;
+const SettingsPage = () => <div className="p-6"><h1 className="text-2xl font-bold">Settings</h1></div>;
 
 const SupplierDashboard = () => {
   const location = useLocation();
@@ -23,6 +24,7 @@ const SupplierDashboard = () => {
         <Route path="/products" element={<ProductsPage />} />
         <Route path="/orders" element={<OrdersPage />} />
         <Route path="/enquiries" element={<EnquiriesPage />} />
+        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </Layout>
   );
