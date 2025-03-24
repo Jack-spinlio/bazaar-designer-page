@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Viewport } from '@/components/Viewport';
@@ -18,12 +17,6 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { 
-  Tabs, 
-  TabsList, 
-  TabsTrigger, 
-  TabsContent 
-} from "@/components/ui/tabs";
 
 // Import icons for tabs
 import { 
@@ -105,7 +98,7 @@ const DesignStudio = () => {
   const [selectedPrefab, setSelectedPrefab] = useState<PrefabItem | null>(null);
   const [selectedDesign, setSelectedDesign] = useState<SavedDesign | null>(null);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("edit");
+  const [activeTab, setActiveTab] = useState<string | null>(null);
 
   // Handlers for component selection
   const handleComponentSelected = (component: ComponentItem) => {
@@ -127,6 +120,15 @@ const DesignStudio = () => {
     console.log('Component placed in scene');
     setSelectedComponent(null);
     setSelectedPrefab(null);
+  };
+
+  // Tab handling with toggle behavior
+  const handleTabClick = (tabId: string) => {
+    if (activeTab === tabId) {
+      setActiveTab(null);
+    } else {
+      setActiveTab(tabId);
+    }
   };
 
   // Tab definitions with icons
@@ -203,7 +205,7 @@ const DesignStudio = () => {
           </div>
         );
       default:
-        return <EditToolbar />;
+        return null;
     }
   };
 
@@ -213,33 +215,34 @@ const DesignStudio = () => {
         {/* Tabbed navigation */}
         <div className="flex flex-col h-full">
           <div className="p-2 bg-white rounded-2xl shadow-sm mb-2.5">
-            <TabsList className="flex flex-col space-y-1">
+            <div className="flex flex-col space-y-1">
               {tabs.map((tab) => (
-                <TabsTrigger
+                <button
                   key={tab.id}
-                  value={tab.id}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                     activeTab === tab.id
                       ? "bg-black text-white"
                       : "text-gray-600 hover:bg-gray-100"
                   }`}
-                  onClick={() => setActiveTab(tab.id)}
+                  onClick={() => handleTabClick(tab.id)}
                 >
                   <tab.icon size={18} />
                   <span className="hidden sm:inline">{tab.label}</span>
-                </TabsTrigger>
+                </button>
               ))}
-            </TabsList>
+            </div>
           </div>
         </div>
 
-        {/* Sidebar based on active tab */}
-        <div className="w-[320px] h-full ml-2.5">
-          {renderSidebar()}
-        </div>
+        {/* Sidebar based on active tab - only render if a tab is active */}
+        {activeTab && (
+          <div className="w-[320px] h-full ml-2.5">
+            {renderSidebar()}
+          </div>
+        )}
 
-        {/* Persistent viewport */}
-        <div className="flex-1 h-full ml-2.5">
+        {/* Persistent viewport - adjust width based on whether sidebar is open */}
+        <div className={`${activeTab ? 'flex-1' : 'w-full'} h-full ${activeTab ? 'ml-2.5' : ''}`}>
           <Viewport 
             selectedComponent={selectedComponent}
             onComponentPlaced={handleComponentPlaced}

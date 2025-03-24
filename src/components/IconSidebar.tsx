@@ -25,12 +25,7 @@ export const IconSidebar = () => {
   
   const sidebarItems = [
     { icon: Layers, label: "Design Studio", path: "/studio" },
-    { icon: Pencil, label: "Edit", path: "/edit" },
-    { icon: Bike, label: "Prefabs", path: "/prefabs" },
-    { icon: Puzzle, label: "Components", path: "/components" },
-    { icon: FileSpreadsheet, label: "BOM", path: "/bom" },
     { icon: Bookmark, label: "Saved", path: "/saved" },
-    { icon: Clock, label: "Timeline", path: "/timeline" },
   ];
 
   const handleUploadClick = (e: React.MouseEvent) => {
