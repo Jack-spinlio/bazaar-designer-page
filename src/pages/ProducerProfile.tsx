@@ -1,168 +1,144 @@
 import React, { useState } from 'react';
 import { Header } from '@/components/Header/Header';
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductCard } from '@/components/marketplace/ProductCard';
 import { Star, StarHalf } from 'lucide-react';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 // Product data with categories
-const products = [
-  {
-    id: 'dt-1',
-    name: 'Shimano 105 Front Calliper',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20front%20calliper.jpeg',
-    price: 55,
-    manufacturer: 'Shimano',
-    category: 'drivetrain'
-  },
-  {
-    id: 'dt-2',
-    name: 'Shimano 105 Rear Hub',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20hub.jpeg',
-    price: 89,
-    manufacturer: 'Shimano',
-    category: 'wheels'
-  },
-  {
-    id: 'dt-3',
-    name: 'Shimano XTR Cassette',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//cassette.jpeg',
-    price: 112,
-    manufacturer: 'Shimano',
-    category: 'drivetrain'
-  },
-  {
-    id: 'dt-4',
-    name: 'Shimano CUES Road Bike Lever',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//CUES%20lever.jpeg',
-    price: 78,
-    manufacturer: 'Shimano',
-    category: 'braking'
-  },
-  {
-    id: 'dt-5',
-    name: 'Shimano Dura-Ace Calliper',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Dura-ace%20calliper.jpeg',
-    price: 195,
-    manufacturer: 'Shimano',
-    category: 'braking'
-  },
-  {
-    id: 'dt-6',
-    name: 'Shimano GRX Pedals',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//GRX%20Pedals.jpeg',
-    price: 95,
-    manufacturer: 'Shimano',
-    category: 'pedals'
-  },
-  {
-    id: 'dt-7',
-    name: 'Shimano XTR Derailleur',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//xrt%20di2%20deralier.jpeg',
-    price: 210,
-    manufacturer: 'Shimano',
-    category: 'drivetrain'
-  },
-  {
-    id: 'dt-8',
-    name: 'Shimano XTR Lever',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//xtra%20lever.jpeg',
-    price: 145,
-    manufacturer: 'Shimano',
-    category: 'braking'
-  },
-  {
-    id: 'ebc-1',
-    name: 'Shimano eBike Display',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//sim%20disp.jpeg',
-    price: 182,
-    manufacturer: 'Shimano',
-    category: 'ebike'
-  },
-  {
-    id: 'ebc-2',
-    name: 'Shimano Steps 504Wh Battery',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//504wh.jpeg',
-    price: 435,
-    manufacturer: 'Shimano',
-    category: 'ebike'
-  },
-  {
-    id: 'ebc-3',
-    name: 'Shimano 630Wh Battery',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//630wh.jpeg',
-    price: 520,
-    manufacturer: 'Shimano',
-    category: 'ebike'
-  },
-  {
-    id: 'ebc-6',
-    name: 'Shimano EP8 Motor',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//EP8.jpeg',
-    price: 610,
-    manufacturer: 'Shimano',
-    category: 'ebike'
-  }
-];
+const products = [{
+  id: 'dt-1',
+  name: 'Shimano 105 Front Calliper',
+  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20front%20calliper.jpeg',
+  price: 55,
+  manufacturer: 'Shimano',
+  category: 'drivetrain'
+}, {
+  id: 'dt-2',
+  name: 'Shimano 105 Rear Hub',
+  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20hub.jpeg',
+  price: 89,
+  manufacturer: 'Shimano',
+  category: 'wheels'
+}, {
+  id: 'dt-3',
+  name: 'Shimano XTR Cassette',
+  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//cassette.jpeg',
+  price: 112,
+  manufacturer: 'Shimano',
+  category: 'drivetrain'
+}, {
+  id: 'dt-4',
+  name: 'Shimano CUES Road Bike Lever',
+  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//CUES%20lever.jpeg',
+  price: 78,
+  manufacturer: 'Shimano',
+  category: 'braking'
+}, {
+  id: 'dt-5',
+  name: 'Shimano Dura-Ace Calliper',
+  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Dura-ace%20calliper.jpeg',
+  price: 195,
+  manufacturer: 'Shimano',
+  category: 'braking'
+}, {
+  id: 'dt-6',
+  name: 'Shimano GRX Pedals',
+  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//GRX%20Pedals.jpeg',
+  price: 95,
+  manufacturer: 'Shimano',
+  category: 'pedals'
+}, {
+  id: 'dt-7',
+  name: 'Shimano XTR Derailleur',
+  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//xrt%20di2%20deralier.jpeg',
+  price: 210,
+  manufacturer: 'Shimano',
+  category: 'drivetrain'
+}, {
+  id: 'dt-8',
+  name: 'Shimano XTR Lever',
+  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//xtra%20lever.jpeg',
+  price: 145,
+  manufacturer: 'Shimano',
+  category: 'braking'
+}, {
+  id: 'ebc-1',
+  name: 'Shimano eBike Display',
+  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//sim%20disp.jpeg',
+  price: 182,
+  manufacturer: 'Shimano',
+  category: 'ebike'
+}, {
+  id: 'ebc-2',
+  name: 'Shimano Steps 504Wh Battery',
+  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//504wh.jpeg',
+  price: 435,
+  manufacturer: 'Shimano',
+  category: 'ebike'
+}, {
+  id: 'ebc-3',
+  name: 'Shimano 630Wh Battery',
+  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//630wh.jpeg',
+  price: 520,
+  manufacturer: 'Shimano',
+  category: 'ebike'
+}, {
+  id: 'ebc-6',
+  name: 'Shimano EP8 Motor',
+  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//EP8.jpeg',
+  price: 610,
+  manufacturer: 'Shimano',
+  category: 'ebike'
+}];
 
 // Gallery images - updated with the new URLs
-const galleryImages = [
-  {
-    id: 1,
-    url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//shimano.avif',
-    alt: 'Shimano Workshop',
-  },
-  {
-    id: 2,
-    url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz%20factory%20.jpg',
-    alt: 'Vulz Factory',
-  },
-  {
-    id: 3,
-    url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz33.jpeg',
-    alt: 'Vulz Facility',
-  },
-  {
-    id: 4,
-    url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz22.jpeg',
-    alt: 'Vulz Equipment',
-  }
-];
-
+const galleryImages = [{
+  id: 1,
+  url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//shimano.avif',
+  alt: 'Shimano Workshop'
+}, {
+  id: 2,
+  url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz%20factory%20.jpg',
+  alt: 'Vulz Factory'
+}, {
+  id: 3,
+  url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz33.jpeg',
+  alt: 'Vulz Facility'
+}, {
+  id: 4,
+  url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz22.jpeg',
+  alt: 'Vulz Equipment'
+}];
 const ProducerProfile = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [featuredImage, setFeaturedImage] = useState<string>(galleryImages[0].url);
-  
+
   // Filter products based on selected category
-  const filteredProducts = selectedCategory === 'all' 
-    ? products 
-    : products.filter(product => product.category === selectedCategory);
-  
+  const filteredProducts = selectedCategory === 'all' ? products : products.filter(product => product.category === selectedCategory);
+
   // Limit products to 6 per row
   const displayedProducts = filteredProducts.slice(0, 6);
-  
-  const categories = [
-    { id: 'all', name: 'All Products' },
-    { id: 'drivetrain', name: 'Drivetrain' },
-    { id: 'braking', name: 'Braking Systems' },
-    { id: 'wheels', name: 'Wheels & Hubs' },
-    { id: 'pedals', name: 'Pedals' },
-    { id: 'ebike', name: 'eBike Components' },
-  ];
-  
-  return (
-    <div className="bg-white min-h-screen">
+  const categories = [{
+    id: 'all',
+    name: 'All Products'
+  }, {
+    id: 'drivetrain',
+    name: 'Drivetrain'
+  }, {
+    id: 'braking',
+    name: 'Braking Systems'
+  }, {
+    id: 'wheels',
+    name: 'Wheels & Hubs'
+  }, {
+    id: 'pedals',
+    name: 'Pedals'
+  }, {
+    id: 'ebike',
+    name: 'eBike Components'
+  }];
+  return <div className="bg-white min-h-screen">
       <Header />
       
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -170,13 +146,9 @@ const ProducerProfile = () => {
         <div className="flex flex-col md:flex-row gap-8 mb-8">
           {/* Left side - Company info */}
           <div className="w-full md:w-1/3">
-            <img 
-              src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Shimano-Logo-1990.png" 
-              alt="Shimano Logo" 
-              className="w-48 h-auto object-contain mb-4"
-            />
-            <p className="text-lg text-gray-600 mb-2">OEM Component Producer</p>
-            <h1 className="text-4xl font-bold mb-3">Shimano Inc, Japan</h1>
+            <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Shimano-Logo-1990.png" alt="Shimano Logo" className="w-48 h-auto object-contain mb-4" />
+            <p className="text-lg text-gray-600 mb-2 text-left">OEM Component Producer</p>
+            <h1 className="text-4xl font-bold mb-3 text-left">Shimano Inc, Japan</h1>
             <div className="flex items-center mb-2">
               <Star className="h-6 w-6 text-yellow-400 fill-yellow-400" />
               <Star className="h-6 w-6 text-yellow-400 fill-yellow-400" />
@@ -190,32 +162,19 @@ const ProducerProfile = () => {
           {/* Right side - Featured image */}
           <div className="w-full md:w-2/3">
             <div className="rounded-lg overflow-hidden h-72">
-              <img 
-                src={featuredImage} 
-                alt="Featured" 
-                className="w-full h-full object-cover"
-              />
+              <img src={featuredImage} alt="Featured" className="w-full h-full object-cover" />
             </div>
             
             <div className="mt-4">
               <Carousel className="w-full">
                 <CarouselContent>
-                  {galleryImages.map((image) => (
-                    <CarouselItem key={image.id} className="basis-1/4">
+                  {galleryImages.map(image => <CarouselItem key={image.id} className="basis-1/4">
                       <div className="p-1">
-                        <div 
-                          className="rounded-lg overflow-hidden cursor-pointer h-24"
-                          onClick={() => setFeaturedImage(image.url)}
-                        >
-                          <img 
-                            src={image.url} 
-                            alt={image.alt} 
-                            className="w-full h-full object-cover"
-                          />
+                        <div className="rounded-lg overflow-hidden cursor-pointer h-24" onClick={() => setFeaturedImage(image.url)}>
+                          <img src={image.url} alt={image.alt} className="w-full h-full object-cover" />
                         </div>
                       </div>
-                    </CarouselItem>
-                  ))}
+                    </CarouselItem>)}
                 </CarouselContent>
                 <CarouselPrevious className="left-0" />
                 <CarouselNext className="right-0" />
@@ -279,39 +238,23 @@ const ProducerProfile = () => {
         <div>
           <div className="mb-6 overflow-x-auto">
             <div className="flex space-x-2 pb-3">
-              {categories.map((category) => (
-                <button
-                  key={category.id}
-                  onClick={() => setSelectedCategory(category.id)}
-                  className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm font-medium ${
-                    selectedCategory === category.id
-                      ? 'bg-black text-white'
-                      : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                  }`}
-                >
+              {categories.map(category => <button key={category.id} onClick={() => setSelectedCategory(category.id)} className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm font-medium ${selectedCategory === category.id ? 'bg-black text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}`}>
                   {category.name}
-                </button>
-              ))}
+                </button>)}
             </div>
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-            {displayedProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+            {displayedProducts.map(product => <ProductCard key={product.id} product={product} />)}
           </div>
           
-          {filteredProducts.length > 6 && (
-            <div className="mt-4 text-center">
+          {filteredProducts.length > 6 && <div className="mt-4 text-center">
               <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium">
                 View All ({filteredProducts.length})
               </button>
-            </div>
-          )}
+            </div>}
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ProducerProfile;
