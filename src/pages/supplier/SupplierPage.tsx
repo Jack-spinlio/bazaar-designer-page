@@ -6,6 +6,7 @@ import { ProductsList } from './ProductsList';
 import { UploadProduct } from './UploadProduct';
 import { EditProfile } from './EditProfile';
 import { EditProduct } from './EditProduct';
+import ProductParameters from './ProductParameters';
 import { Header } from '@/components/Header/Header';
 
 const SupplierPage: React.FC = () => {
@@ -18,6 +19,7 @@ const SupplierPage: React.FC = () => {
           <Routes>
             <Route path="/" element={<ProductsList />} />
             <Route path="/upload" element={<UploadProduct />} />
+            <Route path="/parameters" element={<ProductParameters />} />
             <Route path="/edit-profile" element={<EditProfile />} />
             <Route path="/edit/:id" element={<EditProduct />} />
             <Route path="*" element={<Navigate to="/supplier" replace />} />

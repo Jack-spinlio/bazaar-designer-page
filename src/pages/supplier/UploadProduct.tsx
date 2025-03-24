@@ -13,6 +13,7 @@ export const UploadProduct: React.FC = () => {
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [modelFile, setModelFile] = useState<File | null>(null);
   const categories = [{
     id: 'drivetrain',
     name: 'Drivetrain'
@@ -44,6 +45,14 @@ export const UploadProduct: React.FC = () => {
     }
   };
   
+  const handleModelFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setModelFile(file);
+      toast.success(`3D model "${file.name}" selected`);
+    }
+  };
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
@@ -51,8 +60,9 @@ export const UploadProduct: React.FC = () => {
     // Simulate upload process
     setTimeout(() => {
       setIsUploading(false);
-      toast.success('Product uploaded successfully');
-      navigate('/supplier');
+      toast.success('Product uploaded, continue to add parameters');
+      // Navigate to parameters page instead of supplier page
+      navigate('/supplier/parameters');
     }, 1500);
   };
   
@@ -123,7 +133,7 @@ export const UploadProduct: React.FC = () => {
               </div>
 
               <div>
-                <Label htmlFor="model-file">3D Model File (optional)</Label>
+                <Label htmlFor="model-file">3D Model File (required)</Label>
                 <div className="mt-1">
                   <label className="block w-full">
                     <div className="flex items-center justify-center h-12 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
@@ -133,12 +143,19 @@ export const UploadProduct: React.FC = () => {
                           <span className="text-black font-medium">Upload 3D model</span>
                         </div>
                       </div>
-                      <Input id="model-file" type="file" accept=".obj,.glb,.gltf" className="hidden" />
+                      <Input 
+                        id="model-file" 
+                        type="file" 
+                        accept=".obj,.glb,.gltf,.stl" 
+                        className="hidden" 
+                        onChange={handleModelFileChange}
+                        required
+                      />
                     </div>
                   </label>
                 </div>
                 <p className="text-xs text-gray-500 mt-1 text-left">
-                  Supported formats: OBJ, GLB, GLTF
+                  {modelFile ? `Selected: ${modelFile.name}` : 'Supported formats: OBJ, GLB, GLTF, STL'}
                 </p>
               </div>
             </div>
