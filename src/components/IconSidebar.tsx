@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { 
   Pencil, 
@@ -12,19 +13,26 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { FileUploader } from "@/components/FileUploader";
 
-export const IconSidebar = ({ activeTab, setActiveTab }) => {
+interface IconSidebarProps {
+  activeTab?: string | null;
+  setActiveTab?: (tab: string | null) => void;
+}
+
+export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   
-  const handleTabClick = (tabId) => {
-    if (activeTab === tabId) {
-      setActiveTab(null);
-    } else {
-      setActiveTab(tabId);
+  const handleTabClick = (tabId: string) => {
+    if (setActiveTab) {
+      if (activeTab === tabId) {
+        setActiveTab(null);
+      } else {
+        setActiveTab(tabId);
+      }
     }
     
     if (location.pathname !== '/studio') {
@@ -118,6 +126,7 @@ export const IconSidebar = ({ activeTab, setActiveTab }) => {
 
       <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
         <DialogContent className="sm:max-w-md">
+          <DialogTitle>Upload File</DialogTitle>
           <FileUploader 
             onClose={() => setUploadDialogOpen(false)} 
             onFileUploaded={() => {

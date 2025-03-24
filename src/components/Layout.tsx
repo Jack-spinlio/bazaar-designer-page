@@ -13,6 +13,7 @@ export interface LayoutProps {
 }
 
 export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const [activeTab, setActiveTab] = useState<string | null>(null);
   const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
   const [selectedPrefab, setSelectedPrefab] = useState<PrefabItem | null>(null);
   const [selectedDesign, setSelectedDesign] = useState<SavedDesign | null>(null);
@@ -44,7 +45,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       
       <div className="flex flex-1 overflow-hidden mt-2.5">
         <div className="flex h-full ml-0">
-          <IconSidebar />
+          <IconSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
         </div>
         
         <SidebarContainer 
