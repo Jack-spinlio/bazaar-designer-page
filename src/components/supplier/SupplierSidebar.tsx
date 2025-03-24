@@ -39,7 +39,7 @@ export const SupplierSidebar: React.FC = () => {
   return (
     <SidebarProvider>
       <Sidebar 
-        className={`bg-white text-gray-800 shadow-lg rounded-xl ml-0 
+        className={`bg-white text-gray-800 shadow-lg rounded-xl ml-0 mt-16
                     ${minimized ? 'w-[70px]' : 'w-fit'}`}
         variant="floating"
       >
@@ -64,7 +64,7 @@ export const SupplierSidebar: React.FC = () => {
                 isActive={isActive('/supplier/dashboard')}
                 tooltip="Dashboard" 
                 onClick={() => navigate('/supplier/dashboard')}
-                className={`rounded-full py-3 px-4 ${isActive('/supplier/dashboard') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-center`}
+                className={`rounded-full py-3 px-4 ${isActive('/supplier/dashboard') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-start`}
               >
                 <LayoutDashboard className={`w-5 h-5 ${minimized ? 'mx-auto' : 'mr-2'}`} />
                 {!minimized && <span>Dashboard</span>}
@@ -76,7 +76,7 @@ export const SupplierSidebar: React.FC = () => {
                 isActive={isActive('/supplier/products')}
                 tooltip="Products" 
                 onClick={() => navigate('/supplier/products')}
-                className={`rounded-full py-3 px-4 ${isActive('/supplier/products') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-center`}
+                className={`rounded-full py-3 px-4 ${isActive('/supplier/products') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-start`}
               >
                 <Package className={`w-5 h-5 ${minimized ? 'mx-auto' : 'mr-2'}`} />
                 {!minimized && <span>My Products</span>}
@@ -88,7 +88,7 @@ export const SupplierSidebar: React.FC = () => {
                 isActive={isActive('/supplier/uploads')}
                 tooltip="Upload Components" 
                 onClick={() => navigate('/supplier/uploads')}
-                className={`rounded-full py-3 px-4 ${isActive('/supplier/uploads') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-center`}
+                className={`rounded-full py-3 px-4 ${isActive('/supplier/uploads') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-start`}
               >
                 <Upload className={`w-5 h-5 ${minimized ? 'mx-auto' : 'mr-2'}`} />
                 {!minimized && <span>Upload</span>}
@@ -100,7 +100,7 @@ export const SupplierSidebar: React.FC = () => {
                 isActive={isActive('/supplier/orders')}
                 tooltip="Orders" 
                 onClick={() => navigate('/supplier/orders')}
-                className={`rounded-full py-3 px-4 ${isActive('/supplier/orders') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-center`}
+                className={`rounded-full py-3 px-4 ${isActive('/supplier/orders') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-start`}
               >
                 <ShoppingCart className={`w-5 h-5 ${minimized ? 'mx-auto' : 'mr-2'}`} />
                 {!minimized && <span>Orders</span>}
@@ -112,7 +112,7 @@ export const SupplierSidebar: React.FC = () => {
                 isActive={isActive('/supplier/enquiries')}
                 tooltip="Enquiries" 
                 onClick={() => navigate('/supplier/enquiries')}
-                className={`rounded-full py-3 px-4 ${isActive('/supplier/enquiries') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-center`}
+                className={`rounded-full py-3 px-4 ${isActive('/supplier/enquiries') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-start`}
               >
                 <MessageSquare className={`w-5 h-5 ${minimized ? 'mx-auto' : 'mr-2'}`} />
                 {!minimized && <span>Enquiries</span>}
@@ -124,7 +124,7 @@ export const SupplierSidebar: React.FC = () => {
                 isActive={isActive('/supplier/settings')}
                 tooltip="Settings" 
                 onClick={() => navigate('/supplier/settings')}
-                className={`rounded-full py-3 px-4 ${isActive('/supplier/settings') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-center`}
+                className={`rounded-full py-3 px-4 ${isActive('/supplier/settings') ? 'bg-black text-white font-medium' : 'hover:bg-gray-100 text-gray-800'} flex justify-start`}
               >
                 <Settings className={`w-5 h-5 ${minimized ? 'mx-auto' : 'mr-2'}`} />
                 {!minimized && <span>Settings</span>}
