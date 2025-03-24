@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Upload } from 'lucide-react';
+
 export const UploadProduct: React.FC = () => {
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
@@ -30,6 +32,7 @@ export const UploadProduct: React.FC = () => {
     id: 'frame',
     name: 'Frames'
   }];
+  
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -40,6 +43,7 @@ export const UploadProduct: React.FC = () => {
       reader.readAsDataURL(file);
     }
   };
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsUploading(true);
@@ -51,9 +55,9 @@ export const UploadProduct: React.FC = () => {
       navigate('/supplier');
     }, 1500);
   };
+  
   return <div className="text-left">
       <div className="flex items-center mb-6">
-        
         <h1 className="text-2xl font-bold">Upload New Product</h1>
       </div>
 
@@ -72,6 +76,12 @@ export const UploadProduct: React.FC = () => {
                   <Input id="price" type="number" min="0.01" step="0.01" placeholder="e.g., 99.99" required />
                 </div>
 
+                {/* Swapped order: manufacturer now comes before category */}
+                <div>
+                  <Label htmlFor="manufacturer">Manufacturer</Label>
+                  <Input id="manufacturer" placeholder="e.g., Shimano" required />
+                </div>
+
                 <div>
                   <Label htmlFor="category">Category</Label>
                   <Select required>
@@ -82,11 +92,6 @@ export const UploadProduct: React.FC = () => {
                       {categories.map(category => <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>)}
                     </SelectContent>
                   </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="manufacturer">Manufacturer</Label>
-                  <Input id="manufacturer" placeholder="e.g., Shimano" required />
                 </div>
               </div>
             </div>
@@ -105,7 +110,7 @@ export const UploadProduct: React.FC = () => {
                       {imagePreview ? <img src={imagePreview} alt="Preview" className="h-full object-contain" /> : <div className="space-y-1 text-center p-4">
                           <Upload className="mx-auto h-8 w-8 text-gray-400" />
                           <div className="text-sm text-gray-600">
-                            <span className="text-purple-600 font-medium">Click to upload</span> or drag and drop
+                            <span className="text-black font-medium">Click to upload</span> or drag and drop
                           </div>
                           <p className="text-xs text-gray-500">
                             PNG, JPG, WEBP up to 10MB
@@ -125,7 +130,7 @@ export const UploadProduct: React.FC = () => {
                       <div className="space-y-1 text-center">
                         <div className="text-sm text-gray-600 flex items-center">
                           <Upload className="h-4 w-4 mr-1 text-gray-400" />
-                          <span className="text-purple-600 font-medium">Upload 3D model</span>
+                          <span className="text-black font-medium">Upload 3D model</span>
                         </div>
                       </div>
                       <Input id="model-file" type="file" accept=".obj,.glb,.gltf" className="hidden" />
@@ -143,7 +148,7 @@ export const UploadProduct: React.FC = () => {
             <Button type="button" variant="outline" className="mr-2" onClick={() => navigate('/supplier')}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isUploading}>
+            <Button type="submit" disabled={isUploading} className="bg-black hover:bg-black/90">
               {isUploading ? 'Uploading...' : 'Upload Product'}
             </Button>
           </div>

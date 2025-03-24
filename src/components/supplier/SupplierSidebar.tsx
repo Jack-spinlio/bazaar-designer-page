@@ -36,10 +36,10 @@ export const SupplierSidebar = () => {
   return (
     <div className={`min-h-screen pt-2.5 ${isCollapsed ? 'w-20' : 'w-64'} transition-all duration-300 ease-in-out relative`}>
       <div className="bg-white rounded-lg p-4 shadow-sm h-full">
-        {/* Toggle Button */}
+        {/* Toggle Button - Moved to top right */}
         <button 
           onClick={toggleSidebar} 
-          className="absolute -right-3 top-14 bg-gray-100 rounded-full p-1 shadow-md hover:bg-gray-200 transition-colors z-10"
+          className="absolute -right-3 top-3 bg-gray-100 rounded-full p-1 shadow-md hover:bg-gray-200 transition-colors z-10"
         >
           {isCollapsed ? 
             <ChevronRight className="w-4 h-4" /> : 
@@ -47,7 +47,7 @@ export const SupplierSidebar = () => {
           }
         </button>
 
-        <nav className="space-y-3">
+        <nav className="space-y-3 mt-4">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
             return (
