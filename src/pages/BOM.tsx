@@ -11,11 +11,12 @@ import {
 } from "@/components/ui/table";
 import { Viewport } from '@/components/Viewport';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ChevronRight } from 'lucide-react';
 
 // Type for component data
 interface ComponentData {
   id: string;
-  icon: string;
+  image: string;
   component: string;
   manufacturer: string;
   model: string;
@@ -27,11 +28,11 @@ interface ComponentData {
 const BOM = () => {
   const isMobile = useIsMobile();
   
-  // Sample data for the BOM table - in a real app this would come from your state management
+  // Sample data for the BOM table with updated content to match the image provided
   const components: ComponentData[] = [
     {
       id: "1",
-      icon: "🚲",
+      image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#frame",
       component: "Frame",
       manufacturer: "ModMo",
       model: "Saigon S2",
@@ -41,7 +42,7 @@ const BOM = () => {
     },
     {
       id: "2",
-      icon: "⚙️",
+      image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#motor",
       component: "Motor",
       manufacturer: "Bafang",
       model: "G310",
@@ -51,7 +52,7 @@ const BOM = () => {
     },
     {
       id: "3",
-      icon: "🛞",
+      image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#handlebar",
       component: "Handlebar",
       manufacturer: "King Meter",
       model: "SW-LCD",
@@ -61,7 +62,7 @@ const BOM = () => {
     },
     {
       id: "4",
-      icon: "🛑",
+      image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#brakes",
       component: "Brakes",
       manufacturer: "Tektro",
       model: "HD-E500",
@@ -71,7 +72,7 @@ const BOM = () => {
     },
     {
       id: "5",
-      icon: "🔄",
+      image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#hub",
       component: "Hub",
       manufacturer: "Enviolo",
       model: "TR CVP",
@@ -81,7 +82,7 @@ const BOM = () => {
     },
     {
       id: "6",
-      icon: "🔋",
+      image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#battery",
       component: "Battery",
       manufacturer: "Sansung",
       model: "36V 14Ah",
@@ -91,7 +92,7 @@ const BOM = () => {
     },
     {
       id: "7",
-      icon: "⚫",
+      image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#tires",
       component: "Tires",
       manufacturer: "Schwalbe",
       model: "Marathon",
@@ -101,7 +102,7 @@ const BOM = () => {
     },
     {
       id: "8",
-      icon: "🍴",
+      image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#fork",
       component: "Fork",
       manufacturer: "Suntour",
       model: "NCX E25",
@@ -111,7 +112,7 @@ const BOM = () => {
     },
     {
       id: "9",
-      icon: "🪑",
+      image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#saddle",
       component: "Saddle",
       manufacturer: "Selle Royal",
       model: "Respiro",
@@ -121,7 +122,7 @@ const BOM = () => {
     },
     {
       id: "10",
-      icon: "🔧",
+      image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#grips",
       component: "Grips",
       manufacturer: "Ergon",
       model: "GP1",
@@ -152,7 +153,7 @@ const BOM = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[40px]"></TableHead>
+                    <TableHead></TableHead>
                     <TableHead>Component</TableHead>
                     <TableHead className={isMobile ? "hidden sm:table-cell" : ""}>Manufacturer</TableHead>
                     <TableHead className={isMobile ? "hidden sm:table-cell" : ""}>Model</TableHead>
@@ -165,9 +166,16 @@ const BOM = () => {
                   {components.map((component) => (
                     <TableRow key={component.id} className="cursor-pointer hover:bg-gray-50">
                       <TableCell className="w-[40px]">
-                        <span role="img" aria-label={component.component}>
-                          {component.icon}
-                        </span>
+                        <div className="flex items-center">
+                          <ChevronRight size={18} className="mr-2 text-gray-400" />
+                          <div className="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
+                            <img 
+                              src={component.image} 
+                              alt={component.component} 
+                              className="w-7 h-7 object-contain"
+                            />
+                          </div>
+                        </div>
                       </TableCell>
                       <TableCell className="font-medium">{component.component}</TableCell>
                       <TableCell className={isMobile ? "hidden sm:table-cell" : ""}>{component.manufacturer}</TableCell>

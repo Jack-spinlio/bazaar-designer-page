@@ -1,14 +1,14 @@
+
 import React, { useState } from 'react';
 import { Viewport } from '@/components/Viewport';
 import { IconSidebar } from '@/components/IconSidebar';
-import EditToolbar from '@/components/EditToolbar';
 import { Sidebar, ComponentItem } from '@/components/Sidebar';
 import { PrefabSidebar, PrefabItem } from '@/components/PrefabSidebar';
 import { SavedSidebar, SavedDesign } from '@/components/SavedSidebar';
-import { TimelineChart } from '@/components/TimelineChart';
 import { FileUploader } from '@/components/FileUploader';
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Header } from '@/components/Header/Header';
+import { ChevronRight } from 'lucide-react';
 import { 
   Table, 
   TableBody, 
@@ -21,11 +21,106 @@ import { Pencil, Puzzle, FileSpreadsheet, Bookmark } from "lucide-react";
 
 // BOM data
 const components = [
-  { id: "1", icon: "🚲", component: "Frame", manufacturer: "ModMo", model: "Saigon S2", productionTime: "90 days", country: "Vietnam", price: "$97" },
-  { id: "2", icon: "⚙️", component: "Motor", manufacturer: "Bafang", model: "G310", productionTime: "42 days", country: "China", price: "$52" },
-  { id: "3", icon: "🛞", component: "Handlebar", manufacturer: "King Meter", model: "SW-LCD", productionTime: "35 days", country: "Taiwan", price: "$41" },
-  { id: "4", icon: "🛑", component: "Brakes", manufacturer: "Tektro", model: "HD-E500", productionTime: "40 days", country: "Taiwan", price: "$36" },
-  { id: "5", icon: "🔄", component: "Hub", manufacturer: "Enviolo", model: "TR CVP", productionTime: "60 days", country: "Netherlands", price: "$141" },
+  {
+    id: "1",
+    image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#frame",
+    component: "Frame",
+    manufacturer: "ModMo",
+    model: "Saigon S2",
+    productionTime: "90 days",
+    country: "Vietnam",
+    price: "$97"
+  },
+  {
+    id: "2",
+    image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#motor",
+    component: "Motor",
+    manufacturer: "Bafang",
+    model: "G310",
+    productionTime: "42 days",
+    country: "China",
+    price: "$52"
+  },
+  {
+    id: "3",
+    image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#handlebar",
+    component: "Handlebar",
+    manufacturer: "King Meter",
+    model: "SW-LCD",
+    productionTime: "35 days",
+    country: "Taiwan",
+    price: "$41"
+  },
+  {
+    id: "4",
+    image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#brakes",
+    component: "Brakes",
+    manufacturer: "Tektro",
+    model: "HD-E500",
+    productionTime: "40 days",
+    country: "Taiwan",
+    price: "$36"
+  },
+  {
+    id: "5",
+    image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#hub",
+    component: "Hub",
+    manufacturer: "Enviolo",
+    model: "TR CVP",
+    productionTime: "60 days",
+    country: "Netherlands",
+    price: "$141"
+  },
+  {
+    id: "6",
+    image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#battery",
+    component: "Battery",
+    manufacturer: "Sansung",
+    model: "36V 14Ah",
+    productionTime: "60 days",
+    country: "South Korea",
+    price: "$221"
+  },
+  {
+    id: "7",
+    image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#tires",
+    component: "Tires",
+    manufacturer: "Schwalbe",
+    model: "Marathon",
+    productionTime: "12 days",
+    country: "Vietnam",
+    price: "$6"
+  },
+  {
+    id: "8",
+    image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#fork",
+    component: "Fork",
+    manufacturer: "Suntour",
+    model: "NCX E25",
+    productionTime: "40 days",
+    country: "China",
+    price: "$37"
+  },
+  {
+    id: "9",
+    image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#saddle",
+    component: "Saddle",
+    manufacturer: "Selle Royal",
+    model: "Respiro",
+    productionTime: "30 days",
+    country: "Vietnam",
+    price: "$3"
+  },
+  {
+    id: "10",
+    image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#grips",
+    component: "Grips",
+    manufacturer: "Ergon",
+    model: "GP1",
+    productionTime: "10 days",
+    country: "China",
+    price: "$1.3"
+  },
 ];
 
 // Timeline data
@@ -120,10 +215,12 @@ const DesignStudio = () => {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[40px]"></TableHead>
+                  <TableHead></TableHead>
                   <TableHead>Component</TableHead>
                   <TableHead>Manufacturer</TableHead>
                   <TableHead>Model</TableHead>
+                  <TableHead>Production time</TableHead>
+                  <TableHead>Country</TableHead>
                   <TableHead>Price</TableHead>
                 </TableRow>
               </TableHeader>
@@ -131,13 +228,22 @@ const DesignStudio = () => {
                 {components.map((component) => (
                   <TableRow key={component.id} className="cursor-pointer hover:bg-gray-50">
                     <TableCell className="w-[40px]">
-                      <span role="img" aria-label={component.component}>
-                        {component.icon}
-                      </span>
+                      <div className="flex items-center">
+                        <ChevronRight size={18} className="mr-2 text-gray-400" />
+                        <div className="w-10 h-10 bg-gray-100 rounded-md flex items-center justify-center overflow-hidden">
+                          <img 
+                            src={component.image} 
+                            alt={component.component} 
+                            className="w-7 h-7 object-contain"
+                          />
+                        </div>
+                      </div>
                     </TableCell>
                     <TableCell className="font-medium">{component.component}</TableCell>
                     <TableCell>{component.manufacturer}</TableCell>
                     <TableCell>{component.model}</TableCell>
+                    <TableCell>{component.productionTime}</TableCell>
+                    <TableCell>{component.country}</TableCell>
                     <TableCell>{component.price}</TableCell>
                   </TableRow>
                 ))}
