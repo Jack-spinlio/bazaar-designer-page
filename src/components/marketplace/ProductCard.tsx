@@ -10,6 +10,7 @@ interface Product {
   image: string;
   price: number;
   manufacturer: string;
+  category?: string;
 }
 
 interface ProductCardProps {
@@ -26,8 +27,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   
   const handleManufacturerClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // In a real app, this would navigate to the manufacturer's profile
-    console.log(`Manufacturer clicked: ${product.manufacturer}`);
+    // Navigate to producer profile page
+    navigate('/producer/shimano');
   };
   
   // Determine which logo to use based on manufacturer

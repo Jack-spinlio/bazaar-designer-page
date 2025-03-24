@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Bell } from 'lucide-react';
 import { DesignTitle } from './DesignTitle';
 import { SharePopover } from './SharePopover';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +16,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export const Header: React.FC = () => {
+  const location = useLocation();
+  const isProducerPage = location.pathname.includes('/producer');
+  
   return (
     <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 z-10 bg-white rounded-2xl shadow-sm">
       <div className="flex items-center gap-4">
@@ -57,7 +60,7 @@ export const Header: React.FC = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           
-          <SharePopover />
+          {!isProducerPage && <SharePopover />}
         </div>
       </div>
     </header>
