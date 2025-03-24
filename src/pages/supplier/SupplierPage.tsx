@@ -12,7 +12,7 @@ const SupplierPage: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
       <Header />
-      <div className="flex flex-1 relative">
+      <div className="flex flex-1">
         <SupplierSidebar />
         <div className="flex-1 p-6 max-w-7xl mx-auto w-full">
           <Routes>
