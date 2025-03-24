@@ -11,7 +11,14 @@ import {
   SidebarTrigger,
   SidebarHeader
 } from '@/components/ui/sidebar';
-import { LayoutDashboard, Upload, Package, BarChart3, Settings } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Upload,
+  Package,
+  ShoppingCart,
+  MessageSquare,
+  Settings
+} from 'lucide-react';
 
 export const SupplierSidebar: React.FC = () => {
   const navigate = useNavigate();
@@ -43,6 +50,17 @@ export const SupplierSidebar: React.FC = () => {
             
             <SidebarMenuItem>
               <SidebarMenuButton 
+                isActive={isActive('/supplier/products')}
+                tooltip="Products" 
+                onClick={() => navigate('/supplier/products')}
+              >
+                <Package className="w-5 h-5 mr-2" />
+                <span>Products</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            
+            <SidebarMenuItem>
+              <SidebarMenuButton 
                 isActive={isActive('/supplier/uploads')}
                 tooltip="Upload Components" 
                 onClick={() => navigate('/supplier/uploads')}
@@ -54,21 +72,23 @@ export const SupplierSidebar: React.FC = () => {
             
             <SidebarMenuItem>
               <SidebarMenuButton 
-                tooltip="My Components" 
-                onClick={() => navigate('/supplier/components')}
+                isActive={isActive('/supplier/orders')}
+                tooltip="Orders" 
+                onClick={() => navigate('/supplier/orders')}
               >
-                <Package className="w-5 h-5 mr-2" />
-                <span>My Components</span>
+                <ShoppingCart className="w-5 h-5 mr-2" />
+                <span>Orders</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
             
             <SidebarMenuItem>
               <SidebarMenuButton 
-                tooltip="Analytics" 
-                onClick={() => navigate('/supplier/analytics')}
+                isActive={isActive('/supplier/enquiries')}
+                tooltip="Enquiries" 
+                onClick={() => navigate('/supplier/enquiries')}
               >
-                <BarChart3 className="w-5 h-5 mr-2" />
-                <span>Analytics</span>
+                <MessageSquare className="w-5 h-5 mr-2" />
+                <span>Enquiries</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
             

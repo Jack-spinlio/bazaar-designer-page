@@ -20,19 +20,22 @@ export const MainContent: React.FC<MainContentProps> = ({
   const showPrefabSidebar = location.pathname === '/prefabs';
   const showSavedSidebar = location.pathname === '/saved';
   
-  // Add check to prevent viewport on BOM and other pages where it's not needed
-  const shouldRenderViewport = location.pathname !== '/bom' && 
-                              location.pathname !== '/timeline' &&
-                              location.pathname !== '/settings' &&
-                              location.pathname !== '/uploads';
+  // Add check to prevent viewport on supplier pages, BOM and other pages
+  const isSupplierRoute = location.pathname.startsWith('/supplier');
+  const shouldRenderViewport = 
+    !isSupplierRoute &&
+    location.pathname !== '/bom' && 
+    location.pathname !== '/timeline' &&
+    location.pathname !== '/settings' &&
+    location.pathname !== '/uploads';
 
   return (
     <main className="flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5 bg-white shadow-sm">
       {shouldRenderViewport && (
         <Viewport selectedComponent={selectedComponent} onComponentPlaced={onComponentPlaced} />
       )}
-      {/* Only render children if they exist and we're not showing the viewport */}
-      {children && !shouldRenderViewport && children}
+      {/* Only render children if they exist and we're not showing the viewport, or we're on a supplier route */}
+      {children && (!shouldRenderViewport || isSupplierRoute) && children}
     </main>
   );
 };
