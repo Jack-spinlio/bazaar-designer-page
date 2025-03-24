@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Package, Upload, PenLine, ChevronRight, ChevronLeft } from 'lucide-react';
 
@@ -29,7 +29,12 @@ const navItems = [
 
 export const SupplierSidebar = () => {
   const location = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true); // Default collapsed state
+  
+  // Set initial collapsed state
+  useEffect(() => {
+    setIsCollapsed(true);
+  }, []);
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 

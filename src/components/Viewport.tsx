@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -208,6 +207,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
   const [hasLoadedCM18, setHasLoadedCM18] = useState(false);
   const location = useLocation();
   const isEditPage = location.pathname === '/edit';
+  const isSupplierParameters = location.pathname === '/supplier/parameters';
   
   useEffect(() => {
     if (!hasLoadedCM18) {
@@ -223,43 +223,49 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
           // No modelUrl - we'll use the basic shape instead
         };
         
+        // If we have a selectedComponent and we're on the supplier parameters page,
+        // use that component instead of the default CM18
+        const componentToPlace = isSupplierParameters && selectedComponent 
+          ? selectedComponent 
+          : cm18Component;
+        
         // Place it at a default position
         setPlacedObjects([
           { 
-            id: `cm18-${Date.now()}`, 
-            component: cm18Component, 
+            id: `model-${Date.now()}`, 
+            component: componentToPlace, 
             position: [0, 0, 0] 
           }
         ]);
         
         setHasLoadedCM18(true);
-        // Removed toast notification for CM18 model load
         
         // Also load a sample box component to demonstrate working Three.js rendering
-        const boxComponent: ComponentItem = {
-          id: 'sample-box',
-          name: 'Sample Box',
-          type: 'box',
-          thumbnail: '/placeholder.svg',
-          folder: 'Sample Components',
-          shape: 'box',
-        };
-        
-        // Place it next to the CM18 model
-        setPlacedObjects(prev => [
-          ...prev,
-          { 
-            id: `box-${Date.now()}`, 
-            component: boxComponent, 
-            position: [1.5, 0, 0] 
-          }
-        ]);
+        if (!isSupplierParameters) {
+          const boxComponent: ComponentItem = {
+            id: 'sample-box',
+            name: 'Sample Box',
+            type: 'box',
+            thumbnail: '/placeholder.svg',
+            folder: 'Sample Components',
+            shape: 'box',
+          };
+          
+          // Place it next to the CM18 model
+          setPlacedObjects(prev => [
+            ...prev,
+            { 
+              id: `box-${Date.now()}`, 
+              component: boxComponent, 
+              position: [1.5, 0, 0] 
+            }
+          ]);
+        }
       } catch (error) {
         console.error('Error loading default models:', error);
-        // Removed error toast for default models
       }
     }
-  }, [hasLoadedCM18]);
+  }, [hasLoadedCM18, selectedComponent, isSupplierParameters]);
   
   useEffect(() => {
     if (selectedComponent) {
@@ -279,11 +285,8 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
         }
       ]);
       
-      // Removed success toast for placing component
       onComponentPlaced();
       console.log(`Added ${selectedComponent.name} at position (${position.join(', ')})`);
-    } else {
-      // Removed info toast for selecting component first
     }
   };
 
@@ -291,7 +294,6 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
     setSelectedObjectId(id === selectedObjectId ? null : id);
     const selected = placedObjects.find(obj => obj.id === id);
     if (selected) {
-      // Removed info toast for selected object
       console.log(`Selected object: ${selected.component.name} (${id})`);
     }
   };
@@ -302,7 +304,6 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
       setPlacedObjects(placedObjects.filter(obj => obj.id !== selectedObjectId));
       setSelectedObjectId(null);
       if (selectedObject) {
-        // Removed success toast for deleted object
         console.log(`Deleted object: ${selectedObject.component.name} (${selectedObjectId})`);
       }
     }
@@ -316,7 +317,7 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
           size="sm"
           className="flex items-center gap-2 bg-white/90 backdrop-blur-sm"
           onClick={() => {
-            // Removed info toast for fit to view
+            // Fit to view action
           }}
         >
           <Maximize size={16} />
@@ -335,12 +336,6 @@ export const Viewport: React.FC<ViewportProps> = ({ selectedComponent, onCompone
             <Trash2 size={16} />
             Delete Selected
           </Button>
-        </div>
-      )}
-      
-      {!isEditPage && selectedComponent && (
-        <div className="absolute left-1/2 bottom-4 transform -translate-x-1/2 w-auto max-w-lg bg-black/70 text-white px-6 py-3 rounded-full text-sm z-10">
-          {`Selected: ${selectedComponent.name} - Click in the viewport to place`}
         </div>
       )}
       
