@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useThree, ThreeEvent } from '@react-three/fiber';
 import { Plane, Html } from '@react-three/drei';
@@ -36,36 +35,95 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
   const [pendingPosition, setPendingPosition] = useState<THREE.Vector3 | null>(null);
   const [pendingNormal, setPendingNormal] = useState<THREE.Vector3 | null>(null);
 
-  const handleClick = (event: ThreeEvent<MouseEvent>) => {
-    if (!isActive) return;
-    
-    event.stopPropagation();
-    
-    if (isPendingConfirmation) {
-      // User clicked while in confirmation mode - cancel the pending point
-      setIsPendingConfirmation(false);
-      setPendingPosition(null);
-      setPendingNormal(null);
-      return;
-    }
-    
-    if (event.intersections.length > 0) {
-      const intersection = event.intersections[0];
-      const position = intersection.point.clone();
-      const normal = intersection.face?.normal.clone();
+  useEffect(() => {
+    if (!isActive || isPendingConfirmation) return;
+
+    const handlePointerMove = (event: MouseEvent) => {
+      if (!isActive || isPendingConfirmation) return;
+
+      const canvasElement = document.querySelector('canvas');
+      if (!canvasElement) return;
       
-      // Transform normal from local space to world space if it exists
-      if (normal && intersection.object.type === 'Mesh') {
-        const mesh = intersection.object as THREE.Mesh;
-        normal.transformDirection(mesh.matrixWorld);
+      const rect = canvasElement.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      
+      raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+      
+      const intersects = raycaster.intersectObjects(scene.children, true);
+      
+      if (intersects.length > 0) {
+        const intersection = intersects[0];
+        setHoverPoint(intersection.point.clone());
+        
+        if (intersection.face?.normal) {
+          const normal = intersection.face.normal.clone();
+          
+          if (intersection.object.type === 'Mesh') {
+            const mesh = intersection.object as THREE.Mesh;
+            normal.transformDirection(mesh.matrixWorld);
+          }
+          
+          setHoverNormal(normal);
+        } else {
+          setHoverNormal(null);
+        }
+      } else {
+        setHoverPoint(null);
+        setHoverNormal(null);
       }
+    };
+
+    const handlePointerDown = (event: MouseEvent) => {
+      if (!isActive || isPendingConfirmation) return;
       
-      // Set pending position and normal for confirmation
-      setPendingPosition(position);
-      setPendingNormal(normal || null);
-      setIsPendingConfirmation(true);
-    }
-  };
+      const canvasElement = document.querySelector('canvas');
+      if (!canvasElement) return;
+      
+      const rect = canvasElement.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      
+      raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+      
+      const intersects = raycaster.intersectObjects(scene.children, true);
+      
+      if (intersects.length > 0) {
+        const intersection = intersects[0];
+        
+        const isSnapPoint = (intersection.object.parent as any)?.userData?.isSnapPoint;
+        if (isSnapPoint) return;
+        
+        const position = intersection.point.clone();
+        let normal = null;
+        
+        if (intersection.face?.normal) {
+          normal = intersection.face.normal.clone();
+          
+          if (intersection.object.type === 'Mesh') {
+            const mesh = intersection.object as THREE.Mesh;
+            normal.transformDirection(mesh.matrixWorld);
+          }
+        }
+        
+        setPendingPosition(position);
+        setPendingNormal(normal);
+        setIsPendingConfirmation(true);
+        
+        console.log("Placing snap point at:", position);
+        console.log("Object clicked:", intersection.object.type);
+        if (normal) console.log("Normal:", normal);
+      }
+    };
+
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerdown', handlePointerDown);
+    
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerdown', handlePointerDown);
+    };
+  }, [isActive, isPendingConfirmation, raycaster, camera, scene]);
 
   const handleConfirmSnapPoint = () => {
     if (pendingPosition) {
@@ -83,55 +141,10 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
     setPendingNormal(null);
   };
 
-  const handleMove = (event: ThreeEvent<MouseEvent>) => {
-    if (!isActive || isPendingConfirmation) {
-      if (!isPendingConfirmation) {
-        setHoverPoint(null);
-        setHoverNormal(null);
-      }
-      return;
-    }
-    
-    if (event.intersections.length > 0) {
-      const intersection = event.intersections[0];
-      setHoverPoint(intersection.point.clone());
-      
-      if (intersection.face?.normal) {
-        const normal = intersection.face.normal.clone();
-        
-        // Transform normal from local space to world space
-        if (intersection.object.type === 'Mesh') {
-          const mesh = intersection.object as THREE.Mesh;
-          normal.transformDirection(mesh.matrixWorld);
-        }
-        
-        setHoverNormal(normal);
-      } else {
-        setHoverNormal(null);
-      }
-    } else {
-      setHoverPoint(null);
-      setHoverNormal(null);
-    }
-  };
-
-  // Clean up hover state when editor becomes inactive
-  useEffect(() => {
-    if (!isActive) {
-      setHoverPoint(null);
-      setHoverNormal(null);
-      setIsPendingConfirmation(false);
-      setPendingPosition(null);
-      setPendingNormal(null);
-    }
-  }, [isActive]);
-
-  // Format coordinates to a readable string
   const formatCoordinates = (vector: THREE.Vector3): string => {
     return `X: ${vector.x.toFixed(2)}, Y: ${vector.y.toFixed(2)}, Z: ${vector.z.toFixed(2)}`;
   };
 
-  // Fix: Create arrow helper manually instead of using the JSX element
   const createArrowHelper = (direction: THREE.Vector3, origin: THREE.Vector3, length: number, color: number, headLength?: number, headWidth?: number) => {
     const arrowHelper = new THREE.ArrowHelper(
       direction.clone().normalize(),
@@ -146,19 +159,17 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
 
   return (
     <group>
-      {/* Hover indicator */}
       {isActive && !isPendingConfirmation && hoverPoint && (
         <group position={hoverPoint}>
-          {/* Larger indicator sphere */}
           <mesh>
-            <sphereGeometry args={[0.08, 16, 16]} />
+            <sphereGeometry args={[0.12, 24, 24]} />
             <meshBasicMaterial color="#22c55e" transparent opacity={0.7} />
           </mesh>
           
           {hoverNormal && (
             <group>
               <Plane 
-                args={[0.15, 0.15]} 
+                args={[0.2, 0.2]} 
                 rotation={[0, 0, 0]} 
                 position={[0, 0, 0]}
                 onPointerMove={(e) => e.stopPropagation()}
@@ -168,10 +179,10 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
               <primitive object={createArrowHelper(
                 hoverNormal,
                 new THREE.Vector3(0, 0, 0),
-                0.25,
+                0.3,
                 0x22c55e,
-                0.05,
-                0.05
+                0.07,
+                0.07
               )} />
             </group>
           )}
@@ -185,19 +196,17 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
         </group>
       )}
       
-      {/* Pending confirmation indicator */}
       {isActive && isPendingConfirmation && pendingPosition && (
         <group position={pendingPosition}>
-          {/* Larger indicator sphere */}
           <mesh>
-            <sphereGeometry args={[0.1, 16, 16]} />
+            <sphereGeometry args={[0.15, 24, 24]} />
             <meshBasicMaterial color="#f97316" transparent opacity={0.8} />
           </mesh>
           
           {pendingNormal && (
             <group>
               <Plane 
-                args={[0.2, 0.2]} 
+                args={[0.25, 0.25]} 
                 rotation={[0, 0, 0]} 
                 position={[0, 0, 0]}
                 onPointerMove={(e) => e.stopPropagation()}
@@ -207,10 +216,10 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
               <primitive object={createArrowHelper(
                 pendingNormal,
                 new THREE.Vector3(0, 0, 0),
-                0.3,
+                0.35,
                 0xf97316,
-                0.06,
-                0.06
+                0.08,
+                0.08
               )} />
             </group>
           )}
@@ -238,7 +247,6 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
         </group>
       )}
       
-      {/* Existing snap points */}
       {snapPoints.map((snapPoint) => (
         <group 
           key={snapPoint.id} 
@@ -247,11 +255,11 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
             e.stopPropagation();
             onSelectSnapPoint(snapPoint.id === selectedSnapPointId ? null : snapPoint.id);
           }}
+          userData={{ isSnapPoint: true }}
         >
           {snapPoint.type === 'point' ? (
             <mesh>
-              {/* Larger existing point */}
-              <sphereGeometry args={[0.1, 16, 16]} />
+              <sphereGeometry args={[0.15, 24, 24]} />
               <meshBasicMaterial 
                 color={selectedSnapPointId === snapPoint.id ? "#f97316" : "#0ea5e9"} 
                 transparent 
@@ -260,7 +268,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
             </mesh>
           ) : (
             <group>
-              <Plane args={[0.2, 0.2]}>
+              <Plane args={[0.25, 0.25]}>
                 <meshBasicMaterial 
                   color={selectedSnapPointId === snapPoint.id ? "#f97316" : "#0ea5e9"} 
                   transparent 
@@ -273,43 +281,36 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
                 <primitive object={createArrowHelper(
                   snapPoint.normal,
                   new THREE.Vector3(0, 0, 0),
-                  0.25,
+                  0.3,
                   selectedSnapPointId === snapPoint.id ? 0xf97316 : 0x0ea5e9,
-                  0.05,
-                  0.05
+                  0.06,
+                  0.06
                 )} />
               )}
             </group>
           )}
           
-          {/* Selection indicator - using bright colors and wireframe */}
           {selectedSnapPointId === snapPoint.id && (
             <mesh>
-              <boxGeometry args={[0.25, 0.25, 0.25]} />
+              <boxGeometry args={[0.35, 0.35, 0.35]} />
               <meshBasicMaterial color="#FF5733" wireframe={true} wireframeLinewidth={2} />
             </mesh>
           )}
           
           <Html distanceFactor={10}>
             <div 
-              className={`px-3 py-1.5 text-sm rounded-lg whitespace-nowrap shadow-lg ${
+              className={`px-3 py-2 text-sm rounded-lg whitespace-nowrap shadow-lg ${
                 selectedSnapPointId === snapPoint.id 
                   ? 'bg-orange-500 text-white' 
                   : 'bg-blue-500 text-white'
               }`}
             >
-              <div>{snapPoint.name}</div>
-              <div className="text-xs opacity-80 mt-0.5">{formatCoordinates(snapPoint.position)}</div>
+              <div className="font-medium">{snapPoint.name}</div>
+              <div className="text-xs opacity-90 mt-0.5">{formatCoordinates(snapPoint.position)}</div>
             </div>
           </Html>
         </group>
       ))}
-      
-      {/* Invisible plane to capture clicks */}
-      <mesh visible={false} onPointerMove={handleMove} onClick={handleClick}>
-        <planeGeometry args={[100, 100]} />
-        <meshBasicMaterial transparent opacity={0} />
-      </mesh>
     </group>
   );
 };

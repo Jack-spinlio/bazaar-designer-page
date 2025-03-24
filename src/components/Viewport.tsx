@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -25,6 +24,7 @@ interface PlacedObjectProps {
   id: string;
   onSelect: (id: string) => void;
   isSelected: boolean;
+  isSnapPointMode: boolean;
 }
 
 const PlacedObject: React.FC<PlacedObjectProps> = ({ 
@@ -32,7 +32,8 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
   position, 
   id, 
   onSelect,
-  isSelected
+  isSelected,
+  isSnapPointMode
 }) => {
   const componentRef = useRef<THREE.Group>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -110,6 +111,11 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
   }, [component, position]);
 
   const handleClick = (e: any) => {
+    if (isSnapPointMode) {
+      // When in snap point mode, let the click event propagate to the snap point editor
+      return;
+    }
+    
     e.stopPropagation();
     onSelect(id);
   };
@@ -120,7 +126,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
       onClick={handleClick}
       userData={{ id }}
     >
-      {isSelected && (
+      {isSelected && !isSnapPointMode && (
         <mesh position={[0, 0, 0]}>
           <boxGeometry args={[0.6, 0.6, 0.6]} />
           <meshBasicMaterial color="#ffffff" wireframe={true} />
@@ -184,7 +190,10 @@ const Scene: React.FC<SceneProps> = ({
   return (
     <>
       <PerspectiveCamera makeDefault position={[5, 5, 5]} />
-      <OrbitControls makeDefault />
+      <OrbitControls 
+        makeDefault 
+        enabled={!isSnapPointMode} // Disable controls in snap point mode
+      />
       
       <ambientLight intensity={0.5} />
       <directionalLight
@@ -205,6 +214,7 @@ const Scene: React.FC<SceneProps> = ({
           position={object.position}
           onSelect={onSelectObject}
           isSelected={selectedObjectId === object.id}
+          isSnapPointMode={isSnapPointMode}
         />
       ))}
       
@@ -388,6 +398,7 @@ export const Viewport: React.FC<ViewportProps> = ({
       };
       
       onSnapPointAdded(newSnapPoint);
+      console.log("Added snap point:", newSnapPoint);
     }
   };
 
@@ -421,8 +432,8 @@ export const Viewport: React.FC<ViewportProps> = ({
       
       {isSnapPointMode && (
         <div className="absolute top-4 left-4 z-10">
-          <div className="bg-blue-600 text-white px-3 py-1.5 rounded-md text-sm flex items-center gap-1">
-            <Crosshair size={16} className="animate-pulse" />
+          <div className="bg-blue-600 text-white px-3 py-2 rounded-md text-sm flex items-center gap-1.5 font-medium">
+            <Crosshair size={18} className="animate-pulse" />
             <span>Click on model to add snap point</span>
           </div>
         </div>
