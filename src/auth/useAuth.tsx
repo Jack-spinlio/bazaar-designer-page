@@ -7,8 +7,9 @@ import { toast } from 'sonner';
 // Check if Auth0 is properly configured
 const isAuth0Configured = () => {
   const domain = import.meta.env.VITE_AUTH0_DOMAIN;
+  const fallbackIssuerBaseUrl = import.meta.env.VITE_AUTH0_FALLBACK_ISSUER_BASE_URL;
   const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID || 'buzvq3JLo9qwHqQusnlkqWkldLKMQjAu';
-  return !!domain || (!!clientId && clientId !== 'dummyClientId');
+  return !!domain || !!fallbackIssuerBaseUrl || (!!clientId && clientId !== 'dummyClientId');
 };
 
 export const useAuth = () => {
@@ -58,9 +59,23 @@ export const useAuth = () => {
       if (isAuthenticated && user) {
         try {
           console.log('Attempting to get Auth0 token for Supabase session');
+          // Determine the audience based on available configuration
+          const domain = import.meta.env.VITE_AUTH0_DOMAIN;
+          const fallbackIssuerBaseUrl = import.meta.env.VITE_AUTH0_FALLBACK_ISSUER_BASE_URL;
+          
+          // Extract domain from fallback issuer URL if available
+          let audience;
+          if (fallbackIssuerBaseUrl) {
+            // Extract domain from URL (e.g., https://domain.com -> domain.com)
+            const urlDomain = new URL(fallbackIssuerBaseUrl).hostname;
+            audience = `https://${urlDomain}/api/v2/`;
+          } else {
+            audience = `https://${domain || 'dev-jxcml1qpmbgabh6v.us.auth0.com'}/api/v2/`;
+          }
+          
           const token = await getAccessTokenSilently({
             authorizationParams: {
-              audience: `https://${import.meta.env.VITE_AUTH0_DOMAIN || 'dev-example.us.auth0.com'}/api/v2/`,
+              audience,
             },
           }).catch(err => {
             console.error('Failed to get Auth0 token:', err);

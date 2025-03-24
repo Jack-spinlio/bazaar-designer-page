@@ -12,10 +12,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const navigate = useNavigate();
   
   // Auth0 configuration
-  // Using a standard auth0.com domain format as a fallback if custom domain isn't configured properly
-  const domain = import.meta.env.VITE_AUTH0_DOMAIN || 'dev-example.us.auth0.com'; 
+  const domain = import.meta.env.VITE_AUTH0_DOMAIN || 'dev-jxcml1qpmbgabh6v.us.auth0.com'; 
   const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID || 'buzvq3JLo9qwHqQusnlkqWkldLKMQjAu';
   const redirectUri = window.location.origin;
+  
+  // Support for a fallback issuer base URL if the main domain doesn't work
+  const issuerBaseUrl = import.meta.env.VITE_AUTH0_FALLBACK_ISSUER_BASE_URL || `https://${domain}`;
 
   const onRedirectCallback = (appState?: AppState) => {
     navigate(appState?.returnTo || '/marketplace');
@@ -46,6 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }}
       onRedirectCallback={onRedirectCallback}
       cacheLocation="localstorage"
+      issuerBaseUrl={issuerBaseUrl}
     >
       {children}
     </Auth0Provider>

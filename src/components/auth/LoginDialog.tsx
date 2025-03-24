@@ -27,8 +27,9 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
   const [loginError, setLoginError] = useState<string | null>(null);
 
   const isAuth0Configured = !!import.meta.env.VITE_AUTH0_DOMAIN || 
-                           !!import.meta.env.VITE_AUTH0_CLIENT_ID && 
-                           import.meta.env.VITE_AUTH0_CLIENT_ID !== 'dummyClientId';
+                           !!import.meta.env.VITE_AUTH0_FALLBACK_ISSUER_BASE_URL ||
+                           (!!import.meta.env.VITE_AUTH0_CLIENT_ID && 
+                           import.meta.env.VITE_AUTH0_CLIENT_ID !== 'dummyClientId');
 
   useEffect(() => {
     if (isAuthenticated && open) {
