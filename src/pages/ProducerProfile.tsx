@@ -174,9 +174,9 @@ const ProducerProfile = () => {
           </div>
           
           {/* Right side - Featured image with thumbnails */}
-          <div className="w-full md:w-2/3">
-            {/* Gallery container to maintain equal width */}
-            <div className="flex flex-col space-y-4">
+          <div className="w-full md:w-2/3 flex justify-center">
+            {/* Gallery container with max width */}
+            <div className="flex flex-col space-y-4 max-w-[50%]">
               {/* Main image */}
               <div className="rounded-lg overflow-hidden h-72 w-full">
                 <img src={featuredImage} alt="Featured" className="w-full h-full object-cover" />
