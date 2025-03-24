@@ -7,6 +7,8 @@ import ProducerProfile from './pages/ProducerProfile';
 import NotFound from './pages/NotFound';
 import ProductDetail from './pages/ProductDetail';
 import SupplierPage from './pages/supplier/SupplierPage';
+import Login from './pages/Login';
+import Saved from './pages/Saved';
 import './App.css';
 import { Toaster } from 'sonner';
 import * as THREE from 'three';
@@ -35,6 +37,8 @@ function App() {
         <Route path="/producer/:id" element={<ProducerProfile />} />
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/supplier/*" element={<SupplierPage />} />
+        <Route path="/saved" element={<Saved />} />
+        <Route path="/login" element={<Login />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster position="top-right" richColors />
