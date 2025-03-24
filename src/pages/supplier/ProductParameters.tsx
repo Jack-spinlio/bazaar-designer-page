@@ -386,17 +386,19 @@ export const ProductParameters: React.FC = () => {
               </TabsContent>
 
               <TabsContent value="snap-points" className="pt-2">
-                <SnapPointTools 
-                  onClose={() => setActiveTab('parameters')}
-                  onSetActiveSnapPointMode={setIsSnapPointMode}
-                  onSnapPointAdded={handleSnapPointAdded}
-                  onSnapPointDeleted={handleSnapPointDeleted}
-                  onSnapPointUpdated={handleSnapPointUpdated}
-                  activeSnapPoint={activeSnapPoint}
-                  setActiveSnapPoint={setActiveSnapPoint}
-                  snapPoints={snapPoints}
-                  setSnapPoints={setSnapPoints}
-                />
+                {activeTab === 'snap-points' && (
+                  <SnapPointTools 
+                    onClose={() => setActiveTab('parameters')}
+                    onSetActiveSnapPointMode={setIsSnapPointMode}
+                    onSnapPointAdded={handleSnapPointAdded}
+                    onSnapPointDeleted={handleSnapPointDeleted}
+                    onSnapPointUpdated={handleSnapPointUpdated}
+                    activeSnapPoint={activeSnapPoint}
+                    setActiveSnapPoint={setActiveSnapPoint}
+                    snapPoints={snapPoints}
+                    setSnapPoints={setSnapPoints}
+                  />
+                )}
               </TabsContent>
 
               <TabsContent value="surface" className="pt-2">

@@ -9,14 +9,17 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { ChevronDown, ChevronUp, Plus, Cog, Bike, LayoutGrid } from 'lucide-react';
 import { Label } from './ui/label';
+
 interface ColorOption {
   color: string;
   name: string;
 }
+
 interface ShapeOption {
   name: string;
   shape: string;
 }
+
 export const EditToolbar = () => {
   const [selectedTab, setSelectedTab] = useState('tubing');
   const [selectedColor, setSelectedColor] = useState('blue');
@@ -44,6 +47,7 @@ export const EditToolbar = () => {
   const [wheelDepth, setWheelDepth] = useState([27]);
   const [spokeHoles, setSpokeHoles] = useState([20]);
   const [wheelWidth, setWheelWidth] = useState([30]);
+
   const colorOptions: ColorOption[] = [{
     color: 'bg-black',
     name: 'black'
@@ -81,6 +85,7 @@ export const EditToolbar = () => {
     color: 'bg-amber-200',
     name: 'beige'
   }];
+
   const wheelColorOptions: ColorOption[] = [{
     color: 'bg-black',
     name: 'black'
@@ -115,6 +120,7 @@ export const EditToolbar = () => {
     color: 'bg-amber-200',
     name: 'beige'
   }];
+
   const shapeOptions: ShapeOption[] = [{
     name: 'Ovalized',
     shape: 'ovalized'
@@ -134,6 +140,7 @@ export const EditToolbar = () => {
     name: 'Square',
     shape: 'square'
   }];
+
   const renderSliderWithValue = (label: string, value: number[], onChange: (value: number[]) => void, min: number, max: number, unit: string = 'mm') => {
     return <div className="mb-6 my-[15px] py-0">
         <div className="flex justify-between mb-1">
@@ -149,6 +156,7 @@ export const EditToolbar = () => {
         </div>
       </div>;
   };
+
   const renderTubeContent = () => {
     return <div className="pl-4">
         <div className="mb-6">
@@ -170,6 +178,7 @@ export const EditToolbar = () => {
         </div>
       </div>;
   };
+
   return <div className="bg-white rounded-2xl shadow-sm w-full h-full overflow-hidden">
       <ScrollArea className="h-full">
         <div className="p-4">
@@ -344,4 +353,5 @@ export const EditToolbar = () => {
       </ScrollArea>
     </div>;
 };
+
 export default EditToolbar;

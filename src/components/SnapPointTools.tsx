@@ -77,7 +77,7 @@ export const SnapPointTools: React.FC<SnapPointToolsProps> = ({
     const newSnapPoint: SnapPoint = {
       id: Date.now().toString(),
       name: newSnapPointName,
-      type: newSnapPointType,
+      type: normal ? 'plane' : 'point',
       position: position,
       normal: normal,
       compatibility: [],

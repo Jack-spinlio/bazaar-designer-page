@@ -1,5 +1,3 @@
-
-// Only updating the parts that need to change while preserving functionality
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -302,48 +300,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <TabsTrigger value="marketplace">Marketplace</TabsTrigger>
               <TabsTrigger value="uploads">My Uploads</TabsTrigger>
             </TabsList>
-          </Tabs>
-        </div>
-        
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
-          <Input type="search" placeholder="Search components" className="pl-9 bg-gray-50 border-gray-200 rounded-full text-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-auto p-4">
-        {isLoading ? (
-          <div className="grid grid-cols-2 gap-3">
-            {[1, 2, 3, 4].map((_, index) => (
-              <div key={index} className="bg-gray-50 rounded-lg p-2 h-36 animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <>
-            {activeTab === 'uploads' && filteredUploadedModels.length > 0 && (
-              <div className="mb-6">
-                <div className="grid grid-cols-2 gap-3">
-                  {filteredUploadedModels.map(component => (
-                    <div 
-                      key={component.id} 
-                      onClick={() => handleComponentSelect(component)} 
-                      className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
-                    >
-                      <div className="w-full h-24 mb-2">
-                        <img src={component.thumbnail} alt={component.name} className="w-full h-full object-cover rounded-md" />
-                      </div>
-                      <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
-                      <span className="text-xs text-center text-gray-500">{component.type}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
             
-            {activeTab === 'marketplace' && (
-              <>
-                {!searchQuery && (
-                  <>
+            <TabsContent value="marketplace">
+              <div className="relative my-4">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                <Input type="search" placeholder="Search components" className="pl-9 bg-gray-50 border-gray-200 rounded-full text-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+              </div>
+              
+              <div className="flex-1 overflow-auto">
+                {isLoading ? (
+                  <div className="grid grid-cols-2 gap-3">
+                    {[1, 2, 3, 4].map((_, index) => (
+                      <div key={index} className="bg-gray-50 rounded-lg p-2 h-36 animate-pulse" />
+                    ))}
+                  </div>
+                ) : (
+                  !searchQuery && (
                     <div className="grid grid-cols-2 gap-3">
                       {SHIMANO_COMPONENTS.slice(0, 10).map(component => (
                         <div 
@@ -359,12 +331,49 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         </div>
                       ))}
                     </div>
-                  </>
+                  )
                 )}
-              </>
-            )}
-          </>
-        )}
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="uploads">
+              <div className="relative my-4">
+                <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
+                <Input type="search" placeholder="Search components" className="pl-9 bg-gray-50 border-gray-200 rounded-full text-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+              </div>
+              
+              <div className="flex-1 overflow-auto">
+                {isLoading ? (
+                  <div className="grid grid-cols-2 gap-3">
+                    {[1, 2, 3, 4].map((_, index) => (
+                      <div key={index} className="bg-gray-50 rounded-lg p-2 h-36 animate-pulse" />
+                    ))}
+                  </div>
+                ) : (
+                  filteredUploadedModels.length > 0 && (
+                    <div className="mb-6">
+                      <div className="grid grid-cols-2 gap-3">
+                        {filteredUploadedModels.map(component => (
+                          <div 
+                            key={component.id} 
+                            onClick={() => handleComponentSelect(component)} 
+                            className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
+                          >
+                            <div className="w-full h-24 mb-2">
+                              <img src={component.thumbnail} alt={component.name} className="w-full h-full object-cover rounded-md" />
+                            </div>
+                            <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
+                            <span className="text-xs text-center text-gray-500">{component.type}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                )}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
