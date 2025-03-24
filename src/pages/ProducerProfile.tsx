@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Header } from '@/components/Header/Header';
 import { 
@@ -117,22 +116,27 @@ const products = [
   }
 ];
 
-// Gallery images
+// Gallery images - updated with the new URLs
 const galleryImages = [
   {
     id: 1,
-    url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//image.png',
+    url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//shimano.avif',
     alt: 'Shimano Workshop',
   },
   {
     id: 2,
-    url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//PHOTO-2025-01-16-17-11-25%202.jpg',
-    alt: 'Shimano Factory',
+    url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz%20factory%20.jpg',
+    alt: 'Vulz Factory',
   },
   {
     id: 3,
-    url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Screenshot%202025-03-21%20at%2011.56.56.png',
-    alt: 'Shimano Products',
+    url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz33.jpeg',
+    alt: 'Vulz Facility',
+  },
+  {
+    id: 4,
+    url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz22.jpeg',
+    alt: 'Vulz Equipment',
   }
 ];
 
@@ -144,6 +148,9 @@ const ProducerProfile = () => {
   const filteredProducts = selectedCategory === 'all' 
     ? products 
     : products.filter(product => product.category === selectedCategory);
+  
+  // Limit products to 6 per row
+  const displayedProducts = filteredProducts.slice(0, 6);
   
   const categories = [
     { id: 'all', name: 'All Products' },
@@ -160,71 +167,73 @@ const ProducerProfile = () => {
       
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         {/* Top Section: Producer Info */}
-        <div className="bg-white rounded-xl shadow-sm p-6 mb-8">
-          <div className="flex flex-col md:flex-row gap-6 items-start md:items-center">
+        <div className="flex flex-col md:flex-row gap-8 mb-8">
+          {/* Left side - Company info */}
+          <div className="w-full md:w-1/3">
             <img 
               src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Shimano-Logo-1990.png" 
               alt="Shimano Logo" 
-              className="w-40 h-auto object-contain"
+              className="w-48 h-auto object-contain mb-4"
             />
-            <div>
-              <h1 className="text-3xl font-bold mb-1">Shimano Inc, Japan</h1>
-              <div className="flex items-center mb-1">
-                <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-                <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-                <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-                <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-                <StarHalf className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-                <span className="ml-1.5 text-gray-600">4.5 Bazaar Rating</span>
-              </div>
-              <p className="text-gray-600">OEM Component Producer</p>
+            <p className="text-lg text-gray-600 mb-2">OEM Component Producer</p>
+            <h1 className="text-4xl font-bold mb-3">Shimano Inc, Japan</h1>
+            <div className="flex items-center mb-2">
+              <Star className="h-6 w-6 text-yellow-400 fill-yellow-400" />
+              <Star className="h-6 w-6 text-yellow-400 fill-yellow-400" />
+              <Star className="h-6 w-6 text-yellow-400 fill-yellow-400" />
+              <Star className="h-6 w-6 text-yellow-400 fill-yellow-400" />
+              <StarHalf className="h-6 w-6 text-yellow-400 fill-yellow-400" />
+              <span className="ml-2 text-gray-600">4.5 Bazaar Rating</span>
+            </div>
+          </div>
+          
+          {/* Right side - Featured image */}
+          <div className="w-full md:w-2/3">
+            <div className="rounded-lg overflow-hidden h-72">
+              <img 
+                src={featuredImage} 
+                alt="Featured" 
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            <div className="mt-4">
+              <Carousel className="w-full">
+                <CarouselContent>
+                  {galleryImages.map((image) => (
+                    <CarouselItem key={image.id} className="basis-1/4">
+                      <div className="p-1">
+                        <div 
+                          className="rounded-lg overflow-hidden cursor-pointer h-24"
+                          onClick={() => setFeaturedImage(image.url)}
+                        >
+                          <img 
+                            src={image.url} 
+                            alt={image.alt} 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </div>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious className="left-0" />
+                <CarouselNext className="right-0" />
+              </Carousel>
             </div>
           </div>
         </div>
         
-        {/* Image Gallery */}
-        <div className="mb-8">
-          <div className="rounded-xl overflow-hidden mb-4 h-64">
-            <img 
-              src={featuredImage} 
-              alt="Featured" 
-              className="w-full h-full object-cover"
-            />
-          </div>
-          
-          <Carousel className="w-full">
-            <CarouselContent>
-              {galleryImages.map((image) => (
-                <CarouselItem key={image.id} className="basis-1/4">
-                  <div className="p-1">
-                    <div 
-                      className="rounded-xl overflow-hidden cursor-pointer h-24"
-                      onClick={() => setFeaturedImage(image.url)}
-                    >
-                      <img 
-                        src={image.url} 
-                        alt={image.alt} 
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
-        </div>
-        
         {/* Tab Navigation Section */}
         <div className="mb-8">
-          <Tabs defaultValue="about">
-            <TabsList className="grid w-full md:w-auto md:inline-flex grid-cols-3 mb-4">
-              <TabsTrigger value="about">About</TabsTrigger>
-              <TabsTrigger value="certifications">Certifications</TabsTrigger>
-              <TabsTrigger value="contact">Contact</TabsTrigger>
+          <Tabs defaultValue="information">
+            <TabsList className="flex gap-2 mb-6">
+              <TabsTrigger value="information" className="px-8 py-3 rounded-md">Information</TabsTrigger>
+              <TabsTrigger value="social" className="px-8 py-3 rounded-md">Social Media</TabsTrigger>
+              <TabsTrigger value="certifications" className="px-8 py-3 rounded-md">Certifications</TabsTrigger>
+              <TabsTrigger value="contact" className="px-8 py-3 rounded-md">Contact</TabsTrigger>
             </TabsList>
-            <TabsContent value="about" className="p-4 bg-white rounded-xl shadow-sm">
+            <TabsContent value="information" className="p-4 bg-white rounded-xl shadow-sm text-left">
               <h3 className="text-lg font-semibold mb-3">About Shimano</h3>
               <p className="text-gray-700">
                 Shimano Inc. is a Japanese multinational manufacturer of cycling components, fishing tackle, and rowing equipment. Shimano produces components for road, mountain, and hybrid bikes, including drivetrains, brakes, wheels, pedals, and cycling shoes and clothing.
@@ -233,7 +242,19 @@ const ProducerProfile = () => {
                 Shimano's component designs are known worldwide and used by professional cyclists and everyday riders alike.
               </p>
             </TabsContent>
-            <TabsContent value="certifications" className="p-4 bg-white rounded-xl shadow-sm">
+            <TabsContent value="social" className="p-4 bg-white rounded-xl shadow-sm text-left">
+              <h3 className="text-lg font-semibold mb-3">Social Media</h3>
+              <p className="text-gray-700">
+                Follow Shimano on social media for the latest product announcements and cycling news.
+              </p>
+              <ul className="list-disc pl-5 text-gray-700 mt-3">
+                <li className="mb-2">Instagram: @shimanoofficial</li>
+                <li className="mb-2">Facebook: Shimano</li>
+                <li className="mb-2">Twitter: @ShimanoEurope</li>
+                <li className="mb-2">YouTube: Shimano</li>
+              </ul>
+            </TabsContent>
+            <TabsContent value="certifications" className="p-4 bg-white rounded-xl shadow-sm text-left">
               <h3 className="text-lg font-semibold mb-3">Certifications</h3>
               <ul className="list-disc pl-5 text-gray-700">
                 <li className="mb-2">ISO 9001:2015 Quality Management</li>
@@ -242,7 +263,7 @@ const ProducerProfile = () => {
                 <li className="mb-2">UCI Approved Equipment Manufacturer</li>
               </ul>
             </TabsContent>
-            <TabsContent value="contact" className="p-4 bg-white rounded-xl shadow-sm">
+            <TabsContent value="contact" className="p-4 bg-white rounded-xl shadow-sm text-left">
               <h3 className="text-lg font-semibold mb-3">Contact Information</h3>
               <div className="text-gray-700">
                 <p className="mb-2"><strong>Address:</strong> 3-77 Oimatsu-cho, Sakai-ku, Sakai City, Osaka, Japan</p>
@@ -264,7 +285,7 @@ const ProducerProfile = () => {
                   onClick={() => setSelectedCategory(category.id)}
                   className={`px-4 py-2 rounded-lg whitespace-nowrap text-sm font-medium ${
                     selectedCategory === category.id
-                      ? 'bg-primary text-white'
+                      ? 'bg-black text-white'
                       : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
                   }`}
                 >
@@ -275,10 +296,18 @@ const ProducerProfile = () => {
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-            {filteredProducts.map((product) => (
+            {displayedProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
+          
+          {filteredProducts.length > 6 && (
+            <div className="mt-4 text-center">
+              <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm font-medium">
+                View All ({filteredProducts.length})
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
