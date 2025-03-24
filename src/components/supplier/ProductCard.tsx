@@ -37,36 +37,36 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) =
           </div>
         </div>
       </CardContent>
-      <CardFooter className="p-4 pt-0 flex justify-between gap-2">
+      <CardFooter className="p-3 pt-0 flex justify-between gap-1">
         <Button
           variant="outline"
           size="sm"
-          className="flex-1"
+          className="flex-1 h-8 text-xs px-2"
           asChild
         >
           <Link to={`/product/${product.id}`}>
-            <Eye className="h-4 w-4 mr-1" />
+            <Eye className="h-3.5 w-3.5 mr-1" />
             View
           </Link>
         </Button>
         <Button 
           variant="outline" 
           size="sm"
-          className="flex-1"
+          className="flex-1 h-8 text-xs px-2"
           asChild
         >
           <Link to={`/supplier/edit/${product.id}`}>
-            <Edit className="h-4 w-4 mr-1" />
+            <Edit className="h-3.5 w-3.5 mr-1" />
             Edit
           </Link>
         </Button>
         <Button
           variant="outline"
           size="sm"
-          className="flex-1 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+          className="flex-1 h-8 text-xs px-2 border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
           onClick={() => onDelete && onDelete(product.id)}
         >
-          <Trash2 className="h-4 w-4 mr-1" />
+          <Trash2 className="h-3.5 w-3.5 mr-1" />
           Delete
         </Button>
       </CardFooter>

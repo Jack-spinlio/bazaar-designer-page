@@ -1,10 +1,9 @@
 
 import React, { useState } from 'react';
 import { ProductCard } from '@/components/supplier/ProductCard';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { PackagePlus, Search, ArrowDownAZ, ArrowDownZA } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Search, ArrowDownAZ, ArrowDownZA } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 // Product data with categories - this would typically come from an API/database
@@ -71,12 +70,6 @@ export const ProductsList: React.FC = () => {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Your Products</h1>
-        <Button asChild>
-          <Link to="/supplier/upload">
-            <PackagePlus className="mr-2 h-4 w-4" />
-            Add New Product
-          </Link>
-        </Button>
       </div>
 
       <div className="flex gap-4 mb-6">

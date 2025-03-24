@@ -22,7 +22,7 @@ import {
 export const Header: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const isProducerPage = location.pathname.includes('/producer');
+  const isSupplierPage = location.pathname.includes('/supplier');
   const isDesignPage = location.pathname === '/design';
   const [userRole, setUserRole] = React.useState('designer');
   
@@ -103,7 +103,7 @@ export const Header: React.FC = () => {
             </DropdownMenuContent>
           </DropdownMenu>
           
-          {!isProducerPage && <SharePopover />}
+          {!isSupplierPage && <SharePopover />}
         </div>
       </div>
     </header>
