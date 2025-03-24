@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
 // Define the model types we support
 export type ModelType = 'STL' | 'OBJ' | 'STP' | 'STEP' | 'GLB' | 'GLTF';
@@ -153,17 +154,45 @@ const loadOBJModel = (url: string): Promise<THREE.Object3D> => {
 const loadGLTFModel = (url: string): Promise<THREE.Object3D> => {
   return new Promise((resolve, reject) => {
     try {
+      // Initialize the GLTF loader with DRACO support
       const loader = new GLTFLoader();
+      
+      // Set up DRACO loader for compressed meshes
+      const dracoLoader = new DRACOLoader();
+      // Set the path to the Draco decoder (using a CDN for now)
+      dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+      // Optional: Pre-fetch decoder to improve performance
+      dracoLoader.preload();
+      
+      // Attach the DRACO loader to the GLTF loader
+      loader.setDRACOLoader(dracoLoader);
+      
+      console.log('GLTF loader configured with DRACO support');
       
       loader.load(
         url,
         (gltf) => {
           console.log('GLTF/GLB model loaded successfully');
+          
+          // Ensure all materials are properly set up
+          gltf.scene.traverse((child) => {
+            if (child instanceof THREE.Mesh) {
+              // If the mesh has no material or uses a MeshBasicMaterial, replace it
+              if (!child.material || child.material instanceof THREE.MeshBasicMaterial) {
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0x888888,
+                  metalness: 0.2,
+                  roughness: 0.8,
+                });
+              }
+            }
+          });
+          
           resolve(gltf.scene);
         },
         (xhr) => {
           // Progress callback
-          // console.log(`${(xhr.loaded / xhr.total * 100).toFixed(2)}% loaded`);
+          console.log(`GLTF loading: ${(xhr.loaded / xhr.total * 100).toFixed(2)}% loaded`);
         },
         (error) => {
           console.error('Error loading GLTF/GLB model:', error);
