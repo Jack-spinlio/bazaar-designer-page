@@ -100,7 +100,7 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
             <div className="w-3 h-3 rounded-full bg-black -ml-1.5 -mt-1"></div>
           </div>
           
-          {/* Total timeline row */}
+          {/* Total timeline row - now a continuous bar */}
           <div className="flex mb-4">
             <div className="w-44 pr-2 flex-shrink-0">
               <div className="h-10 bg-gray-600 text-white rounded-l-lg flex items-center pl-4 font-medium">
@@ -108,8 +108,8 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
               </div>
             </div>
             
-            <div className="flex-1">
-              <div className="h-10 bg-gray-600 rounded-r-lg text-white flex items-center px-4">
+            <div className="flex-1 relative">
+              <div className="absolute inset-0 h-10 bg-gray-600 rounded-r-lg text-white flex items-center px-4">
                 90 days period
               </div>
             </div>
@@ -124,13 +124,14 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
                   <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis pl-2">{component.name}</span>
                 </div>
                 
-                {/* Timeline bar */}
+                {/* Timeline bar - ensuring they all stretch right */}
                 <div className="flex-1 relative h-full">
                   <div 
                     style={{
                       left: getWeekPosition(component.startWeek),
                       width: getWidthFromDays(component.days),
-                      minWidth: '50px'
+                      minWidth: '50px',
+                      right: '0'
                     }} 
                     className={`absolute h-8 ${getComponentColor(component.id)} rounded-full flex items-center px-4`}
                   >
