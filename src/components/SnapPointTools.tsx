@@ -176,11 +176,11 @@ export const SnapPointTools: React.FC<SnapPointToolsProps> = ({
       >
         <div className="px-4 pt-2">
           <TabsList className="w-full">
-            <TabsTrigger value="list" className="flex-1">
+            <TabsTrigger value="list">
               <Layers size={16} className="mr-1" />
               Snap Points
             </TabsTrigger>
-            <TabsTrigger value="add" className="flex-1">
+            <TabsTrigger value="add">
               <Plus size={16} className="mr-1" />
               Add New
             </TabsTrigger>
@@ -368,12 +368,10 @@ export const SnapPointTools: React.FC<SnapPointToolsProps> = ({
             <div className="flex flex-col items-center justify-center h-full text-center text-app-gray-light">
               <MapPin size={40} className="mb-2 opacity-50" />
               <p className="mb-2">No snap points added yet</p>
-              <TabsTrigger value="add" className="mt-2" asChild>
-                <Button>
-                  <Plus size={16} className="mr-2" />
-                  Add Snap Point
-                </Button>
-              </TabsTrigger>
+              <Button onClick={() => setActiveTab('add')}>
+                <Plus size={16} className="mr-2" />
+                Add Snap Point
+              </Button>
             </div>
           )}
         </TabsContent>
