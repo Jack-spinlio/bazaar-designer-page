@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -14,21 +15,11 @@ import { Viewport } from '@/components/Viewport';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ComponentItem } from '@/components/Sidebar';
 
-// Mock component data for Viewport
-const mockForkComponent: ComponentItem = {
-  id: 'bicycle-fork',
-  name: 'Bicycle Fork',
-  type: 'OBJ',
-  thumbnail: '/placeholder.svg',
-  folder: 'Uploaded Products',
-  shape: 'box',
-  modelUrl: '/path/to/model.obj' // This would be replaced with actual model URL
-};
 export const ProductParameters: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSaving, setIsSaving] = useState(false);
-  const [selectedComponent] = useState<ComponentItem>(mockForkComponent);
+  const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
 
   // States for form fields
   const [isPublic, setIsPublic] = useState(true);
@@ -45,10 +36,33 @@ export const ProductParameters: React.FC = () => {
   const [category, setCategory] = useState('Rigid, suspension');
   const [countryOfOrigin, setCountryOfOrigin] = useState('Taiwan');
   const [fenderMounts, setFenderMounts] = useState('Yes');
-  const [description, setDescription] = useState('Project Bike 3d Configurator created so that you can build your existing or future bike with modern technology and 3D graphics. Bike customization has never been so quick and easy, change components, experiment with colors, see how suspension works, show your friends, create the bike of your dream. In the future, we see the project as a online shop or service with which you can easily build and then purchase your bike. Also plans to add other types of bikes, more hardtail, dirt, dh, cross country bikes, road and city bikes.');
+  const [description, setDescription] = useState('');
+
+  // Load the product data from local storage
+  useEffect(() => {
+    const storedProduct = localStorage.getItem('currentUploadedProduct');
+    if (storedProduct) {
+      try {
+        const productData = JSON.parse(storedProduct);
+        setSelectedComponent(productData);
+        
+        // Set description if available
+        if (productData.description) {
+          setDescription(productData.description);
+        }
+      } catch (error) {
+        console.error('Error parsing product data:', error);
+      }
+    }
+  }, []);
+
   const handleIntendedUseChange = (value: string) => {
-    setIntendedUse(intendedUse.includes(value) ? intendedUse.filter(item => item !== value) : [...intendedUse, value]);
+    setIntendedUse(intendedUse.includes(value) 
+      ? intendedUse.filter(item => item !== value) 
+      : [...intendedUse, value]
+    );
   };
+
   const handleSave = () => {
     setIsSaving(true);
     // Mock saving process
@@ -58,14 +72,15 @@ export const ProductParameters: React.FC = () => {
       navigate('/supplier');
     }, 1500);
   };
+
   return <div className="text-left">
       <div className="flex items-center mb-4">
         <h1 className="text-2xl font-bold">Product Parameters</h1>
       </div>
 
-      <div className="flex h-[calc(100vh-150px)] gap-2">
+      <div className="flex h-[calc(100vh-150px)] gap-1">
         {/* Left Column - Parameters (30% width) */}
-        <div className="w-[33%] overflow-hidden flex flex-col">
+        <div className="w-[30%] overflow-hidden flex flex-col">
           <Tabs defaultValue="parameters" className="w-full">
             <TabsList className="bg-black text-white w-full rounded-xl">
               <TabsTrigger value="parameters" className="rounded-full">Parameters</TabsTrigger>
@@ -74,8 +89,8 @@ export const ProductParameters: React.FC = () => {
             </TabsList>
 
             <ScrollArea className="h-[calc(100vh-220px)] pr-2">
-              <TabsContent value="parameters" className="pt-4">
-                <div className="bg-white rounded-lg shadow-sm p-4 space-y-4">
+              <TabsContent value="parameters" className="pt-2">
+                <div className="bg-white rounded-lg shadow-sm p-3 space-y-3">
                   <div className="flex justify-between items-center">
                     <div>
                       <Label htmlFor="visibility">Visibility</Label>
@@ -86,8 +101,8 @@ export const ProductParameters: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-4">
-                    <div className="space-y-2">
+                  <div className="space-y-3">
+                    <div className="space-y-1">
                       <Label htmlFor="steerer-diameter">Steerer Tube Diameter</Label>
                       <Select value={steererDiameter} onValueChange={setSteererDiameter}>
                         <SelectTrigger className="text-left">
@@ -101,7 +116,7 @@ export const ProductParameters: React.FC = () => {
                       </Select>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label>Intended Use</Label>
                       <div className="flex flex-col gap-1.5">
                         <div className="flex items-center space-x-2">
@@ -119,7 +134,7 @@ export const ProductParameters: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="brake-mount">Brake Mount Type</Label>
                       <Select value={brakeMount} onValueChange={setBrakeMount}>
                         <SelectTrigger className="text-left">
@@ -133,7 +148,7 @@ export const ProductParameters: React.FC = () => {
                       </Select>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="axle-type">Axel type</Label>
                       <Select value={axleType} onValueChange={setAxleType}>
                         <SelectTrigger className="text-left">
@@ -147,7 +162,7 @@ export const ProductParameters: React.FC = () => {
                       </Select>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="axle-width">Axel width</Label>
                       <Select value={axleWidth} onValueChange={setAxleWidth}>
                         <SelectTrigger className="text-left">
@@ -162,7 +177,7 @@ export const ProductParameters: React.FC = () => {
                       </Select>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="axle-diameter">Axel diameter</Label>
                       <Select value={axleDiameter} onValueChange={setAxleDiameter}>
                         <SelectTrigger className="text-left">
@@ -177,44 +192,44 @@ export const ProductParameters: React.FC = () => {
                       </Select>
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="steerer-length">Steerer tube max length</Label>
                       <Input id="steerer-length" value={steererMaxLength} onChange={e => setSteererMaxLength(e.target.value)} />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="crown-race">Crown race diameter</Label>
                       <Input id="crown-race" value={crownRaceDiameter} onChange={e => setCrownRaceDiameter(e.target.value)} />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="rotor-size">Maximum rotor size</Label>
                       <Input id="rotor-size" value={maxRotorSize} onChange={e => setMaxRotorSize(e.target.value)} />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="brake-routing">Brake hose routing</Label>
                       <Input id="brake-routing" value={brakeHoseRouting} onChange={e => setBrakeHoseRouting(e.target.value)} />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="country">Country of origin</Label>
                       <Input id="country" value={countryOfOrigin} onChange={e => setCountryOfOrigin(e.target.value)} />
                     </div>
                     
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="category">Category</Label>
                       <Input id="category" value={category} onChange={e => setCategory(e.target.value)} />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="fender-mounts">Fender mounts</Label>
                       <Input id="fender-mounts" value={fenderMounts} onChange={e => setFenderMounts(e.target.value)} />
                     </div>
 
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       <Label htmlFor="description">Description</Label>
-                      <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} className="h-32 text-left" />
+                      <Textarea id="description" value={description} onChange={e => setDescription(e.target.value)} className="h-24 text-left" />
                     </div>
                   </div>
 
@@ -229,8 +244,8 @@ export const ProductParameters: React.FC = () => {
                 </div>
               </TabsContent>
 
-              <TabsContent value="snap-points" className="pt-4">
-                <div className="bg-white rounded-lg shadow-sm p-4">
+              <TabsContent value="snap-points" className="pt-2">
+                <div className="bg-white rounded-lg shadow-sm p-3">
                   <div className="flex justify-end pt-2">
                     <Button onClick={() => navigate('/supplier')} variant="outline" className="mr-2">
                       Cancel
@@ -242,8 +257,8 @@ export const ProductParameters: React.FC = () => {
                 </div>
               </TabsContent>
 
-              <TabsContent value="surface" className="pt-4">
-                <div className="bg-white rounded-lg shadow-sm p-4">
+              <TabsContent value="surface" className="pt-2">
+                <div className="bg-white rounded-lg shadow-sm p-3">
                   <div className="flex justify-end pt-2">
                     <Button onClick={() => navigate('/supplier')} variant="outline" className="mr-2">
                       Cancel
@@ -259,7 +274,7 @@ export const ProductParameters: React.FC = () => {
         </div>
 
         {/* Right Column - 3D Viewport (70% width) */}
-        <div className="w-[67%]">
+        <div className="w-[70%]">
           <div className="bg-white rounded-lg shadow-sm h-full overflow-hidden relative">
             <div className="h-full">
               <Viewport selectedComponent={selectedComponent} onComponentPlaced={() => {}} />

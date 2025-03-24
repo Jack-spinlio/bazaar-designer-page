@@ -8,12 +8,22 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, Upload } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { ComponentItem } from '@/components/Sidebar';
 
 export const UploadProduct: React.FC = () => {
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [modelFile, setModelFile] = useState<File | null>(null);
+  const [productData, setProductData] = useState({
+    name: '',
+    price: '',
+    manufacturer: '',
+    category: '',
+    description: ''
+  });
+  
   const categories = [{
     id: 'drivetrain',
     name: 'Drivetrain'
@@ -34,6 +44,21 @@ export const UploadProduct: React.FC = () => {
     name: 'Frames'
   }];
   
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setProductData(prev => ({
+      ...prev,
+      [id]: value
+    }));
+  };
+  
+  const handleSelectChange = (value: string) => {
+    setProductData(prev => ({
+      ...prev,
+      category: value
+    }));
+  };
+  
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -48,22 +73,75 @@ export const UploadProduct: React.FC = () => {
   const handleModelFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
+      if (!['stl', 'obj', 'glb', 'gltf'].includes(fileExt || '')) {
+        toast.error('Unsupported file format. Please upload STL, OBJ, GLB, or GLTF files.');
+        return;
+      }
+      
       setModelFile(file);
       toast.success(`3D model "${file.name}" selected`);
     }
   };
   
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!productData.name || !productData.price || !productData.category || !modelFile) {
+      toast.error('Please fill in all required fields and upload a 3D model');
+      return;
+    }
+    
     setIsUploading(true);
-
-    // Simulate upload process
-    setTimeout(() => {
+    
+    try {
+      // Upload model file to Supabase
+      const fileExt = modelFile.name.split('.').pop();
+      const filePath = `${Date.now()}_${productData.name.replace(/\s+/g, '_')}.${fileExt}`;
+      
+      const { data: modelData, error: modelError } = await supabase.storage
+        .from('models')
+        .upload(filePath, modelFile, {
+          cacheControl: '3600',
+          upsert: true
+        });
+      
+      if (modelError) {
+        throw modelError;
+      }
+      
+      // Get the public URL for the uploaded model
+      const { data: modelUrlData } = supabase.storage
+        .from('models')
+        .getPublicUrl(filePath);
+      
+      // Create component object for the viewport
+      const component: ComponentItem = {
+        id: `product-${Date.now()}`,
+        name: productData.name,
+        type: fileExt?.toUpperCase() || 'STL',
+        thumbnail: imagePreview || '/placeholder.svg',
+        folder: productData.category,
+        shape: 'box',
+        modelUrl: modelUrlData.publicUrl
+      };
+      
+      // Store component in local storage for now to pass to parameters page
+      localStorage.setItem('currentUploadedProduct', JSON.stringify({
+        ...component,
+        price: productData.price,
+        manufacturer: productData.manufacturer,
+        description: productData.description
+      }));
+      
       setIsUploading(false);
       toast.success('Product uploaded, continue to add parameters');
-      // Navigate to parameters page instead of supplier page
       navigate('/supplier/parameters');
-    }, 1500);
+    } catch (error: any) {
+      console.error('Error uploading product:', error);
+      toast.error(`Upload failed: ${error.message || 'Unknown error'}`);
+      setIsUploading(false);
+    }
   };
   
   return <div className="text-left">
@@ -78,28 +156,56 @@ export const UploadProduct: React.FC = () => {
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="name">Product Name</Label>
-                  <Input id="name" placeholder="e.g., Carbon Fiber Handlebar" required />
+                  <Input 
+                    id="name" 
+                    placeholder="e.g., Carbon Fiber Handlebar" 
+                    value={productData.name}
+                    onChange={handleChange}
+                    required 
+                  />
                 </div>
                 
                 <div>
                   <Label htmlFor="price">Price ($)</Label>
-                  <Input id="price" type="number" min="0.01" step="0.01" placeholder="e.g., 99.99" required />
+                  <Input 
+                    id="price" 
+                    type="number" 
+                    min="0.01" 
+                    step="0.01" 
+                    placeholder="e.g., 99.99" 
+                    value={productData.price}
+                    onChange={handleChange}
+                    required 
+                  />
                 </div>
 
-                {/* Swapped order: manufacturer now comes before category */}
                 <div>
                   <Label htmlFor="manufacturer">Manufacturer</Label>
-                  <Input id="manufacturer" placeholder="e.g., Shimano" required />
+                  <Input 
+                    id="manufacturer" 
+                    placeholder="e.g., Shimano" 
+                    value={productData.manufacturer}
+                    onChange={handleChange}
+                    required 
+                  />
                 </div>
 
                 <div>
                   <Label htmlFor="category">Category</Label>
-                  <Select required>
+                  <Select 
+                    value={productData.category} 
+                    onValueChange={handleSelectChange}
+                    required
+                  >
                     <SelectTrigger className="text-left">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map(category => <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>)}
+                      {categories.map(category => (
+                        <SelectItem key={category.id} value={category.id}>
+                          {category.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -109,7 +215,14 @@ export const UploadProduct: React.FC = () => {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="description">Product Description</Label>
-                <Textarea id="description" placeholder="Describe your product in detail..." className="h-32 text-left" required />
+                <Textarea 
+                  id="description" 
+                  placeholder="Describe your product in detail..." 
+                  className="h-32 text-left"
+                  value={productData.description}
+                  onChange={handleChange}
+                  required 
+                />
               </div>
 
               <div>
@@ -117,7 +230,10 @@ export const UploadProduct: React.FC = () => {
                 <div className="mt-1 flex items-center">
                   <label className="block w-full">
                     <div className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
-                      {imagePreview ? <img src={imagePreview} alt="Preview" className="h-full object-contain" /> : <div className="space-y-1 text-center p-4">
+                      {imagePreview ? (
+                        <img src={imagePreview} alt="Preview" className="h-full object-contain" />
+                      ) : (
+                        <div className="space-y-1 text-center p-4">
                           <Upload className="mx-auto h-8 w-8 text-gray-400" />
                           <div className="text-sm text-gray-600">
                             <span className="text-black font-medium">Click to upload</span> or drag and drop
@@ -125,8 +241,16 @@ export const UploadProduct: React.FC = () => {
                           <p className="text-xs text-gray-500">
                             PNG, JPG, WEBP up to 10MB
                           </p>
-                        </div>}
-                      <Input id="product-image" type="file" accept="image/*" className="hidden" onChange={handleImageChange} required />
+                        </div>
+                      )}
+                      <Input 
+                        id="product-image" 
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={handleImageChange} 
+                        required 
+                      />
                     </div>
                   </label>
                 </div>
