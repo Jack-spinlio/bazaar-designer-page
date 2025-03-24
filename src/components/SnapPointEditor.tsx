@@ -37,7 +37,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
   const [pendingNormal, setPendingNormal] = useState<THREE.Vector3 | null>(null);
 
   useEffect(() => {
-    if (!isActive || isPendingConfirmation) return;
+    if (!isActive) return;
 
     const handlePointerMove = (event: MouseEvent) => {
       if (!isActive || isPendingConfirmation) return;
@@ -88,25 +88,33 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
       raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
       
       const intersects = raycaster.intersectObjects(scene.children, true);
+      console.log("Pointer down intersects:", intersects);
       
       if (intersects.length > 0) {
         const intersection = intersects[0];
         
-        // Check if we're clicking on a snap point
+        // Check if we're clicking on an existing snap point
         let isSnapPointClick = false;
-        const parent = intersection.object.parent;
-        if (parent && parent.userData && parent.userData.isSnapPoint) {
-          isSnapPointClick = true;
-          
-          // Find the snap point ID
-          const snapPointId = parent.userData.id;
-          if (snapPointId) {
-            onSelectSnapPoint(snapPointId === selectedSnapPointId ? null : snapPointId);
+        let snapPointId: string | null = null;
+        
+        // Traverse up the object hierarchy to check for userData
+        let currentObject: THREE.Object3D | null = intersection.object;
+        while (currentObject && !isSnapPointClick) {
+          if (currentObject.userData && currentObject.userData.isSnapPoint) {
+            isSnapPointClick = true;
+            snapPointId = currentObject.userData.id || null;
+            break;
           }
-          
+          currentObject = currentObject.parent;
+        }
+        
+        if (isSnapPointClick && snapPointId) {
+          console.log("Clicked on snap point:", snapPointId);
+          onSelectSnapPoint(snapPointId === selectedSnapPointId ? null : snapPointId);
           return; // Don't place a new snap point
         }
         
+        // Not a snap point click, so place a new one
         const position = intersection.point.clone();
         let normal = null;
         
@@ -125,6 +133,8 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
         
         console.log("Placing snap point at:", position);
         console.log("Object clicked:", intersection.object.type);
+        console.log("Object name:", intersection.object.name);
+        console.log("Object userData:", intersection.object.userData);
         if (normal) console.log("Normal:", normal);
       }
     };
@@ -257,7 +267,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
           userData={{ isSnapPoint: true, id: snapPoint.id }}
         >
           {snapPoint.type === 'point' ? (
-            <mesh>
+            <mesh userData={{ isSnapPoint: true, id: snapPoint.id }}>
               <sphereGeometry args={[0.15, 24, 24]} />
               <meshBasicMaterial 
                 color={selectedSnapPointId === snapPoint.id ? "#f97316" : "#0ea5e9"} 
@@ -266,7 +276,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
               />
             </mesh>
           ) : (
-            <group>
+            <group userData={{ isSnapPoint: true, id: snapPoint.id }}>
               <Plane args={[0.25, 0.25]}>
                 <meshBasicMaterial 
                   color={selectedSnapPointId === snapPoint.id ? "#f97316" : "#0ea5e9"} 
@@ -292,7 +302,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
           )}
           
           {selectedSnapPointId === snapPoint.id && (
-            <mesh>
+            <mesh userData={{ isSnapPoint: true, id: snapPoint.id }}>
               <boxGeometry args={[0.35, 0.35, 0.35]} />
               <meshBasicMaterial color="#FF5733" wireframe={true} wireframeLinewidth={2} />
             </mesh>

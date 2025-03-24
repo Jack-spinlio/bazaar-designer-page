@@ -78,6 +78,23 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
               // Position the model
               model.position.set(0, 0, 0);
               
+              // Set component userData on the model and all its children for snap point selection
+              model.userData = { 
+                ...model.userData, 
+                componentId: id, 
+                componentName: component.name 
+              };
+              
+              model.traverse(child => {
+                if (child instanceof THREE.Mesh) {
+                  child.userData = { 
+                    ...child.userData, 
+                    componentId: id, 
+                    componentName: component.name 
+                  };
+                }
+              });
+              
               // Add to the group
               componentRef.current.add(model);
               toast.success(`Model ${component.name} loaded successfully`);
@@ -91,6 +108,10 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
             
             // Fallback to basic shape if model loading fails
             const componentMesh = createComponentShape(component.shape);
+            componentMesh.userData = { 
+              componentId: id, 
+              componentName: component.name 
+            };
             if (componentRef.current) {
               componentRef.current.add(componentMesh);
             }
@@ -99,6 +120,10 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
       } else {
         // Create the standard component mesh for basic shapes
         const componentMesh = createComponentShape(component.shape || 'box');
+        componentMesh.userData = { 
+          componentId: id, 
+          componentName: component.name 
+        };
         componentRef.current.add(componentMesh);
         console.log(`Created basic shape "${component.shape}" for component "${component.name}"`);
       }
@@ -108,11 +133,13 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
       
       console.log(`Placed component "${component.name}" at position (${position.join(', ')})`);
     }
-  }, [component, position]);
+  }, [component, position, id]);
 
   const handleClick = (e: any) => {
     if (isSnapPointMode) {
       // When in snap point mode, don't stop propagation
+      // This allows the click to be handled by SnapPointEditor
+      console.log("Click in snap point mode, not capturing");
       return;
     }
     
