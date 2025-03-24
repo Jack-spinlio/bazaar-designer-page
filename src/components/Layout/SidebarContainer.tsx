@@ -100,11 +100,11 @@ export const SidebarContainer: React.FC<SidebarContainerProps> = ({
       case "components":
       case "prefabs":
       case "saved":
-        return "w-[20rem]"; // ~320px
+        return "w-[300px]"; // 300px for standard sidebars
       case "bom":
-        return "w-[32rem]";  // ~512px
+        return "w-[600px]";  // 600px for BOM
       case "timeline":
-        return "w-[36rem]"; // ~576px
+        return "w-[650px]"; // 650px for timeline
       default:
         return "w-0";
     }
