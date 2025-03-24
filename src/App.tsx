@@ -6,7 +6,6 @@ import Marketplace from './pages/Marketplace';
 import ProducerProfile from './pages/ProducerProfile';
 import NotFound from './pages/NotFound';
 import ProductDetail from './pages/ProductDetail';
-import SupplierDashboard from './pages/SupplierDashboard';
 import './App.css';
 import { Toaster } from 'sonner';
 import * as THREE from 'three';
@@ -32,8 +31,6 @@ function App() {
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/producer/:id" element={<ProducerProfile />} />
         <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/supplier/*" element={<SupplierDashboard />} />
-        <Route path="/uploads" element={<Navigate to="/supplier/uploads" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster position="top-right" richColors />
