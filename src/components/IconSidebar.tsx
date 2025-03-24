@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { 
   Pencil, 
@@ -16,21 +15,30 @@ import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FileUploader } from "@/components/FileUploader";
 
-export const IconSidebar = () => {
+export const IconSidebar = ({ activeTab, setActiveTab }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   
-  const isActive = (path: string) => location.pathname === path;
+  const handleTabClick = (tabId) => {
+    if (activeTab === tabId) {
+      setActiveTab(null);
+    } else {
+      setActiveTab(tabId);
+    }
+    
+    if (location.pathname !== '/studio') {
+      navigate('/studio');
+    }
+  };
   
   const sidebarItems = [
-    { icon: Layers, label: "Design Studio", path: "/studio" },
-    { icon: Pencil, label: "Edit", path: "/edit" },
-    { icon: Bike, label: "Prefabs", path: "/prefabs" },
-    { icon: Puzzle, label: "Components", path: "/components" },
-    { icon: FileSpreadsheet, label: "BOM", path: "/bom" },
-    { icon: Bookmark, label: "Saved", path: "/saved" },
-    { icon: Clock, label: "Timeline", path: "/timeline" },
+    { id: "edit", icon: Pencil, label: "Edit" },
+    { id: "prefabs", icon: Bike, label: "Prefabs" },
+    { id: "components", icon: Puzzle, label: "Components" },
+    { id: "bom", icon: FileSpreadsheet, label: "BOM" },
+    { id: "saved", icon: Bookmark, label: "Saved" },
+    { id: "timeline", icon: Clock, label: "Timeline" },
   ];
 
   const handleUploadClick = (e: React.MouseEvent) => {
@@ -43,18 +51,38 @@ export const IconSidebar = () => {
       <div className="w-16 border-r border-gray-200 flex flex-col items-center py-4 bg-white rounded-2xl h-full shadow-sm">
         <TooltipProvider>
           <div className="flex-1 flex flex-col gap-6 items-center">
-            {sidebarItems.map((item, index) => (
-              <Tooltip key={item.path}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant={location.pathname === '/studio' ? "default" : "ghost"} 
+                  size="icon" 
+                  className={
+                    location.pathname === '/studio' 
+                      ? "bg-black text-white hover:bg-black hover:text-white" 
+                      : "text-gray-400 hover:text-gray-600"
+                  }
+                  onClick={() => navigate('/studio')}
+                >
+                  <Layers size={20} />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>Design Studio</p>
+              </TooltipContent>
+            </Tooltip>
+            
+            {sidebarItems.map((item) => (
+              <Tooltip key={item.id}>
                 <TooltipTrigger asChild>
                   <Button 
-                    variant={isActive(item.path) ? "default" : "ghost"} 
+                    variant={activeTab === item.id ? "default" : "ghost"} 
                     size="icon" 
                     className={
-                      isActive(item.path) 
+                      activeTab === item.id
                         ? "bg-black text-white hover:bg-black hover:text-white" 
                         : "text-gray-400 hover:text-gray-600"
                     }
-                    onClick={() => navigate(item.path)}
+                    onClick={() => handleTabClick(item.id)}
                   >
                     <item.icon size={20} />
                   </Button>
@@ -68,9 +96,13 @@ export const IconSidebar = () => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
-                  variant="ghost" 
+                  variant={activeTab === "uploads" ? "default" : "ghost"} 
                   size="icon" 
-                  className="text-gray-400 hover:text-gray-600"
+                  className={
+                    activeTab === "uploads"
+                      ? "bg-black text-white hover:bg-black hover:text-white" 
+                      : "text-gray-400 hover:text-gray-600"
+                  }
                   onClick={handleUploadClick}
                 >
                   <Upload size={20} />

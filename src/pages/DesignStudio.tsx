@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Viewport } from '@/components/Viewport';
+import { IconSidebar } from '@/components/IconSidebar';
 import EditToolbar from '@/components/EditToolbar';
 import { Sidebar, ComponentItem } from '@/components/Sidebar';
 import { PrefabSidebar, PrefabItem } from '@/components/PrefabSidebar';
@@ -18,23 +19,6 @@ import {
   TableHeader, 
   TableRow 
 } from "@/components/ui/table";
-import { 
-  Tabs, 
-  TabsList, 
-  TabsTrigger, 
-  TabsContent 
-} from "@/components/ui/tabs";
-
-// Import icons for tabs
-import { 
-  Pencil, 
-  Bike, 
-  Puzzle, 
-  Bookmark, 
-  Clock, 
-  Upload,
-  FileSpreadsheet
-} from "lucide-react";
 
 // BOM data
 const components = [
@@ -92,20 +76,24 @@ const components = [
 
 // Timeline data
 const bikeComponents: BikeComponent[] = [
-  { id: '1', name: 'Frame', icon: <Bike size={18} />, days: 90, color: 'bg-blue-100', startWeek: 1 },
+  { id: '1', name: 'Frame', icon: <Pencil size={18} />, days: 90, color: 'bg-blue-100', startWeek: 1 },
   { id: '2', name: 'Fork', icon: <Puzzle size={18} />, days: 42, color: 'bg-purple-100', startWeek: 8 },
   { id: '3', name: 'Motor', icon: <Pencil size={18} />, days: 35, color: 'bg-green-100', startWeek: 9 },
   { id: '4', name: 'Rear Hub', icon: <FileSpreadsheet size={18} />, days: 40, color: 'bg-pink-100', startWeek: 9 },
   { id: '5', name: 'Handlebar', icon: <Bookmark size={18} />, days: 60, color: 'bg-cyan-100', startWeek: 8 },
 ];
 
+import { Pencil, Puzzle, FileSpreadsheet, Bookmark } from "lucide-react";
+
 const DesignStudio = () => {
+  // State for active tab
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+  
   // States for different components
   const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
   const [selectedPrefab, setSelectedPrefab] = useState<PrefabItem | null>(null);
   const [selectedDesign, setSelectedDesign] = useState<SavedDesign | null>(null);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState("edit");
 
   // Handlers for component selection
   const handleComponentSelected = (component: ComponentItem) => {
@@ -128,17 +116,6 @@ const DesignStudio = () => {
     setSelectedComponent(null);
     setSelectedPrefab(null);
   };
-
-  // Tab definitions with icons
-  const tabs = [
-    { id: "edit", label: "Edit", icon: Pencil },
-    { id: "prefabs", label: "Prefabs", icon: Bike },
-    { id: "components", label: "Components", icon: Puzzle },
-    { id: "bom", label: "BOM", icon: FileSpreadsheet },
-    { id: "saved", label: "Saved", icon: Bookmark },
-    { id: "timeline", label: "Timeline", icon: Clock },
-    { id: "uploads", label: "Upload", icon: Upload },
-  ];
 
   // Sidebar content based on active tab
   const renderSidebar = () => {
@@ -190,56 +167,27 @@ const DesignStudio = () => {
             <TimelineChart components={bikeComponents} />
           </div>
         );
-      case "uploads":
-        return (
-          <div className="h-full bg-white p-4 flex flex-col items-center justify-center">
-            <button
-              onClick={() => setUploadDialogOpen(true)}
-              className="px-4 py-2 bg-black text-white rounded-lg flex items-center gap-2"
-            >
-              <Upload size={16} />
-              Upload Component
-            </button>
-          </div>
-        );
       default:
-        return <EditToolbar />;
+        return null;
     }
   };
 
   return (
-    <Layout>
-      <div className="flex h-full">
-        {/* Tabbed navigation */}
-        <div className="flex flex-col h-full">
-          <div className="p-2 bg-white rounded-2xl shadow-sm mb-2.5">
-            <TabsList className="flex flex-col space-y-1">
-              {tabs.map((tab) => (
-                <TabsTrigger
-                  key={tab.id}
-                  value={tab.id}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg ${
-                    activeTab === tab.id
-                      ? "bg-black text-white"
-                      : "text-gray-600 hover:bg-gray-100"
-                  }`}
-                  onClick={() => setActiveTab(tab.id)}
-                >
-                  <tab.icon size={18} />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-        </div>
-
+    <div className="flex h-screen overflow-hidden bg-[#F5F5F5] p-2.5">
+      <div className="flex h-full ml-0">
+        <IconSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      </div>
+      
+      <div className="flex flex-1 overflow-hidden mt-2.5 ml-2.5">
         {/* Sidebar based on active tab */}
-        <div className="w-[320px] h-full ml-2.5">
-          {renderSidebar()}
-        </div>
+        {activeTab && (
+          <div className="w-[320px] h-full mr-2.5">
+            {renderSidebar()}
+          </div>
+        )}
 
         {/* Persistent viewport */}
-        <div className="flex-1 h-full ml-2.5">
+        <div className={`${activeTab ? 'flex-1' : 'w-full'} h-full`}>
           <Viewport 
             selectedComponent={selectedComponent}
             onComponentPlaced={handleComponentPlaced}
@@ -258,7 +206,7 @@ const DesignStudio = () => {
           />
         </DialogContent>
       </Dialog>
-    </Layout>
+    </div>
   );
 };
 
