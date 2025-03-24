@@ -10,10 +10,11 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const navigate = useNavigate();
-  // Auth0 domain should typically end with auth0.com or your custom domain
-  // If auth.bazaar.it is a custom domain, ensure it's properly configured in Auth0
-  const domain = 'auth.bazaar.it'; 
-  const clientId = 'yourAuth0ClientId'; // Replace with your actual Auth0 client ID
+  
+  // Auth0 configuration
+  // Using a standard auth0.com domain format as a fallback if custom domain isn't configured properly
+  const domain = import.meta.env.VITE_AUTH0_DOMAIN || 'dev-example.us.auth0.com'; 
+  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID || 'dummyClientId';
   const redirectUri = window.location.origin;
 
   const onRedirectCallback = (appState?: AppState) => {
@@ -25,6 +26,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     toast.error(`Authentication error: ${error.message}`);
   };
 
+  // Check if provider is configured
+  const isConfigured = domain !== 'dev-example.us.auth0.com' && clientId !== 'dummyClientId';
+
+  if (!isConfigured) {
+    console.warn('Auth0 is not properly configured. Using dummy implementation.');
+  }
+
+  // Prevent Auth0 from attempting to initialize with invalid configuration
+  if (!isConfigured) {
+    return (
+      <div className="auth-provider-fallback">
+        {children}
+      </div>
+    );
+  }
+
   return (
     <Auth0Provider
       domain={domain}
@@ -34,6 +51,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }}
       onRedirectCallback={onRedirectCallback}
       onError={onError}
+      cacheLocation="localstorage"
     >
       {children}
     </Auth0Provider>
