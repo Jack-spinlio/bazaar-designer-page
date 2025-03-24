@@ -101,13 +101,17 @@ export const TimelineChart: React.FC<TimelineChartProps> = ({
           </div>
           
           {/* Total timeline row */}
-          <div className="flex items-center mb-3">
-            <div className="w-44 pr-2 font-medium text-left flex-shrink-0 bg-gray-600 py-2 pl-2 rounded-l-lg text-white">
-              Total Timeline
+          <div className="flex mb-4">
+            <div className="w-44 pr-2 flex-shrink-0">
+              <div className="h-10 bg-gray-600 text-white rounded-l-lg flex items-center pl-4 font-medium">
+                Total Timeline
+              </div>
             </div>
             
-            <div className="flex-1 h-8 bg-gray-600 rounded-r-lg flex items-center px-4 text-white">
-              90 days period
+            <div className="flex-1">
+              <div className="h-10 bg-gray-600 rounded-r-lg text-white flex items-center px-4">
+                90 days period
+              </div>
             </div>
           </div>
           
