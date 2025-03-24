@@ -29,11 +29,12 @@ const navItems = [
 
 export const SupplierSidebar = () => {
   const location = useLocation();
-  const [isCollapsed, setIsCollapsed] = useState(true); // Default collapsed state
+  const [isCollapsed, setIsCollapsed] = useState(true);
   
-  // Set initial collapsed state
+  // Set initial collapsed state to true
   useEffect(() => {
-    setIsCollapsed(true);
+    const shouldCollapse = true; // Always default to collapsed
+    setIsCollapsed(shouldCollapse);
   }, []);
 
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
