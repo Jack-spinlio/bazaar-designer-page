@@ -126,20 +126,26 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
     }
   }, [isActive]);
 
+  // Format coordinates to a readable string
+  const formatCoordinates = (vector: THREE.Vector3): string => {
+    return `X: ${vector.x.toFixed(2)}, Y: ${vector.y.toFixed(2)}, Z: ${vector.z.toFixed(2)}`;
+  };
+
   return (
     <group>
       {/* Hover indicator */}
       {isActive && !isPendingConfirmation && hoverPoint && (
         <group position={hoverPoint}>
+          {/* Larger indicator sphere */}
           <mesh>
-            <sphereGeometry args={[0.03, 16, 16]} />
+            <sphereGeometry args={[0.08, 16, 16]} />
             <meshBasicMaterial color="#22c55e" transparent opacity={0.7} />
           </mesh>
           
           {hoverNormal && (
             <group>
               <Plane 
-                args={[0.1, 0.1]} 
+                args={[0.15, 0.15]} 
                 rotation={[0, 0, 0]} 
                 position={[0, 0, 0]}
                 onPointerMove={(e) => e.stopPropagation()}
@@ -150,16 +156,19 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
                 args={[
                   hoverNormal, 
                   new THREE.Vector3(0, 0, 0), 
-                  0.15, 
-                  0x22c55e
+                  0.25, // Longer arrow 
+                  0x22c55e,
+                  0.05, // Larger head
+                  0.05  // Larger head width
                 ]} 
               />
             </group>
           )}
           
           <Html distanceFactor={10}>
-            <div className="bg-black/75 text-white px-2 py-1 text-xs rounded whitespace-nowrap">
-              Click to place snap point
+            <div className="bg-black/90 text-white px-3 py-2 text-sm rounded-lg whitespace-nowrap shadow-lg flex flex-col">
+              <div className="font-medium">Click to place snap point</div>
+              <div className="text-xs opacity-80">{formatCoordinates(hoverPoint)}</div>
             </div>
           </Html>
         </group>
@@ -168,15 +177,16 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
       {/* Pending confirmation indicator */}
       {isActive && isPendingConfirmation && pendingPosition && (
         <group position={pendingPosition}>
+          {/* Larger indicator sphere */}
           <mesh>
-            <sphereGeometry args={[0.04, 16, 16]} />
+            <sphereGeometry args={[0.1, 16, 16]} />
             <meshBasicMaterial color="#f97316" transparent opacity={0.8} />
           </mesh>
           
           {pendingNormal && (
             <group>
               <Plane 
-                args={[0.15, 0.15]} 
+                args={[0.2, 0.2]} 
                 rotation={[0, 0, 0]} 
                 position={[0, 0, 0]}
                 onPointerMove={(e) => e.stopPropagation()}
@@ -187,25 +197,28 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
                 args={[
                   pendingNormal, 
                   new THREE.Vector3(0, 0, 0), 
-                  0.2, 
-                  0xf97316
+                  0.3, // Longer arrow
+                  0xf97316,
+                  0.06, // Larger head
+                  0.06  // Larger head width
                 ]} 
               />
             </group>
           )}
           
           <Html distanceFactor={10}>
-            <div className="flex flex-col items-center bg-black/75 text-white px-3 py-2 rounded whitespace-nowrap">
-              <div className="text-xs font-semibold mb-2">Confirm snap point placement?</div>
+            <div className="flex flex-col items-center bg-black/90 text-white px-4 py-3 rounded-lg whitespace-nowrap shadow-lg">
+              <div className="text-sm font-semibold mb-1">Confirm snap point placement</div>
+              <div className="text-xs opacity-80 mb-2">{formatCoordinates(pendingPosition)}</div>
               <div className="flex space-x-2">
                 <button 
-                  className="bg-green-500 hover:bg-green-600 text-white text-xs px-2 py-1 rounded"
+                  className="bg-green-500 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded-md font-medium"
                   onClick={handleConfirmSnapPoint}
                 >
                   Confirm
                 </button>
                 <button 
-                  className="bg-red-500 hover:bg-red-600 text-white text-xs px-2 py-1 rounded"
+                  className="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1.5 rounded-md font-medium"
                   onClick={handleCancelSnapPoint}
                 >
                   Cancel
@@ -228,7 +241,8 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
         >
           {snapPoint.type === 'point' ? (
             <mesh>
-              <sphereGeometry args={[0.06, 16, 16]} />
+              {/* Larger existing point */}
+              <sphereGeometry args={[0.1, 16, 16]} />
               <meshBasicMaterial 
                 color={selectedSnapPointId === snapPoint.id ? "#f97316" : "#0ea5e9"} 
                 transparent 
@@ -237,7 +251,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
             </mesh>
           ) : (
             <group>
-              <Plane args={[0.15, 0.15]}>
+              <Plane args={[0.2, 0.2]}>
                 <meshBasicMaterial 
                   color={selectedSnapPointId === snapPoint.id ? "#f97316" : "#0ea5e9"} 
                   transparent 
@@ -251,31 +265,34 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
                   args={[
                     snapPoint.normal, 
                     new THREE.Vector3(0, 0, 0), 
-                    0.15, 
-                    selectedSnapPointId === snapPoint.id ? 0xf97316 : 0x0ea5e9
+                    0.25, // Longer arrow
+                    selectedSnapPointId === snapPoint.id ? 0xf97316 : 0x0ea5e9,
+                    0.05, // Larger head
+                    0.05  // Larger head width
                   ]} 
                 />
               )}
             </group>
           )}
           
-          {/* Selection indicator */}
+          {/* Selection indicator - using bright colors and wireframe */}
           {selectedSnapPointId === snapPoint.id && (
             <mesh>
-              <boxGeometry args={[0.2, 0.2, 0.2]} />
-              <meshBasicMaterial color="#f97316" wireframe={true} />
+              <boxGeometry args={[0.25, 0.25, 0.25]} />
+              <meshBasicMaterial color="#ff3d00" wireframe={true} wireframeLinewidth={2} />
             </mesh>
           )}
           
           <Html distanceFactor={10}>
             <div 
-              className={`px-2 py-1 text-xs rounded whitespace-nowrap ${
+              className={`px-3 py-1.5 text-sm rounded-lg whitespace-nowrap shadow-lg ${
                 selectedSnapPointId === snapPoint.id 
                   ? 'bg-orange-500 text-white' 
                   : 'bg-blue-500 text-white'
               }`}
             >
-              {snapPoint.name}
+              <div>{snapPoint.name}</div>
+              <div className="text-xs opacity-80 mt-0.5">{formatCoordinates(snapPoint.position)}</div>
             </div>
           </Html>
         </group>
