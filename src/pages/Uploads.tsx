@@ -97,7 +97,10 @@ const Uploads = () => {
       }
       
       toast.success('File uploaded successfully');
-      handleClose();
+      setFile(null);
+      setComponentName('');
+      setCategory('');
+      setSubCategory('');
     } catch (error: any) {
       console.error('Upload error:', error);
       toast.error(error.message || 'Upload failed');
@@ -113,11 +116,14 @@ const Uploads = () => {
 
   return (
     <Layout>
-      <Dialog open onOpenChange={handleClose}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>List a Product</DialogTitle>
-          </DialogHeader>
+      <div className="p-6 max-w-4xl mx-auto">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold">Supplier Dashboard</h1>
+          <p className="text-gray-600">Upload and manage your components for the marketplace</p>
+        </div>
+        
+        <div className="bg-white p-6 rounded-lg shadow-sm">
+          <h2 className="text-xl font-semibold mb-4">Upload New Component</h2>
           
           <div className="space-y-4">
             <div className="space-y-2">
@@ -225,9 +231,6 @@ const Uploads = () => {
             </div>
             
             <div className="flex justify-end space-x-2 pt-3">
-              <Button variant="outline" onClick={handleClose}>
-                Cancel
-              </Button>
               <Button 
                 onClick={handleUpload} 
                 disabled={!file || !componentName || isUploading}
@@ -236,8 +239,8 @@ const Uploads = () => {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </div>
     </Layout>
   );
 };

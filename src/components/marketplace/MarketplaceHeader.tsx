@@ -1,19 +1,36 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bell } from 'lucide-react';
+import { Bell, Upload, UserCog } from 'lucide-react';
+import { toast } from 'sonner';
 import { 
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  DropdownMenuGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuRadioGroup
 } from "@/components/ui/dropdown-menu";
 
 export const MarketplaceHeader: React.FC = () => {
+  const navigate = useNavigate();
+  const [userRole, setUserRole] = React.useState('designer');
+  
+  const handleRoleChange = (value: string) => {
+    setUserRole(value);
+    if (value === 'supplier') {
+      navigate('/uploads');
+      toast.success('Switched to Supplier mode');
+    } else {
+      toast.success('Switched to Designer mode');
+    }
+  };
+
   return (
     <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 z-10 bg-white rounded-2xl shadow-sm">
       <div className="flex items-center gap-4">
@@ -37,12 +54,33 @@ export const MarketplaceHeader: React.FC = () => {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="font-normal text-xs text-gray-500 pl-2">Switch Role</DropdownMenuLabel>
+              <DropdownMenuRadioGroup value={userRole} onValueChange={handleRoleChange}>
+                <DropdownMenuRadioItem value="designer">
+                  <UserCog className="mr-2 h-4 w-4" />
+                  <span>Designer</span>
+                </DropdownMenuRadioItem>
+                <DropdownMenuRadioItem value="supplier">
+                  <Upload className="mr-2 h-4 w-4" />
+                  <span>Supplier</span>
+                </DropdownMenuRadioItem>
+              </DropdownMenuRadioGroup>
+            </DropdownMenuGroup>
+            
+            <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
               <Link to="/marketplace">Marketplace</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link to="/edit">Design Interface</Link>
+              <Link to="/design">Design Interface</Link>
             </DropdownMenuItem>
+            {userRole === 'supplier' && (
+              <DropdownMenuItem asChild>
+                <Link to="/uploads">Upload Components</Link>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem asChild>
               <Link to="/saved">Saved Designs</Link>
             </DropdownMenuItem>

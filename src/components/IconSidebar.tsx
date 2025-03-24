@@ -50,7 +50,8 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
 
   const handleUploadClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    setUploadDialogOpen(true);
+    // Instead of opening a dialog, navigate to the uploads page
+    navigate('/uploads');
   };
 
   return (
@@ -85,10 +86,10 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
-                  variant={activeTab === "uploads" ? "default" : "ghost"} 
+                  variant={location.pathname === "/uploads" ? "default" : "ghost"} 
                   size="icon" 
                   className={
-                    activeTab === "uploads"
+                    location.pathname === "/uploads"
                       ? "bg-black text-white hover:bg-black hover:text-white" 
                       : "text-gray-400 hover:text-gray-600"
                   }
@@ -104,18 +105,6 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
           </div>
         </TooltipProvider>
       </div>
-
-      <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <h3 className="text-lg font-medium mb-4">Upload 3D Component</h3>
-          <FileUploader 
-            onClose={() => setUploadDialogOpen(false)} 
-            onFileUploaded={() => {
-              setUploadDialogOpen(false);
-            }} 
-          />
-        </DialogContent>
-      </Dialog>
     </>
   );
 };
