@@ -24,15 +24,37 @@ interface ComponentCategory {
   group_id: string;
 }
 
+// Mock data for component groups and categories
+const MOCK_COMPONENT_GROUPS: ComponentGroup[] = [
+  { id: 'frame', name: 'Frame' },
+  { id: 'drivetrain', name: 'Drivetrain' },
+  { id: 'wheels', name: 'Wheels' },
+  { id: 'components', name: 'Components' }
+];
+
+const MOCK_COMPONENT_CATEGORIES: ComponentCategory[] = [
+  { id: 'frame-road', name: 'Road Frames', group_id: 'frame' },
+  { id: 'frame-mtb', name: 'Mountain Bike Frames', group_id: 'frame' },
+  { id: 'frame-gravel', name: 'Gravel Frames', group_id: 'frame' },
+  { id: 'drivetrain-groupsets', name: 'Groupsets', group_id: 'drivetrain' },
+  { id: 'drivetrain-chainrings', name: 'Chainrings', group_id: 'drivetrain' },
+  { id: 'drivetrain-cassettes', name: 'Cassettes', group_id: 'drivetrain' },
+  { id: 'wheels-road', name: 'Road Wheels', group_id: 'wheels' },
+  { id: 'wheels-mtb', name: 'Mountain Bike Wheels', group_id: 'wheels' },
+  { id: 'components-handlebars', name: 'Handlebars', group_id: 'components' },
+  { id: 'components-stems', name: 'Stems', group_id: 'components' },
+  { id: 'components-seatposts', name: 'Seatposts', group_id: 'components' }
+];
+
 export const UploadProduct: React.FC = () => {
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [modelFile, setModelFile] = useState<File | null>(null);
-  const [componentGroups, setComponentGroups] = useState<ComponentGroup[]>([]);
-  const [componentCategories, setComponentCategories] = useState<ComponentCategory[]>([]);
+  const [componentGroups, setComponentGroups] = useState<ComponentGroup[]>(MOCK_COMPONENT_GROUPS);
+  const [componentCategories, setComponentCategories] = useState<ComponentCategory[]>(MOCK_COMPONENT_CATEGORIES);
   const [filteredCategories, setFilteredCategories] = useState<ComponentCategory[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   
   const [productData, setProductData] = useState({
     name: '',
@@ -42,41 +64,6 @@ export const UploadProduct: React.FC = () => {
     category_id: '',
     description: ''
   });
-  
-  // Fetch component groups and categories from Supabase
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setIsLoading(true);
-        
-        // Fetch component groups
-        const { data: groupsData, error: groupsError } = await supabase
-          .from('component_groups')
-          .select('*')
-          .order('name');
-        
-        if (groupsError) throw groupsError;
-        
-        // Fetch component categories
-        const { data: categoriesData, error: categoriesError } = await supabase
-          .from('component_categories')
-          .select('*')
-          .order('name');
-          
-        if (categoriesError) throw categoriesError;
-        
-        setComponentGroups(groupsData || []);
-        setComponentCategories(categoriesData || []);
-      } catch (error: any) {
-        console.error('Error fetching categories:', error);
-        toast.error(`Failed to load categories: ${error.message}`);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    fetchCategories();
-  }, []);
   
   // Filter categories when group changes
   useEffect(() => {
