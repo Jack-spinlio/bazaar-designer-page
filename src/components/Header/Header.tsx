@@ -23,6 +23,7 @@ export const Header: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isProducerPage = location.pathname.includes('/producer');
+  const isDesignPage = location.pathname === '/design';
   const [userRole, setUserRole] = React.useState('designer');
   
   const handleRoleChange = (value: string) => {
@@ -46,9 +47,11 @@ export const Header: React.FC = () => {
         </Link>
       </div>
       <div className="flex items-center">
-        <div className="flex items-center mr-4">
-          <DesignTitle initialTitle="Bazaar Road bike" />
-        </div>
+        {isDesignPage && (
+          <div className="flex items-center mr-4">
+            <DesignTitle initialTitle="Bazaar Road bike" />
+          </div>
+        )}
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon">
             <Bell size={20} />
