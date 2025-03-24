@@ -1,7 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Package, Upload, PenLine } from 'lucide-react';
+import { Package, Upload, PenLine, ChevronRight, ChevronLeft } from 'lucide-react';
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarProvider,
+} from "@/components/ui/sidebar";
 
 const navItems = [
   { 
@@ -23,10 +29,24 @@ const navItems = [
 
 export const SupplierSidebar = () => {
   const location = useLocation();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
   return (
-    <div className="min-h-screen pt-10 pr-4">
-      <div className="bg-white rounded-lg p-4 shadow-sm">
+    <div className={`min-h-screen pt-10 ${isCollapsed ? 'w-20' : 'w-64'} transition-all duration-300 ease-in-out relative`}>
+      <div className="bg-white rounded-lg p-4 shadow-sm h-full">
+        {/* Toggle Button */}
+        <button 
+          onClick={toggleSidebar} 
+          className="absolute -right-3 top-14 bg-gray-100 rounded-full p-1 shadow-md hover:bg-gray-200 transition-colors z-10"
+        >
+          {isCollapsed ? 
+            <ChevronRight className="w-4 h-4" /> : 
+            <ChevronLeft className="w-4 h-4" />
+          }
+        </button>
+
         <nav className="space-y-3">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path;
@@ -34,16 +54,21 @@ export const SupplierSidebar = () => {
               <Link
                 key={item.path}
                 to={item.path}
-                className={`flex items-center px-4 py-3 text-sm rounded-lg transition-colors ${
+                className={`flex items-center ${isCollapsed ? 'justify-center' : 'px-4'} py-3 rounded-lg transition-colors ${
                   isActive
                     ? 'bg-black text-white font-medium'
                     : 'bg-[#f5f5f5] text-black hover:bg-gray-200'
                 }`}
               >
-                <span className={`mr-3 ${isActive ? 'text-white' : 'text-gray-700'}`}>
-                  {item.icon}
+                <span className={`${isActive ? 'text-white' : 'text-gray-700'} ${isCollapsed ? 'mr-0' : 'mr-3'}`}>
+                  {isCollapsed ? 
+                    <div className={`p-2 rounded-full ${isActive ? 'bg-black' : 'bg-[#f5f5f5]'}`}>
+                      {item.icon}
+                    </div> : 
+                    item.icon
+                  }
                 </span>
-                <span className="font-bold">{item.name}</span>
+                {!isCollapsed && <span className="font-bold">{item.name}</span>}
               </Link>
             );
           })}
