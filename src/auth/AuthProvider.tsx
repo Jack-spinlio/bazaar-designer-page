@@ -11,30 +11,41 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const navigate = useNavigate();
   
-  // Auth0 configuration
-  const domain = import.meta.env.VITE_AUTH0_DOMAIN || 
-                import.meta.env.VITE_AUTH0_FALLBACK_DOMAIN || 
-                'dev-jxcml1qpmbgabh6v.us.auth0.com';
-                
-  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID || 'rTSJkyJmYL2VIARI3RaqLJruCquzfpXa';
-  const redirectUri = window.location.origin;
+  // Explicitly get environment variables with console logging
+  const domain = import.meta.env.VITE_AUTH0_DOMAIN;
+  const fallbackDomain = import.meta.env.VITE_AUTH0_FALLBACK_DOMAIN;
+  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+  const audience = import.meta.env.VITE_AUTH0_AUDIENCE;
   
-  // For audience configuration
-  const audience = import.meta.env.VITE_AUTH0_AUDIENCE || `https://${domain}/api/v2/`;
+  // Use the first available domain with a proper fallback
+  const effectiveDomain = domain || fallbackDomain || 'dev-jxcml1qpmbgabh6v.us.auth0.com';
+  const effectiveClientId = clientId || 'rTSJkyJmYL2VIARI3RaqLJruCquzfpXa';
+  const effectiveAudience = audience || `https://${effectiveDomain}/api/v2/`;
+  
+  const redirectUri = window.location.origin;
+
+  // Log configuration for debugging
+  console.log('Auth0 configuration:', { 
+    effectiveDomain, 
+    effectiveClientId,
+    effectiveAudience,
+    redirectUri,
+    envDomain: domain,
+    envFallbackDomain: fallbackDomain,
+    envClientId: clientId,
+    envAudience: audience
+  });
 
   const onRedirectCallback = (appState?: AppState) => {
     navigate(appState?.returnTo || '/marketplace');
   };
 
-  // Check if provider is configured
-  const isConfigured = domain !== 'dev-example.us.auth0.com' && clientId !== 'dummyClientId';
+  // Check if provider is configured with meaningful values
+  const isConfigured = effectiveDomain !== 'dev-example.us.auth0.com' && 
+                     effectiveClientId !== 'dummyClientId';
 
   if (!isConfigured) {
     console.warn('Auth0 is not properly configured. Using dummy implementation.');
-  }
-
-  // Prevent Auth0 from attempting to initialize with invalid configuration
-  if (!isConfigured) {
     return (
       <div className="auth-provider-fallback">
         {children}
@@ -44,11 +55,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <Auth0Provider
-      domain={domain}
-      clientId={clientId}
+      domain={effectiveDomain}
+      clientId={effectiveClientId}
       authorizationParams={{
         redirect_uri: redirectUri,
-        audience: audience,
+        audience: effectiveAudience,
       }}
       onRedirectCallback={onRedirectCallback}
       cacheLocation="localstorage"

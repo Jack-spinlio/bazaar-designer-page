@@ -26,10 +26,20 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
 
-  const isAuth0Configured = !!import.meta.env.VITE_AUTH0_DOMAIN || 
-                           !!import.meta.env.VITE_AUTH0_FALLBACK_DOMAIN ||
-                           (!!import.meta.env.VITE_AUTH0_CLIENT_ID && 
-                           import.meta.env.VITE_AUTH0_CLIENT_ID !== 'dummyClientId');
+  // Check if any Auth0 environment variables are configured
+  const domain = import.meta.env.VITE_AUTH0_DOMAIN;
+  const fallbackDomain = import.meta.env.VITE_AUTH0_FALLBACK_DOMAIN;
+  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+  
+  const isAuth0Configured = !!domain || !!fallbackDomain || 
+                          (!!clientId && clientId !== 'dummyClientId');
+
+  console.log('Auth0 configuration status:', { 
+    isConfigured: isAuth0Configured,
+    domain,
+    fallbackDomain,
+    clientId
+  });
 
   useEffect(() => {
     if (isAuthenticated && open) {

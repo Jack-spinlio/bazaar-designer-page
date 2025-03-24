@@ -4,11 +4,15 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
-// Check if Auth0 is properly configured
+// Check if Auth0 is properly configured with better detection
 const isAuth0Configured = () => {
   const domain = import.meta.env.VITE_AUTH0_DOMAIN;
   const fallbackDomain = import.meta.env.VITE_AUTH0_FALLBACK_DOMAIN;
-  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID || 'rTSJkyJmYL2VIARI3RaqLJruCquzfpXa';
+  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+  
+  // Log the Auth0 configuration for debugging
+  console.log('Auth0 configuration check:', { domain, fallbackDomain, clientId });
+  
   return !!domain || !!fallbackDomain || (!!clientId && clientId !== 'dummyClientId');
 };
 
@@ -60,13 +64,15 @@ export const useAuth = () => {
         try {
           console.log('Attempting to get Auth0 token for Supabase session');
           
-          // Get the configured domain
-          const domain = import.meta.env.VITE_AUTH0_DOMAIN || 
-                       import.meta.env.VITE_AUTH0_FALLBACK_DOMAIN || 
-                       'dev-jxcml1qpmbgabh6v.us.auth0.com';
+          // Get the configured domain with proper fallbacks
+          const domain = import.meta.env.VITE_AUTH0_DOMAIN;
+          const fallbackDomain = import.meta.env.VITE_AUTH0_FALLBACK_DOMAIN;
+          const effectiveDomain = domain || fallbackDomain || 'dev-jxcml1qpmbgabh6v.us.auth0.com';
           
           // Use the configured audience or default to the domain
-          const audience = import.meta.env.VITE_AUTH0_AUDIENCE || `https://${domain}/api/v2/`;
+          const audience = import.meta.env.VITE_AUTH0_AUDIENCE || `https://${effectiveDomain}/api/v2/`;
+          
+          console.log('Getting token with audience:', audience);
           
           const token = await getAccessTokenSilently({
             authorizationParams: {
@@ -138,6 +144,7 @@ export const useAuth = () => {
 
   // Provide a mock auth object if Auth0 is not configured
   if (!isAuth0Configured() && isInitialized) {
+    console.log('Using mock auth implementation');
     return {
       user: null,
       isAuthenticated: false,
