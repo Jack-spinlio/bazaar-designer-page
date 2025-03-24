@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Header } from '@/components/Header/Header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -174,42 +175,47 @@ const ProducerProfile = () => {
           
           {/* Right side - Featured image with thumbnails */}
           <div className="w-full md:w-2/3">
-            <div className="rounded-lg overflow-hidden h-72 relative">
-              <img src={featuredImage} alt="Featured" className="w-full h-full object-cover" />
-            </div>
-            
-            <div className="mt-4 relative flex items-center">
-              {/* Navigation buttons */}
-              <button 
-                onClick={handlePrevImage}
-                className="absolute left-0 z-10 bg-white/80 rounded-full p-1 shadow-md"
-                aria-label="Previous image"
-              >
-                <ChevronLeft className="h-6 w-6" />
-              </button>
-              
-              <div className="mx-auto grid grid-cols-3 gap-4 w-[80%]">
-                {galleryImages.slice(0, 3).map((image, index) => (
-                  <div 
-                    key={image.id} 
-                    className={`rounded-lg overflow-hidden cursor-pointer h-24 ${currentImageIndex === index ? 'ring-2 ring-black' : ''}`}
-                    onClick={() => {
-                      setFeaturedImage(image.url);
-                      setCurrentImageIndex(index);
-                    }}
-                  >
-                    <img src={image.url} alt={image.alt} className="w-full h-full object-cover" />
-                  </div>
-                ))}
+            {/* Gallery container to maintain equal width */}
+            <div className="flex flex-col space-y-4">
+              {/* Main image */}
+              <div className="rounded-lg overflow-hidden h-72 w-full">
+                <img src={featuredImage} alt="Featured" className="w-full h-full object-cover" />
               </div>
+              
+              {/* Thumbnails row with navigation */}
+              <div className="relative flex items-center">
+                {/* Navigation buttons */}
+                <button 
+                  onClick={handlePrevImage}
+                  className="absolute -left-4 z-10 bg-white/80 rounded-full p-1 shadow-md hover:bg-gray-100"
+                  aria-label="Previous image"
+                >
+                  <ChevronLeft className="h-6 w-6" />
+                </button>
+                
+                <div className="w-full grid grid-cols-3 gap-4">
+                  {galleryImages.slice(0, 3).map((image, index) => (
+                    <div 
+                      key={image.id} 
+                      className={`rounded-lg overflow-hidden cursor-pointer h-24 transition-all ${currentImageIndex === index ? 'ring-2 ring-black' : ''}`}
+                      onClick={() => {
+                        setFeaturedImage(image.url);
+                        setCurrentImageIndex(index);
+                      }}
+                    >
+                      <img src={image.url} alt={image.alt} className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                </div>
 
-              <button 
-                onClick={handleNextImage}
-                className="absolute right-0 z-10 bg-white/80 rounded-full p-1 shadow-md"
-                aria-label="Next image"
-              >
-                <ChevronRight className="h-6 w-6" />
-              </button>
+                <button 
+                  onClick={handleNextImage}
+                  className="absolute -right-4 z-10 bg-white/80 rounded-full p-1 shadow-md hover:bg-gray-100"
+                  aria-label="Next image"
+                >
+                  <ChevronRight className="h-6 w-6" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -217,11 +223,31 @@ const ProducerProfile = () => {
         {/* Tab Navigation Section */}
         <div className="mb-8">
           <Tabs defaultValue="information">
-            <TabsList className="flex gap-2 mb-6">
-              <TabsTrigger value="information" className="px-8 py-3 rounded-md">Information</TabsTrigger>
-              <TabsTrigger value="social" className="px-8 py-3 rounded-md">Social Media</TabsTrigger>
-              <TabsTrigger value="certifications" className="px-8 py-3 rounded-md">Certifications</TabsTrigger>
-              <TabsTrigger value="contact" className="px-8 py-3 rounded-md">Contact</TabsTrigger>
+            <TabsList className="flex mb-6 p-1 bg-gray-100 rounded-lg">
+              <TabsTrigger 
+                value="information" 
+                className="px-8 py-3 rounded-md data-[state=active]:bg-black data-[state=active]:text-white transition-colors"
+              >
+                Information
+              </TabsTrigger>
+              <TabsTrigger 
+                value="social" 
+                className="px-8 py-3 rounded-md data-[state=active]:bg-black data-[state=active]:text-white transition-colors"
+              >
+                Social Media
+              </TabsTrigger>
+              <TabsTrigger 
+                value="certifications" 
+                className="px-8 py-3 rounded-md data-[state=active]:bg-black data-[state=active]:text-white transition-colors"
+              >
+                Certifications
+              </TabsTrigger>
+              <TabsTrigger 
+                value="contact" 
+                className="px-8 py-3 rounded-md data-[state=active]:bg-black data-[state=active]:text-white transition-colors"
+              >
+                Contact
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="information" className="p-4 bg-white rounded-xl shadow-sm text-left">
               <h3 className="text-lg font-semibold mb-3">About Shimano</h3>
