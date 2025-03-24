@@ -67,7 +67,7 @@ export const ProductsList: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="text-left">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Your Products</h1>
       </div>
@@ -95,7 +95,7 @@ export const ProductsList: React.FC = () => {
       </div>
 
       {sortedProducts.length === 0 ? (
-        <div className="text-center py-12 bg-gray-50 rounded-lg">
+        <div className="text-left py-12 bg-gray-50 rounded-lg">
           <p className="text-gray-500">No products found. Try a different search term or add a new product.</p>
         </div>
       ) : (

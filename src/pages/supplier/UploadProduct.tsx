@@ -47,7 +47,7 @@ export const UploadProduct: React.FC = () => {
   };
 
   return (
-    <div>
+    <div className="text-left">
       <div className="flex items-center mb-6">
         <Button 
           variant="ghost" 
@@ -79,7 +79,7 @@ export const UploadProduct: React.FC = () => {
                 <div>
                   <Label htmlFor="category">Category</Label>
                   <Select required>
-                    <SelectTrigger>
+                    <SelectTrigger className="text-left">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
@@ -103,7 +103,7 @@ export const UploadProduct: React.FC = () => {
                 <Textarea 
                   id="description" 
                   placeholder="Describe your product in detail..." 
-                  className="h-32" 
+                  className="h-32 text-left" 
                   required 
                 />
               </div>
@@ -163,7 +163,7 @@ export const UploadProduct: React.FC = () => {
                     </div>
                   </label>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 mt-1 text-left">
                   Supported formats: OBJ, GLB, GLTF
                 </p>
               </div>

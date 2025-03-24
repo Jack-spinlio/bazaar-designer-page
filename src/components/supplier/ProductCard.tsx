@@ -28,9 +28,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product, onDelete }) =
           className="object-cover w-full h-full rounded-t-lg"
         />
       </AspectRatio>
-      <CardContent className="p-4">
+      <CardContent className="p-4 text-left">
         <div className="space-y-1">
-          <h3 className="font-medium text-base">{product.name}</h3>
+          <h3 className="font-medium text-base text-left">{product.name}</h3>
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-500">{product.category}</span>
             <span className="font-medium">${product.price}</span>
