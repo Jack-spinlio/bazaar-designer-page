@@ -9,7 +9,7 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const navigate = useNavigate();
-  const domain = 'dev-y1234567.us.auth0.com'; // Replace with your Auth0 domain
+  const domain = 'auth.bazaar.it'; // Updated Auth0 domain
   const clientId = 'yourAuth0ClientId'; // Replace with your Auth0 client ID
   const redirectUri = window.location.origin;
 

@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Bell, Upload, UserCog, LogIn, LogOut } from 'lucide-react';
@@ -8,6 +8,7 @@ import { SharePopover } from './SharePopover';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { useAuth } from '@/auth/useAuth';
+import { LoginDialog } from '@/components/auth/LoginDialog';
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -26,7 +27,8 @@ export const Header: React.FC = () => {
   const isSupplierPage = location.pathname.includes('/supplier');
   const isDesignPage = location.pathname === '/design';
   const [userRole, setUserRole] = React.useState('designer');
-  const { isAuthenticated, user, login, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   
   const handleRoleChange = (value: string) => {
     setUserRole(value);
@@ -113,7 +115,7 @@ export const Header: React.FC = () => {
               variant="outline" 
               size="sm" 
               className="flex items-center gap-2"
-              onClick={() => login()}
+              onClick={() => setShowLoginDialog(true)}
             >
               <LogIn className="h-4 w-4" />
               Login
@@ -123,6 +125,8 @@ export const Header: React.FC = () => {
           {!isSupplierPage && <SharePopover />}
         </div>
       </div>
+      
+      <LoginDialog open={showLoginDialog} onOpenChange={setShowLoginDialog} />
     </header>
   );
 };

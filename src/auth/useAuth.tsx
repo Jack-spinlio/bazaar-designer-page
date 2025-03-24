@@ -9,6 +9,7 @@ export const useAuth = () => {
     isAuthenticated,
     isLoading,
     loginWithRedirect,
+    loginWithPopup,
     logout,
     getAccessTokenSilently,
   } = useAuth0();
@@ -21,7 +22,6 @@ export const useAuth = () => {
           const token = await getAccessTokenSilently();
           // Use the token to set Supabase auth
           // This is just a placeholder - you'll need to implement your own JWT strategy
-          // Typically this would involve a server-side function to create a Supabase JWT
           console.log('Auth0 token obtained, would set Supabase session here');
           
           // When you have proper JWT implementation:
@@ -35,11 +35,21 @@ export const useAuth = () => {
     setSupabaseSession();
   }, [isAuthenticated, user, getAccessTokenSilently]);
 
+  const login = async () => {
+    try {
+      await loginWithPopup();
+    } catch (error) {
+      console.error('Login error:', error);
+      // Fallback to redirect if popup is blocked
+      await loginWithRedirect();
+    }
+  };
+
   return {
     user,
     isAuthenticated,
     isLoading,
-    login: loginWithRedirect,
+    login,
     logout: () => logout({ logoutParams: { returnTo: window.location.origin } }),
   };
 };
