@@ -218,7 +218,7 @@ export const ProductParameters: React.FC = () => {
     }
     
     // Stricter duplicate detection with smaller tolerance
-    const tolerance = 0.001;
+    const tolerance = 0.0001;
     const isDuplicate = snapPoints.some(existing => {
       return (
         Math.abs(existing.position.x - snapPoint.position.x) < tolerance &&
@@ -234,9 +234,9 @@ export const ProductParameters: React.FC = () => {
     }
     
     // Generate a unique ID with timestamp + random value to ensure uniqueness
-    const uniqueId = `snap-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const uniqueId = `snap-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
     
-    const newPoint = {
+    const newPoint: SnapPoint = {
       ...snapPoint,
       id: uniqueId,
       name: snapPoint.name || 'New Snap Point',
@@ -244,7 +244,19 @@ export const ProductParameters: React.FC = () => {
       compatibility: snapPoint.compatibility || []
     };
     
-    setSnapPoints([...snapPoints, newPoint]);
+    // Ensure no duplicates in state update
+    setSnapPoints(prevPoints => {
+      // Double-check for duplicates one more time
+      const alreadyExists = prevPoints.some(point => 
+        Math.abs(point.position.x - newPoint.position.x) < tolerance &&
+        Math.abs(point.position.y - newPoint.position.y) < tolerance &&
+        Math.abs(point.position.z - newPoint.position.z) < tolerance
+      );
+      
+      if (alreadyExists) return prevPoints;
+      return [...prevPoints, newPoint];
+    });
+    
     setSelectedSnapPointId(newPoint.id);
     setActiveSnapPoint(newPoint);
     

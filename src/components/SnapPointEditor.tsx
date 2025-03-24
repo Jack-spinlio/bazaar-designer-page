@@ -1,5 +1,5 @@
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import * as THREE from 'three';
 import { useThree } from '@react-three/fiber';
 
@@ -32,25 +32,57 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
 }) => {
   const { raycaster, camera, scene } = useThree();
   const [hoverPoint, setHoverPoint] = useState<string | null>(null);
+  const clickTimeout = useRef<NodeJS.Timeout | null>(null);
+  const [isProcessingClick, setIsProcessingClick] = useState(false);
+
+  // Reset processing state when active state changes
+  useEffect(() => {
+    setIsProcessingClick(false);
+    if (clickTimeout.current) {
+      clearTimeout(clickTimeout.current);
+    }
+  }, [isActive]);
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (clickTimeout.current) {
+        clearTimeout(clickTimeout.current);
+      }
+    };
+  }, []);
 
   const handleClick = (e: any) => {
-    if (!isActive) return;
+    // Guard conditions
+    if (!isActive || isProcessingClick) return;
+    
+    // Prevent duplicate clicks by setting a processing flag
+    setIsProcessingClick(true);
     
     // Stop event propagation to prevent duplicate handling
     e.stopPropagation();
     
     // Use raycaster to get intersection with meshes in the scene
-    const intersects = raycaster.intersectObjects(scene.children, true);
+    // Skip the click handler mesh itself and any snap point visualization meshes
+    const intersects = raycaster.intersectObjects(
+      scene.children.filter(obj => {
+        // Exclude our clickable plane and snap point visualizations
+        const isSnapPointViz = obj.userData && obj.userData.isSnapPointVisualization;
+        const isClickPlane = obj.userData && obj.userData.isClickPlane;
+        return !isSnapPointViz && !isClickPlane;
+      }), 
+      true
+    );
     
     if (intersects.length > 0) {
       const intersection = intersects[0];
       const position = intersection.point.clone();
       
       // Get the normal at the intersection point if available
-      let normal = intersection.face?.normal?.clone();
+      let normal = intersection.face?.normal ? intersection.face.normal.clone() : undefined;
       
       // Apply the object's transformation to the normal if needed
-      if (normal && intersection.object.parent) {
+      if (normal && intersection.object.matrixWorld) {
         const normalMatrix = new THREE.Matrix3().getNormalMatrix(intersection.object.matrixWorld);
         normal.applyMatrix3(normalMatrix).normalize();
       }
@@ -81,6 +113,14 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
       
       // Only add snap point if we have a valid intersection
       onAddSnapPoint(position, normal, parentObject);
+      
+      // Reset processing flag after a short delay
+      clickTimeout.current = setTimeout(() => {
+        setIsProcessingClick(false);
+      }, 300);
+    } else {
+      // Reset processing flag if no intersection
+      setIsProcessingClick(false);
     }
   };
 
@@ -89,14 +129,22 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
   return (
     <group>
       {isActive && (
-        <mesh visible={false} onClick={handleClick}>
-          <boxGeometry args={[100, 100, 100]} />
-          <meshBasicMaterial transparent opacity={0} />
+        <mesh 
+          visible={false} 
+          onClick={handleClick} 
+          userData={{ isClickPlane: true }}
+        >
+          <planeGeometry args={[100, 100]} />
+          <meshBasicMaterial transparent opacity={0} side={THREE.DoubleSide} />
         </mesh>
       )}
       
-      {isActive && snapPoints.map((point) => (
-        <group key={point.id} position={point.position}>
+      {snapPoints.map((point) => (
+        <group 
+          key={point.id} 
+          position={point.position}
+          userData={{ isSnapPointVisualization: true }}
+        >
           {/* Point visualization */}
           <mesh
             scale={selectedSnapPointId === point.id ? 0.12 : 0.08}
@@ -106,6 +154,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
             }}
             onPointerOver={() => setHoverPoint(point.id)}
             onPointerOut={() => setHoverPoint(null)}
+            userData={{ isSnapPointVisualization: true }}
           >
             <sphereGeometry />
             <meshStandardMaterial
@@ -117,14 +166,18 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
           
           {/* Normal direction visualization (if normal exists) */}
           {point.normal && point.type === 'plane' && (
-            <group>
-              <mesh position={point.normal.clone().multiplyScalar(0.15)}>
+            <group userData={{ isSnapPointVisualization: true }}>
+              <mesh 
+                position={point.normal.clone().multiplyScalar(0.15)}
+                userData={{ isSnapPointVisualization: true }}
+              >
                 <cylinderGeometry args={[0.015, 0.015, 0.3]} />
                 <meshStandardMaterial color="#00e676" />
               </mesh>
               <mesh 
                 position={point.normal.clone().multiplyScalar(0.3)}
                 rotation={[Math.PI/2, 0, 0]}
+                userData={{ isSnapPointVisualization: true }}
               >
                 <coneGeometry args={[0.05, 0.1]} />
                 <meshStandardMaterial color="#00e676" />

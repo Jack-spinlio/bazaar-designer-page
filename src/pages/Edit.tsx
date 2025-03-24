@@ -19,8 +19,8 @@ const Edit = () => {
   };
 
   const handleAddSnapPoint = (snapPoint: SnapPoint) => {
-    // Check for duplicates with a tight tolerance
-    const tolerance = 0.001;
+    // More strict duplicate detection with a very small tolerance
+    const tolerance = 0.0001;
     const isDuplicate = snapPoints.some(existing => {
       return (
         Math.abs(existing.position.x - snapPoint.position.x) < tolerance &&
@@ -34,14 +34,14 @@ const Edit = () => {
       return;
     }
     
-    // Create a unique ID
-    const uniqueId = `snap-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    // Create a unique ID with timestamp + random component to ensure uniqueness
+    const uniqueId = `snap-${Date.now()}-${Math.floor(Math.random() * 10000)}`;
     const newPoint = {
       ...snapPoint,
       id: uniqueId
     };
     
-    setSnapPoints([...snapPoints, newPoint]);
+    setSnapPoints(prevPoints => [...prevPoints, newPoint]);
     setSelectedSnapPointId(newPoint.id);
     toast.success(`Added snap point${newPoint.parentId ? ' to component' : ''}`);
   };
