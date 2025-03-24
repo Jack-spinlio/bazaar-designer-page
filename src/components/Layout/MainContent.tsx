@@ -27,9 +27,7 @@ export const MainContent: React.FC<MainContentProps> = ({
                               location.pathname !== '/uploads';
 
   return (
-    <main className={`flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5 ${
-      !showComponentSidebar && !showPrefabSidebar && !showSavedSidebar ? 'w-full' : ''
-    }`}>
+    <main className="flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5 bg-white shadow-sm">
       {shouldRenderViewport && (
         <Viewport selectedComponent={selectedComponent} onComponentPlaced={onComponentPlaced} />
       )}

@@ -100,11 +100,11 @@ export const SidebarContainer: React.FC<SidebarContainerProps> = ({
       case "components":
       case "prefabs":
       case "saved":
-        return "w-[18.75rem]"; // ~300px
+        return "w-[20rem]"; // ~320px
       case "bom":
-        return "w-[37.5rem]";  // ~600px
+        return "w-[32rem]";  // ~512px
       case "timeline":
-        return "w-[43.75rem]"; // ~700px
+        return "w-[36rem]"; // ~576px
       default:
         return "w-0";
     }
@@ -114,13 +114,29 @@ export const SidebarContainer: React.FC<SidebarContainerProps> = ({
   const renderSidebarContent = () => {
     switch (activeTab) {
       case "edit":
-        return <EditToolbar />;
+        return (
+          <div className="h-full bg-white p-4 overflow-auto rounded-2xl shadow-sm">
+            <EditToolbar />
+          </div>
+        );
       case "components":
-        return <Sidebar onSelectComponent={onComponentSelected} />;
+        return (
+          <div className="h-full bg-white overflow-auto rounded-2xl shadow-sm">
+            <Sidebar onSelectComponent={onComponentSelected} />
+          </div>
+        );
       case "prefabs":
-        return <PrefabSidebar onSelectPrefab={onPrefabSelected} />;
+        return (
+          <div className="h-full bg-white overflow-auto rounded-2xl shadow-sm">
+            <PrefabSidebar onSelectPrefab={onPrefabSelected} />
+          </div>
+        );
       case "saved":
-        return <SavedSidebar onSelectDesign={onDesignSelected} />;
+        return (
+          <div className="h-full bg-white overflow-auto rounded-2xl shadow-sm">
+            <SavedSidebar onSelectDesign={onDesignSelected} />
+          </div>
+        );
       case "bom":
         return (
           <div className="h-full bg-white p-4 overflow-auto rounded-2xl shadow-sm">
