@@ -23,7 +23,7 @@ import {
   Battery,
   Disc,
   Grip,
-  Steering,
+  Gamepad,
   Cog,
   Utensils
 } from 'lucide-react';
@@ -67,7 +67,7 @@ const components = [
     productionTime: "35 days",
     country: "Taiwan",
     price: "$41",
-    icon: <Steering size={16} />
+    icon: <Gamepad size={16} />
   },
   {
     id: "4",

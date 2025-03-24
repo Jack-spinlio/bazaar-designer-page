@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Layout } from '@/components/Layout';
 import { 
@@ -16,14 +15,13 @@ import {
   FrameIcon, 
   Battery, 
   Cog, 
-  Steering, 
+  Gamepad, 
   Disc, 
   Utensils, 
   Puzzle, 
   Grip 
 } from 'lucide-react';
 
-// Type for component data
 interface ComponentData {
   id: string;
   image: string;
@@ -39,7 +37,6 @@ interface ComponentData {
 const BOM = () => {
   const isMobile = useIsMobile();
   
-  // Sample data for the BOM table with updated content to match the image provided
   const components: ComponentData[] = [
     {
       id: "1",
@@ -72,7 +69,7 @@ const BOM = () => {
       productionTime: "35 days",
       country: "Taiwan",
       price: "$41",
-      icon: <Steering size={16} />
+      icon: <Gamepad size={16} />
     },
     {
       id: "4",
@@ -160,7 +157,6 @@ const BOM = () => {
   return (
     <Layout>
       <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} h-full w-full`}>
-        {/* Left side: Bill of Materials table */}
         <div className={`${isMobile ? 'w-full h-1/2' : 'w-3/5 xl:w-2/3'} overflow-auto`}>
           <div className="bg-white rounded-lg p-4 md:p-6 shadow-sm h-full">
             <div className="flex items-center justify-between mb-4">
@@ -215,7 +211,6 @@ const BOM = () => {
           </div>
         </div>
         
-        {/* Right side: 3D Viewport */}
         <div className={`${isMobile ? 'w-full h-1/2' : 'w-2/5 xl:w-1/3'} h-full pl-0 md:pl-2.5`}>
           <Viewport 
             selectedComponent={null}

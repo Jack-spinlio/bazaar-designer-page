@@ -28,7 +28,7 @@ import {
   Lightbulb,
   Wrench,
   Unplug,
-  Steering,
+  Gamepad,
   Utensils,
   Shield,
   Cog
@@ -69,7 +69,7 @@ const components = [
     productionTime: "35 days",
     country: "Taiwan",
     price: "$41",
-    icon: <Steering size={16} />
+    icon: <Gamepad size={16} />
   },
   {
     id: "4",
@@ -156,7 +156,7 @@ const bikeComponents = [
   { id: '2', name: 'Fork', icon: <Utensils size={18} />, days: 42, color: 'bg-purple-100', startWeek: 8 },
   { id: '3', name: 'Motor', icon: <Cog size={18} />, days: 35, color: 'bg-green-100', startWeek: 9 },
   { id: '4', name: 'Rear Hub', icon: <Disc size={18} />, days: 40, color: 'bg-pink-100', startWeek: 9 },
-  { id: '5', name: 'Handlebar', icon: <Steering size={18} />, days: 60, color: 'bg-cyan-100', startWeek: 8 },
+  { id: '5', name: 'Handlebar', icon: <Gamepad size={18} />, days: 60, color: 'bg-cyan-100', startWeek: 8 },
 ];
 
 const DesignStudio = () => {
@@ -198,11 +198,11 @@ const DesignStudio = () => {
       case "components":
       case "prefabs":
       case "saved":
-        return "w-[320px]"; // Reduced by 20% from 400px
+        return "w-[320px]";
       case "bom":
-        return "w-[750px]"; // BOM sidebar width stays the same
+        return "w-[750px]";
       case "timeline":
-        return "w-[800px]"; // Timeline sidebar width stays the same
+        return "w-[800px]";
       default:
         return "w-0";
     }
