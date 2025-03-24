@@ -48,7 +48,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         />
       </div>
       <CardContent className="p-3">
-        <h3 className="font-medium text-gray-900 line-clamp-2 h-10 text-sm mb-2">{product.name}</h3>
+        <h3 className="font-medium text-gray-900 line-clamp-2 h-10 text-sm mb-2 text-left">{product.name}</h3>
         <div 
           onClick={handleManufacturerClick}
           className="flex items-center gap-2 mb-2 cursor-pointer group"
@@ -61,7 +61,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.manufacturer}
           </span>
         </div>
-        <p className="font-semibold text-sm">${product.price}</p>
+        <p className="font-semibold text-sm text-left">${product.price}</p>
       </CardContent>
     </Card>
   );
