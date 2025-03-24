@@ -40,11 +40,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer w-full bg-white border border-gray-100"
       onClick={handleCardClick}
     >
-      <div className="h-44 p-4 flex items-center justify-center bg-gray-50">
+      <div className="h-44 flex items-center justify-center bg-gray-50">
         <img 
           src={product.image} 
           alt={product.name} 
-          className="max-h-full max-w-full object-contain rounded-md"
+          className="w-full h-full object-cover"
         />
       </div>
       <CardContent className="p-4">

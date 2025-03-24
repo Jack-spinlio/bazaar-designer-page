@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ProductCategory } from '@/components/marketplace/ProductCategory';
 import { MarketplaceHeader } from '@/components/marketplace/MarketplaceHeader';
@@ -50,48 +49,62 @@ const eBikes = [
   }
 ];
 
-// Drivetrain components
+// Drivetrain components with updated images
 const drivetrainComponents = [
   {
     id: 'dt-1',
-    name: 'VX4200 Chain',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//chain.jpg',
-    price: 21,
+    name: 'Shimano 105 Front Calliper',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20front%20calliper.jpeg',
+    price: 55,
     manufacturer: 'Shimano'
   },
   {
     id: 'dt-2',
-    name: 'Shimano GRX Brake',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//brake.jpg',
-    price: 58,
+    name: 'Shimano 105 Rear Hub',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20hub.jpeg',
+    price: 89,
     manufacturer: 'Shimano'
   },
   {
     id: 'dt-3',
-    name: 'Shimano Deore Derailleur',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//derailleur.jpg',
-    price: 18,
+    name: 'Shimano XTR Cassette',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//cassette.jpeg',
+    price: 112,
     manufacturer: 'Shimano'
   },
   {
     id: 'dt-4',
-    name: '105 Rear Hub',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//hub.jpg',
-    price: 42,
+    name: 'Shimano CUES Road Bike Lever',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//CUES%20lever.jpeg',
+    price: 78,
     manufacturer: 'Shimano'
   },
   {
     id: 'dt-5',
-    name: 'XTR 12 Speed Cassette',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//cassette.jpg',
-    price: 24,
+    name: 'Shimano Dura-Ace Calliper',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Dura-ace%20calliper.jpeg',
+    price: 195,
     manufacturer: 'Shimano'
   },
   {
     id: 'dt-6',
-    name: 'XTR Crankset',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//crank.jpg',
-    price: 21,
+    name: 'Shimano GRX Pedals',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//GRX%20Pedals.jpeg',
+    price: 95,
+    manufacturer: 'Shimano'
+  },
+  {
+    id: 'dt-7',
+    name: 'Shimano XTR Derailleur',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//xrt%20di2%20deralier.jpeg',
+    price: 210,
+    manufacturer: 'Shimano'
+  },
+  {
+    id: 'dt-8',
+    name: 'Shimano XTR Lever',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//xtra%20lever.jpeg',
+    price: 145,
     manufacturer: 'Shimano'
   }
 ];
@@ -149,48 +162,48 @@ const roadBikes = [
   }
 ];
 
-// eBike components
+// eBike components with updated images
 const eBikeComponents = [
   {
     id: 'ebc-1',
-    name: '602Wh External Battery',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//battery.jpg',
+    name: 'Shimano eBike Display',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//sim%20disp.jpeg',
     price: 182,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-2',
-    name: 'Controller Unit',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//controller.jpg',
-    price: 58,
+    name: 'Shimano Steps 504Wh Battery',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//504wh.jpeg',
+    price: 435,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-3',
-    name: 'E-Shifter ST-E6100',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//shifter.jpg',
-    price: 18,
+    name: 'Shimano 630Wh Battery',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//630wh.jpeg',
+    price: 520,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-4',
-    name: 'PW-250W Front Hub Motor',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//motor.jpg',
-    price: 142,
+    name: 'Shimano Di2 Switch',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Di2%20Switch.jpeg',
+    price: 85,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-5',
-    name: '270x50 HDI Display',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//display.jpg',
-    price: 124,
+    name: 'Shimano STEPS Switch',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//disp.jpeg',
+    price: 95,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-6',
-    name: 'Di2 Power Control Button',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//button.jpg',
-    price: 51,
+    name: 'Shimano EP8 Motor',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//EP8.jpeg',
+    price: 610,
     manufacturer: 'Shimano'
   }
 ];
