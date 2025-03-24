@@ -114,11 +114,12 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
         current = current.parent;
       }
       
-      // No offset needed now as we're using the exact intersection point
+      // Log detailed information for debugging
       console.log("Placing snap point at exact intersection:", position.toArray());
       console.log("Object clicked:", clickedObject.type);
       console.log("Parent object:", parentObject ? parentObject.userData.componentName : "null");
       console.log("Distance from camera:", camera.position.distanceTo(position));
+      console.log("Intersection distance:", intersection.distance);
       
       // Use the exact intersection point for the snap point
       onAddSnapPoint(position, normal, parentObject);
@@ -155,7 +156,7 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
         >
           {/* Point visualization - smaller size for more precise positioning */}
           <mesh
-            scale={selectedSnapPointId === point.id ? 0.08 : 0.05}
+            scale={selectedSnapPointId === point.id ? 0.04 : 0.025}
             onClick={(e) => {
               e.stopPropagation();
               onSelectSnapPoint(point.id);
@@ -176,18 +177,18 @@ export const SnapPointEditor: React.FC<SnapPointEditorProps> = ({
           {point.normal && point.type === 'plane' && (
             <group userData={{ isSnapPointVisualization: true }}>
               <mesh 
-                position={point.normal.clone().multiplyScalar(0.12)}
+                position={point.normal.clone().multiplyScalar(0.06)}
                 userData={{ isSnapPointVisualization: true }}
               >
-                <cylinderGeometry args={[0.01, 0.01, 0.24]} />
+                <cylinderGeometry args={[0.005, 0.005, 0.12]} />
                 <meshStandardMaterial color="#00e676" />
               </mesh>
               <mesh 
-                position={point.normal.clone().multiplyScalar(0.24)}
+                position={point.normal.clone().multiplyScalar(0.12)}
                 rotation={[Math.PI/2, 0, 0]}
                 userData={{ isSnapPointVisualization: true }}
               >
-                <coneGeometry args={[0.03, 0.06]} />
+                <coneGeometry args={[0.015, 0.03]} />
                 <meshStandardMaterial color="#00e676" />
               </mesh>
             </group>

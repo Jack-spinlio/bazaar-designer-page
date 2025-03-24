@@ -64,10 +64,28 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
               const size = new THREE.Vector3();
               box.getSize(size);
               
+              console.log("Original model dimensions:", size);
+              
+              // Convert real-world mm to Three.js units (assuming 1 unit = 100mm)
+              const targetWidth = 0.9;  // 90mm -> 0.9 units
+              const targetHeight = 1.3; // 130mm -> 1.3 units
+              const targetLength = 2.0; // 200mm -> 2.0 units
+              
+              // Calculate scale factor based on dimensions
+              // Use the largest dimension for uniform scaling
               const maxDim = Math.max(size.x, size.y, size.z);
+              const targetMaxDim = Math.max(targetWidth, targetHeight, targetLength);
+              
               if (maxDim > 0) {
-                const scale = 1 / maxDim;
+                // Scale to match target dimensions while preserving aspect ratio
+                const scale = targetMaxDim / maxDim;
                 model.scale.set(scale, scale, scale);
+                
+                // After scaling, check new dimensions
+                const newBox = new THREE.Box3().setFromObject(model);
+                const newSize = new THREE.Vector3();
+                newBox.getSize(newSize);
+                console.log("Scaled model dimensions:", newSize);
               }
               
               model.position.set(0, 0, 0);
@@ -118,6 +136,13 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
           componentName: component.name,
           isComponent: true
         };
+        
+        // Scale basic shape to match real-world dimensions
+        if (component.shape === 'box') {
+          // Set dimensions based on real-world size (in Three.js units)
+          componentMesh.scale.set(2.0, 1.3, 0.9); // 200mm x 130mm x 90mm
+        }
+        
         if (componentRef.current) {
           componentRef.current.add(componentMesh);
         }

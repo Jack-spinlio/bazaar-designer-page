@@ -19,8 +19,8 @@ const Edit = () => {
   };
 
   const handleAddSnapPoint = (snapPoint: SnapPoint) => {
-    // Very strict duplicate detection with tiny tolerance
-    const tolerance = 0.00001; // Extremely small tolerance
+    // Use a small but reasonable tolerance for duplicate detection
+    const tolerance = 0.001; // 1mm in our scale
     const isDuplicate = snapPoints.some(existing => {
       return (
         Math.abs(existing.position.x - snapPoint.position.x) < tolerance &&
