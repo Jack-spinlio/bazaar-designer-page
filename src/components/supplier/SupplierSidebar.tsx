@@ -39,25 +39,23 @@ export const SupplierSidebar: React.FC = () => {
   return (
     <SidebarProvider>
       <Sidebar 
-        className={`bg-white text-gray-800 border-0 top-[60px] shadow-lg rounded-xl mt-4 mx-4 
-                    ${minimized ? 'w-[80px]' : 'w-[220px]'}`}
+        className={`bg-white text-gray-800 border-0 top-[75px] shadow-lg rounded-xl ml-4 
+                    ${minimized ? 'w-[70px]' : 'w-fit'}`}
         variant="floating"
       >
-        <SidebarHeader className="flex items-center justify-between px-4 pt-4 pb-2">
+        <SidebarHeader className="flex items-center justify-between px-4 pt-4 pb-2 relative">
           <div className="flex items-center">
             {!minimized && <h2 className="text-2xl font-bold text-black">Bazaar</h2>}
           </div>
-          <div className="flex items-center">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleMinimize} 
-              className="h-7 w-7 text-gray-500 hover:text-black"
-            >
-              {minimized ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-            </Button>
-            <SidebarTrigger />
-          </div>
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={toggleMinimize} 
+            className="absolute -right-4 top-3 bg-white rounded-full shadow-md h-8 w-8 flex items-center justify-center p-0"
+          >
+            {minimized ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          </Button>
+          <SidebarTrigger className="hidden" />
         </SidebarHeader>
         <SidebarContent>
           <SidebarMenu className="gap-2 px-2">
