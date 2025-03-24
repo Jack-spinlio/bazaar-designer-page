@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { Header } from '@/components/Header/Header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductCard } from '@/components/marketplace/ProductCard';
-import { Star, StarHalf } from 'lucide-react';
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Star, StarHalf, ChevronLeft, ChevronRight } from 'lucide-react';
 
 // Product data with categories
 const products = [{
@@ -110,9 +109,11 @@ const galleryImages = [{
   url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz22.jpeg',
   alt: 'Vulz Equipment'
 }];
+
 const ProducerProfile = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [featuredImage, setFeaturedImage] = useState<string>(galleryImages[0].url);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Filter products based on selected category
   const filteredProducts = selectedCategory === 'all' ? products : products.filter(product => product.category === selectedCategory);
@@ -138,7 +139,19 @@ const ProducerProfile = () => {
     id: 'ebike',
     name: 'eBike Components'
   }];
-  return <div className="bg-white min-h-screen">
+
+  const handlePrevImage = () => {
+    setCurrentImageIndex((prev) => (prev === 0 ? galleryImages.length - 1 : prev - 1));
+    setFeaturedImage(galleryImages[(currentImageIndex === 0 ? galleryImages.length - 1 : currentImageIndex - 1)].url);
+  };
+
+  const handleNextImage = () => {
+    setCurrentImageIndex((prev) => (prev === galleryImages.length - 1 ? 0 : prev + 1));
+    setFeaturedImage(galleryImages[(currentImageIndex === galleryImages.length - 1 ? 0 : currentImageIndex + 1)].url);
+  };
+
+  return (
+    <div className="bg-white min-h-screen">
       <Header />
       
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -159,26 +172,44 @@ const ProducerProfile = () => {
             </div>
           </div>
           
-          {/* Right side - Featured image */}
+          {/* Right side - Featured image with thumbnails */}
           <div className="w-full md:w-2/3">
-            <div className="rounded-lg overflow-hidden h-72">
+            <div className="rounded-lg overflow-hidden h-72 relative">
               <img src={featuredImage} alt="Featured" className="w-full h-full object-cover" />
             </div>
             
-            <div className="mt-4">
-              <Carousel className="w-full">
-                <CarouselContent>
-                  {galleryImages.map(image => <CarouselItem key={image.id} className="basis-1/4">
-                      <div className="p-1">
-                        <div className="rounded-lg overflow-hidden cursor-pointer h-24" onClick={() => setFeaturedImage(image.url)}>
-                          <img src={image.url} alt={image.alt} className="w-full h-full object-cover" />
-                        </div>
-                      </div>
-                    </CarouselItem>)}
-                </CarouselContent>
-                <CarouselPrevious className="left-0" />
-                <CarouselNext className="right-0" />
-              </Carousel>
+            <div className="mt-4 relative flex items-center">
+              {/* Navigation buttons */}
+              <button 
+                onClick={handlePrevImage}
+                className="absolute left-0 z-10 bg-white/80 rounded-full p-1 shadow-md"
+                aria-label="Previous image"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              
+              <div className="mx-auto grid grid-cols-3 gap-4 w-[80%]">
+                {galleryImages.slice(0, 3).map((image, index) => (
+                  <div 
+                    key={image.id} 
+                    className={`rounded-lg overflow-hidden cursor-pointer h-24 ${currentImageIndex === index ? 'ring-2 ring-black' : ''}`}
+                    onClick={() => {
+                      setFeaturedImage(image.url);
+                      setCurrentImageIndex(index);
+                    }}
+                  >
+                    <img src={image.url} alt={image.alt} className="w-full h-full object-cover" />
+                  </div>
+                ))}
+              </div>
+
+              <button 
+                onClick={handleNextImage}
+                className="absolute right-0 z-10 bg-white/80 rounded-full p-1 shadow-md"
+                aria-label="Next image"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
             </div>
           </div>
         </div>
@@ -255,6 +286,8 @@ const ProducerProfile = () => {
             </div>}
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default ProducerProfile;
