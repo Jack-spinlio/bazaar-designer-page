@@ -116,7 +116,7 @@ export const SavedSidebar: React.FC<SavedSidebarProps> = ({
                 onClick={() => handleDesignSelect(design)} 
                 className="bg-gray-50 hover:bg-gray-100 rounded-lg p-3 cursor-pointer transition-colors flex flex-col"
               >
-                <div className="w-full h-28 rounded-md bg-white overflow-hidden flex-shrink-0 mb-2">
+                <div className="w-full h-28 rounded-md overflow-hidden flex-shrink-0 mb-2">
                   <img 
                     src={design.thumbnail} 
                     alt={design.name} 

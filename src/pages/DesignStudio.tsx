@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Viewport } from '@/components/Viewport';
 import { IconSidebar } from '@/components/IconSidebar';
@@ -77,11 +76,11 @@ const DesignStudio = () => {
       case "components":
       case "prefabs":
       case "saved":
-        return "w-[400px]"; // Width for standard sidebars
+        return "w-[320px]"; // Reduced by 20% from 400px
       case "bom":
-        return "w-[750px]"; // Width for BOM sidebar
+        return "w-[750px]"; // BOM sidebar width stays the same
       case "timeline":
-        return "w-[800px]"; // Width for timeline sidebar
+        return "w-[800px]"; // Timeline sidebar width stays the same
       default:
         return "w-0";
     }

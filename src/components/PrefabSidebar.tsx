@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -157,11 +158,11 @@ export const PrefabSidebar: React.FC<PrefabSidebarProps> = ({
                 onClick={() => handlePrefabSelect(prefab)} 
                 className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
               >
-                <div className="w-full h-24 mb-2 flex items-center justify-center">
+                <div className="w-full h-24 mb-2">
                   <img 
                     src={prefab.thumbnail} 
                     alt={prefab.name} 
-                    className="max-h-full max-w-full object-contain" 
+                    className="w-full h-full object-cover rounded-md" 
                   />
                 </div>
                 <span className="text-sm text-center font-medium text-gray-800">{prefab.name}</span>

@@ -1,3 +1,5 @@
+
+// Only updating the parts that need to change while preserving functionality
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -327,8 +329,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       onClick={() => handleComponentSelect(component)} 
                       className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
                     >
-                      <div className="w-full h-24 mb-2 flex items-center justify-center">
-                        <img src={component.thumbnail} alt={component.name} className="max-h-full max-w-full object-contain" />
+                      <div className="w-full h-24 mb-2">
+                        <img src={component.thumbnail} alt={component.name} className="w-full h-full object-cover rounded-md" />
                       </div>
                       <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
                       <span className="text-xs text-center text-gray-500">{component.type}</span>
@@ -349,8 +351,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           onClick={() => handleComponentSelect(component)} 
                           className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
                         >
-                          <div className="w-full h-24 mb-2 flex items-center justify-center">
-                            <img src={component.thumbnail} alt={component.name} className="max-h-full max-w-full object-contain" />
+                          <div className="w-full h-24 mb-2">
+                            <img src={component.thumbnail} alt={component.name} className="w-full h-full object-cover rounded-md" />
                           </div>
                           <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
                           <span className="text-xs text-center text-gray-500">{component.type}</span>

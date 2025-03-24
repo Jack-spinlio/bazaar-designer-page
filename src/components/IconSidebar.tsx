@@ -7,8 +7,7 @@ import {
   Bookmark, 
   Clock, 
   Upload,
-  FileSpreadsheet,
-  Layers
+  FileSpreadsheet
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -59,25 +58,7 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
       <div className="w-16 border-r border-gray-200 flex flex-col items-center py-4 bg-white rounded-2xl h-full shadow-sm">
         <TooltipProvider>
           <div className="flex-1 flex flex-col gap-6 items-center">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button 
-                  variant={location.pathname === '/studio' ? "default" : "ghost"} 
-                  size="icon" 
-                  className={
-                    location.pathname === '/studio' 
-                      ? "bg-black text-white hover:bg-black hover:text-white" 
-                      : "text-gray-400 hover:text-gray-600"
-                  }
-                  onClick={() => navigate('/studio')}
-                >
-                  <Layers size={20} />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="right">
-                <p>Design Studio</p>
-              </TooltipContent>
-            </Tooltip>
+            {/* Design Studio tab removed */}
             
             {sidebarItems.map((item) => (
               <Tooltip key={item.id}>
