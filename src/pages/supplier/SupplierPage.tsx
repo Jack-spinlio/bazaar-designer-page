@@ -6,6 +6,7 @@ import { ProductsList } from './ProductsList';
 import { UploadProduct } from './UploadProduct';
 import { EditProfile } from './EditProfile';
 import { EditProduct } from './EditProduct';
+// Using named import but either default or named will work now
 import { ProductParameters } from './ProductParameters';
 import { Header } from '@/components/Header/Header';
 
