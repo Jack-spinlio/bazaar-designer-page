@@ -28,10 +28,10 @@ export const Header: React.FC = () => {
   const handleRoleChange = (value: string) => {
     setUserRole(value);
     if (value === 'supplier') {
-      navigate('/uploads');
+      navigate('/supplier/uploads');
       toast.success('Switched to Supplier mode');
     } else {
-      if (location.pathname === '/uploads') {
+      if (location.pathname.startsWith('/supplier')) {
         navigate('/design');
       }
       toast.success('Switched to Designer mode');
@@ -89,7 +89,7 @@ export const Header: React.FC = () => {
               </DropdownMenuItem>
               {userRole === 'supplier' && (
                 <DropdownMenuItem asChild>
-                  <Link to="/uploads">Upload Components</Link>
+                  <Link to="/supplier/uploads">Upload Components</Link>
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem asChild>

@@ -16,8 +16,7 @@ import {
   Upload,
   Package,
   ShoppingCart,
-  MessageSquare,
-  Settings
+  MessageSquare
 } from 'lucide-react';
 
 export const SupplierSidebar: React.FC = () => {
@@ -89,16 +88,6 @@ export const SupplierSidebar: React.FC = () => {
               >
                 <MessageSquare className="w-5 h-5 mr-2" />
                 <span>Enquiries</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-            
-            <SidebarMenuItem>
-              <SidebarMenuButton 
-                tooltip="Settings" 
-                onClick={() => navigate('/settings')}
-              >
-                <Settings className="w-5 h-5 mr-2" />
-                <span>Settings</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
