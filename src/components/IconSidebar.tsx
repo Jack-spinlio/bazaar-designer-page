@@ -7,7 +7,8 @@ import {
   Bookmark, 
   Clock, 
   Upload,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Layers
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -23,6 +24,7 @@ export const IconSidebar = () => {
   const isActive = (path: string) => location.pathname === path;
   
   const sidebarItems = [
+    { icon: Layers, label: "Design Studio", path: "/studio" },
     { icon: Pencil, label: "Edit", path: "/edit" },
     { icon: Bike, label: "Prefabs", path: "/prefabs" },
     { icon: Puzzle, label: "Components", path: "/components" },
