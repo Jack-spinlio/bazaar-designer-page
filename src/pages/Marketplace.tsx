@@ -114,7 +114,7 @@ const roadBikes = [
   {
     id: 'rb-1',
     name: 'Racing Bike',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//1.jpg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Screenshot%202025-03-21%20at%2011.56.56.png',
     price: 1160,
     manufacturer: 'Vulz'
   },

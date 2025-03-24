@@ -40,28 +40,28 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       className="overflow-hidden hover:shadow-md transition-shadow cursor-pointer w-full bg-white border border-gray-100"
       onClick={handleCardClick}
     >
-      <div className="h-44 flex items-center justify-center bg-gray-50">
+      <div className="h-36 overflow-hidden">
         <img 
           src={product.image} 
           alt={product.name} 
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-t-lg"
         />
       </div>
-      <CardContent className="p-4">
-        <h3 className="font-medium text-gray-900 line-clamp-2 h-12 mb-2">{product.name}</h3>
+      <CardContent className="p-3">
+        <h3 className="font-medium text-gray-900 line-clamp-2 h-10 text-sm mb-2">{product.name}</h3>
         <div 
           onClick={handleManufacturerClick}
-          className="flex items-center gap-2 mb-3 cursor-pointer group"
+          className="flex items-center gap-2 mb-2 cursor-pointer group"
         >
-          <Avatar className="h-6 w-6">
+          <Avatar className="h-5 w-5">
             <AvatarImage src={manufacturerLogo} alt={`${product.manufacturer} logo`} />
             <AvatarFallback>{product.manufacturer.charAt(0)}</AvatarFallback>
           </Avatar>
-          <span className="text-sm text-gray-600 group-hover:text-blue-600 border-b border-gray-300 group-hover:border-blue-600">
+          <span className="text-xs text-gray-600 group-hover:text-blue-600 border-b border-gray-300 group-hover:border-blue-600">
             {product.manufacturer}
           </span>
         </div>
-        <p className="font-semibold text-lg">${product.price}</p>
+        <p className="font-semibold text-sm">${product.price}</p>
       </CardContent>
     </Card>
   );
