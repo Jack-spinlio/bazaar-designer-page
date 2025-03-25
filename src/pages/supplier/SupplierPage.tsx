@@ -6,9 +6,9 @@ import { ProductsList } from './ProductsList';
 import { UploadProduct } from './UploadProduct';
 import { EditProfile } from './EditProfile';
 import { EditProduct } from './EditProduct';
-// Using named import but either default or named will work now
 import { ProductParameters } from './ProductParameters';
 import { Header } from '@/components/Header/Header';
+import { SupplierDashboard } from './SupplierDashboard';
 
 const SupplierPage: React.FC = () => {
   return (
@@ -18,7 +18,8 @@ const SupplierPage: React.FC = () => {
         <SupplierSidebar />
         <div className="flex-1 p-6 max-w-7xl mx-auto w-full">
           <Routes>
-            <Route path="/" element={<ProductsList />} />
+            <Route path="/" element={<SupplierDashboard />} />
+            <Route path="/products" element={<ProductsList />} />
             <Route path="/upload" element={<UploadProduct />} />
             <Route path="/parameters" element={<ProductParameters />} />
             <Route path="/edit-profile" element={<EditProfile />} />

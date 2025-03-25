@@ -1,46 +1,76 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ProductCard } from '@/components/supplier/ProductCard';
 import { Input } from '@/components/ui/input';
-import { Search, ArrowDownAZ, ArrowDownZA } from 'lucide-react';
+import { Search, ArrowDownAZ, ArrowDownZA, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { Link } from 'react-router-dom';
 
-// Product data with categories - this would typically come from an API/database
-const initialProducts = [{
-  id: 'dt-1',
-  name: 'Shimano 105 Front Calliper',
-  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20front%20calliper.jpeg',
-  price: 55,
-  manufacturer: 'Shimano',
-  category: 'drivetrain'
-}, {
-  id: 'dt-2',
-  name: 'Shimano 105 Rear Hub',
-  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20hub.jpeg',
-  price: 89,
-  manufacturer: 'Shimano',
-  category: 'wheels'
-}, {
-  id: 'dt-3',
-  name: 'Shimano XTR Cassette',
-  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//cassette.jpeg',
-  price: 112,
-  manufacturer: 'Shimano',
-  category: 'drivetrain'
-}, {
-  id: 'dt-4',
-  name: 'Shimano CUES Road Bike Lever',
-  image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//CUES%20lever.jpeg',
-  price: 78,
-  manufacturer: 'Shimano',
-  category: 'braking'
-}];
+interface Product {
+  id: string;
+  name: string;
+  image: string;
+  price: number;
+  manufacturer: string;
+  category: string;
+  thumbnail_url: string;
+}
 
 export const ProductsList: React.FC = () => {
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
+
+  const fetchProducts = async () => {
+    try {
+      setIsLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast.error('You must be logged in to view your products');
+        return;
+      }
+      
+      // Get products with their categories
+      const { data, error } = await supabase
+        .from('products')
+        .select(`
+          id, 
+          name, 
+          price, 
+          manufacturer, 
+          thumbnail_url,
+          categories:category_id (name)
+        `)
+        .eq('user_id', user.id);
+      
+      if (error) throw error;
+      
+      // Transform the data to match our component's expected format
+      const formattedProducts = data.map(item => ({
+        id: item.id,
+        name: item.name,
+        image: item.thumbnail_url || 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//placeholder.svg',
+        price: parseFloat(item.price),
+        manufacturer: item.manufacturer,
+        category: item.categories?.name || 'Uncategorized'
+      }));
+      
+      setProducts(formattedProducts);
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      toast.error('Failed to load products');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Filter products based on search term
   const filteredProducts = products.filter(product => 
@@ -57,9 +87,21 @@ export const ProductsList: React.FC = () => {
     }
   });
 
-  const handleDeleteProduct = (id: string) => {
-    setProducts(products.filter(product => product.id !== id));
-    toast.success('Product deleted successfully');
+  const handleDeleteProduct = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', id);
+      
+      if (error) throw error;
+      
+      setProducts(products.filter(product => product.id !== id));
+      toast.success('Product deleted successfully');
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      toast.error('Failed to delete product');
+    }
   };
 
   const toggleSortOrder = () => {
@@ -70,6 +112,12 @@ export const ProductsList: React.FC = () => {
     <div className="text-left">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Your Products</h1>
+        <Button asChild className="bg-black hover:bg-black/90">
+          <Link to="/supplier/upload">
+            <Plus className="mr-2 h-4 w-4" />
+            Add Product
+          </Link>
+        </Button>
       </div>
 
       <div className="flex gap-4 mb-6">
@@ -94,9 +142,21 @@ export const ProductsList: React.FC = () => {
         </Button>
       </div>
 
-      {sortedProducts.length === 0 ? (
-        <div className="text-left py-12 bg-gray-50 rounded-lg">
-          <p className="text-gray-500">No products found. Try a different search term or add a new product.</p>
+      {isLoading ? (
+        <div className="flex justify-center py-12">
+          <p>Loading products...</p>
+        </div>
+      ) : sortedProducts.length === 0 ? (
+        <div className="text-center py-12 bg-gray-50 rounded-lg">
+          <p className="text-gray-500 mb-4">No products found. {searchTerm ? 'Try a different search term' : 'Add your first product to get started.'}</p>
+          {!searchTerm && (
+            <Button asChild>
+              <Link to="/supplier/upload">
+                <Plus className="mr-2 h-4 w-4" />
+                Add Your First Product
+              </Link>
+            </Button>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

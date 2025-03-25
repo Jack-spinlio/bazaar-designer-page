@@ -9,6 +9,33 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       designs: {
         Row: {
           created_at: string
@@ -29,6 +56,91 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      product_parameters: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          product_id: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          product_id: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          product_id?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_parameters_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          manufacturer: string
+          model_url: string | null
+          name: string
+          price: number
+          thumbnail_url: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          manufacturer: string
+          model_url?: string | null
+          name: string
+          price: number
+          thumbnail_url?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          manufacturer?: string
+          model_url?: string | null
+          name?: string
+          price?: number
+          thumbnail_url?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       "Taipei 3D models": {
         Row: {
