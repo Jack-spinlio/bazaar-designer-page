@@ -184,6 +184,15 @@ const CUSTOM_COMPONENTS = [
     folder: 'Custom Components',
     shape: 'box' as const,
     modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//Fork.obj'
+  },
+  {
+    id: 'custom-frame-1',
+    name: 'Modmo Saigon Frame',
+    type: 'GLTF',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//Modmo.webp',
+    folder: 'Custom Components',
+    shape: 'box' as const,
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//Frame.gltf'
   }
 ];
 
@@ -254,9 +263,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//K5347%20Integrated%203D%20Drawings%2020240220(1)%20(1).STEP'
           };
           
-          console.log("Custom Fork component:", CUSTOM_COMPONENTS[0]);
+          console.log("Custom components:", CUSTOM_COMPONENTS);
           
-          // Ensure Front Fork component is included in both arrays
+          // Ensure custom components are included in both arrays
           setUploadedModels([...CUSTOM_COMPONENTS, kingMeterComponent, ...modelComponents]);
           
           // Update components without duplicating
@@ -264,7 +273,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             !comp.id.startsWith('supabase-') && 
             !comp.id.startsWith('uploaded-') && 
             comp.id !== 'king-meter-k5347' &&
-            comp.id !== 'custom-fork-1'
+            !CUSTOM_COMPONENTS.some(custom => custom.id === comp.id)
           );
           setComponents([...filteredComponents, ...CUSTOM_COMPONENTS, kingMeterComponent, ...modelComponents]);
         }
