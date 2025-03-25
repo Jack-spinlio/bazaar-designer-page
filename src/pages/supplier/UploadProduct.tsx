@@ -98,6 +98,8 @@ export const UploadProduct: React.FC = () => {
   const [showNewGroupDialog, setShowNewGroupDialog] = useState(false);
   const [showNewCategoryDialog, setShowNewCategoryDialog] = useState(false);
   const [showNewSubcategoryDialog, setShowNewSubcategoryDialog] = useState(false);
+  const [newItemName, setNewItemName] = useState('');
+  const [newItemDescription, setNewItemDescription] = useState('');
   
   const [productData, setProductData] = useState({
     name: '',
@@ -1100,7 +1102,7 @@ export const UploadProduct: React.FC = () => {
           </div>
         </div>
         
-        <div className="bg-white p-6 rounded-lg shadow-sm border">
+        <div className="bg-white p-6 rounded-lg shadow-sm border space-y-6">
           <h2 className="text-xl font-semibold mb-4">Variants</h2>
           <div className="flex flex-wrap gap-2">
             {availableVariants.map((variant) => (
@@ -1557,4 +1559,3 @@ export const UploadProduct: React.FC = () => {
     </div>
   );
 };
-
