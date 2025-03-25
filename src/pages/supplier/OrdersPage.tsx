@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { PenSquare, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { PenSquare, Plus, ChevronLeft, ChevronRight, Search } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Table,
@@ -37,7 +36,6 @@ interface Order {
   value: number;
 }
 
-// Mock data for the orders
 const mockOrders: Order[] = [
   { id: '59217', status: 'PO Received', customerName: 'Vanmoof', value: 39411 },
   { id: '59213', status: 'Inproduction', customerName: 'Cowboy', value: 188417 },
@@ -65,7 +63,6 @@ const OrdersPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const ordersPerPage = 10;
 
-  // Filter orders based on search term and status
   const filteredOrders = mockOrders.filter(order => {
     const matchesSearch = 
       !searchTerm || 
@@ -77,7 +74,6 @@ const OrdersPage: React.FC = () => {
     return matchesSearch && matchesStatus;
   });
 
-  // Calculate pagination
   const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
   const indexOfLastOrder = currentPage * ordersPerPage;
   const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
@@ -86,7 +82,7 @@ const OrdersPage: React.FC = () => {
   return (
     <div className="flex flex-col h-full bg-white">
       <ScrollArea className="h-[calc(100vh-130px)] pr-4">
-        <div className="space-y-6 pt-8 px-4">
+        <div className="space-y-6 pt-12 px-6">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">Order</h1>
             <Button className="bg-black hover:bg-black/90 rounded-full">
@@ -97,29 +93,24 @@ const OrdersPage: React.FC = () => {
 
           <div className="border-t border-gray-200 pt-10 mt-6">
             <div className="flex flex-col sm:flex-row gap-4 mb-8">
-              <div className="relative flex-1">
-                <Select onValueChange={(value) => setSearchTerm(value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Order ID" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="id">Order ID</SelectItem>
-                    <SelectItem value="customer">Customer Name</SelectItem>
-                  </SelectContent>
-                </Select>
-                <div className="absolute inset-y-0 right-0 flex items-center">
-                  <div className="h-6 w-[1px] bg-gray-300 mx-2"></div>
+              <div className="relative w-full sm:w-auto sm:flex-1">
+                <div className="flex items-center mb-3 space-x-2">
+                  <Search className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm font-medium text-gray-700">Search</span>
                 </div>
                 <Input
-                  placeholder="Search"
+                  placeholder="Search by order ID or customer name"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="absolute inset-0 pl-28 border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="h-10 w-full border border-gray-300 rounded-md px-3 py-2 focus-visible:ring-2 focus-visible:ring-ring"
                 />
               </div>
               <div className="w-full sm:w-56">
+                <div className="mb-3">
+                  <span className="text-sm font-medium text-gray-700">Status</span>
+                </div>
                 <Select onValueChange={setStatusFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-10 border border-gray-300">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -183,7 +174,6 @@ const OrdersPage: React.FC = () => {
                   </PaginationItem>
                   
                   {Array.from({ length: Math.min(5, totalPages) }).map((_, idx) => {
-                    // Handle pagination display logic
                     let pageNumber;
                     if (totalPages <= 5) {
                       pageNumber = idx + 1;
