@@ -84,9 +84,9 @@ const OrdersPage: React.FC = () => {
   const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-white">
       <ScrollArea className="h-[calc(100vh-130px)] pr-4">
-        <div className="space-y-6 pt-4">
+        <div className="space-y-6 pt-8 px-4">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">Order</h1>
             <Button className="bg-black hover:bg-black/90 rounded-full">
@@ -95,8 +95,8 @@ const OrdersPage: React.FC = () => {
             </Button>
           </div>
 
-          <div className="border-t border-gray-200 pt-8 mt-4">
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          <div className="border-t border-gray-200 pt-10 mt-6">
+            <div className="flex flex-col sm:flex-row gap-4 mb-8">
               <div className="relative flex-1">
                 <Select onValueChange={(value) => setSearchTerm(value)}>
                   <SelectTrigger>
@@ -135,7 +135,7 @@ const OrdersPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="overflow-hidden border rounded-md">
+            <div className="overflow-hidden border rounded-md bg-white">
               <Table>
                 <TableHeader>
                   <TableRow className="bg-gray-50">
@@ -168,7 +168,7 @@ const OrdersPage: React.FC = () => {
               </Table>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6">
               <p className="text-sm text-gray-500">
                 Showing {indexOfFirstOrder + 1} to {Math.min(indexOfLastOrder, filteredOrders.length)} of {filteredOrders.length} results
               </p>
