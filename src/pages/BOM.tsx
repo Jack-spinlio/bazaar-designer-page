@@ -10,15 +10,6 @@ import {
 } from "@/components/ui/table";
 import { Viewport } from '@/components/Viewport';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { 
-  Battery, 
-  Cog, 
-  Gamepad, 
-  Disc, 
-  Utensils, 
-  Puzzle, 
-  Grip 
-} from 'lucide-react';
 
 interface ComponentData {
   id: string;
@@ -56,7 +47,7 @@ const BOM = () => {
       productionTime: "42 days",
       country: "China",
       price: "$52",
-      icon: <Cog size={16} />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//hub.png" alt="Motor" className="w-6 h-6 object-cover" />
     },
     {
       id: "3",
@@ -67,7 +58,7 @@ const BOM = () => {
       productionTime: "35 days",
       country: "Taiwan",
       price: "$41",
-      icon: <Gamepad size={16} />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//handlebar.png" alt="Handlebar" className="w-6 h-6 object-cover" />
     },
     {
       id: "4",
@@ -78,7 +69,7 @@ const BOM = () => {
       productionTime: "40 days",
       country: "Taiwan",
       price: "$36",
-      icon: <Disc size={16} />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//brakes.png" alt="Brakes" className="w-6 h-6 object-cover" />
     },
     {
       id: "5",
@@ -89,7 +80,7 @@ const BOM = () => {
       productionTime: "60 days",
       country: "Netherlands",
       price: "$141",
-      icon: <Disc size={16} />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//rear_hub.png" alt="Hub" className="w-6 h-6 object-cover" />
     },
     {
       id: "6",
@@ -100,7 +91,7 @@ const BOM = () => {
       productionTime: "60 days",
       country: "South Korea",
       price: "$221",
-      icon: <Battery size={16} />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//battery.png" alt="Battery" className="w-6 h-6 object-cover" />
     },
     {
       id: "7",
@@ -111,7 +102,7 @@ const BOM = () => {
       productionTime: "12 days",
       country: "Vietnam",
       price: "$6",
-      icon: <Disc size={16} />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//tyre.png" alt="Tires" className="w-6 h-6 object-cover" />
     },
     {
       id: "8",
@@ -122,7 +113,7 @@ const BOM = () => {
       productionTime: "40 days",
       country: "China",
       price: "$37",
-      icon: <Utensils size={16} />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//fork.png" alt="Fork" className="w-6 h-6 object-cover" />
     },
     {
       id: "9",
@@ -133,7 +124,7 @@ const BOM = () => {
       productionTime: "30 days",
       country: "Vietnam",
       price: "$3",
-      icon: <Puzzle size={16} />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//saddle.png" alt="Saddle" className="w-6 h-6 object-cover" />
     },
     {
       id: "10",
@@ -144,7 +135,7 @@ const BOM = () => {
       productionTime: "10 days",
       country: "China",
       price: "$1.3",
-      icon: <Grip size={16} />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//grips.png" alt="Grips" className="w-6 h-6 object-cover" />
     }
   ];
 
