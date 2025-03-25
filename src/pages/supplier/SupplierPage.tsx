@@ -4,6 +4,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { SupplierSidebar } from '@/components/supplier/SupplierSidebar';
 import { Header } from '@/components/Header/Header';
 import { SupplierDashboard } from './SupplierDashboard';
+import OrdersPage from './OrdersPage';
 
 const SupplierPage: React.FC = () => {
   return (
@@ -14,6 +15,7 @@ const SupplierPage: React.FC = () => {
         <div className="flex-1 p-6 max-w-7xl mx-auto w-full">
           <Routes>
             <Route path="/" element={<SupplierDashboard />} />
+            <Route path="/orders" element={<OrdersPage />} />
             <Route path="*" element={<Navigate to="/supplier" replace />} />
           </Routes>
         </div>

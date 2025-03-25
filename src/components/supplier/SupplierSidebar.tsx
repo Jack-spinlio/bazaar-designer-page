@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Package, Upload, PenLine, ChevronRight, ChevronLeft, Grid } from 'lucide-react';
+import { Package, Upload, PenLine, ChevronRight, ChevronLeft, Grid, ShoppingBag } from 'lucide-react';
 
 import {
   Sidebar,
@@ -19,6 +19,11 @@ const navItems = [
     path: '/supplier/products', 
     name: 'Products', 
     icon: <Package className="w-5 h-5" /> 
+  },
+  { 
+    path: '/supplier/orders', 
+    name: 'Orders', 
+    icon: <ShoppingBag className="w-5 h-5" /> 
   },
   { 
     path: '/supplier/upload', 

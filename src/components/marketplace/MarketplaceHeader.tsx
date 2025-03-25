@@ -58,13 +58,19 @@ export const MarketplaceHeader: React.FC = () => {
             <DropdownMenuGroup>
               <DropdownMenuLabel className="font-normal text-xs text-gray-500 pl-2">Switch Role</DropdownMenuLabel>
               <DropdownMenuRadioGroup value={userRole} onValueChange={handleRoleChange}>
-                <DropdownMenuRadioItem value="designer">
+                <DropdownMenuRadioItem value="designer" className="relative">
                   <UserCog className="mr-2 h-4 w-4" />
                   <span>Designer</span>
+                  {userRole === "designer" && (
+                    <div className="absolute right-2 w-2 h-2 bg-green-500 rounded-full"></div>
+                  )}
                 </DropdownMenuRadioItem>
-                <DropdownMenuRadioItem value="supplier">
+                <DropdownMenuRadioItem value="supplier" className="relative">
                   <Upload className="mr-2 h-4 w-4" />
                   <span>Supplier</span>
+                  {userRole === "supplier" && (
+                    <div className="absolute right-2 w-2 h-2 bg-green-500 rounded-full"></div>
+                  )}
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
             </DropdownMenuGroup>
