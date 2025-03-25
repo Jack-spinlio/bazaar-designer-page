@@ -16,7 +16,8 @@ const BIKE_PREFABS = [
     thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/Modmo.webp',
     folder: 'Bikes',
     shape: 'box' as const,
-    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/CompleteBike.gltf'
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/CompleteBike.gltf',
+    modelType: 'GLTF'
   },
   {
     id: 'bike-1',
@@ -100,6 +101,7 @@ export interface PrefabItem {
   folder?: string;
   shape: 'box' | 'sphere' | 'cylinder' | 'cone' | 'torus';
   modelUrl?: string;
+  modelType?: string;
 }
 
 interface PrefabSidebarProps {
