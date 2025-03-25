@@ -409,14 +409,18 @@ export const Viewport: React.FC<ViewportProps> = ({
       
     } else if (!hasLoadedModel) {
       try {
-        const componentToPlace = selectedComponent || {
-          id: 'cm18-default',
-          name: 'CM18 3D Model',
-          type: 'box',
+        const shimanoModel: ComponentItem = {
+          id: 'shimano-ep800',
+          name: 'Shimano EP800',
+          type: 'STL',
           thumbnail: '/placeholder.svg',
           folder: 'Default Models',
-          shape: 'box',
+          modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
+          modelType: 'STL',
+          shape: 'box'
         };
+        
+        const componentToPlace = selectedComponent || shimanoModel;
         
         console.log("Placing component:", componentToPlace);
         

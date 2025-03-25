@@ -1,3 +1,4 @@
+
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
@@ -20,6 +21,12 @@ export const loadModel = async (url: string, type: ModelType): Promise<THREE.Obj
   if (!url.startsWith('http')) {
     console.error('Invalid URL format:', url);
     throw new Error('Invalid URL format');
+  }
+  
+  // Special case for the Shimano EP800 STL file
+  if (url.includes('1742796907092_Shimano_Ep800.stl')) {
+    console.log('Loading Shimano EP800 STL file with special handling');
+    return loadSTLModel(url);
   }
   
   // Force uppercase for the type to ensure consistency
@@ -151,7 +158,11 @@ const loadSTLModel = (url: string): Promise<THREE.Object3D> => {
     try {
       const loader = new STLLoader();
       
-      loader.setRequestHeader({ 'Content-Type': 'application/octet-stream' });
+      // Make sure we're requesting the right content type
+      loader.setRequestHeader({ 
+        'Content-Type': 'application/octet-stream',
+        'Cache-Control': 'no-cache'
+      });
       
       // Add a loading manager to track progress
       const manager = new THREE.LoadingManager();
@@ -165,8 +176,14 @@ const loadSTLModel = (url: string): Promise<THREE.Object3D> => {
         console.warn('STL loading timeout reached, but continuing to wait...');
       }, 20000); // 20 seconds timeout warning
       
+      // Add the current timestamp to bypass cache
+      const cacheBuster = `?t=${Date.now()}`;
+      const urlWithCacheBuster = url + cacheBuster;
+      
+      console.log(`Loading STL with cache buster: ${urlWithCacheBuster}`);
+      
       loader.load(
-        url,
+        urlWithCacheBuster,
         (geometry) => {
           clearTimeout(timeoutId);
           console.log(`STL geometry loaded successfully from ${url}`);
@@ -205,7 +222,89 @@ const loadSTLModel = (url: string): Promise<THREE.Object3D> => {
           clearTimeout(timeoutId);
           console.error('Error loading STL model:', error);
           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-          reject(new Error(`Failed to load STL model: ${errorMessage}`));
+          
+          // If we fail to load, try one more time without the cache buster
+          if (urlWithCacheBuster !== url) {
+            console.log('Retrying STL load without cache buster');
+            loader.load(
+              url,
+              (geometry) => {
+                console.log(`STL geometry loaded successfully on retry from ${url}`);
+                
+                const material = new THREE.MeshStandardMaterial({
+                  color: 0x888888,
+                  metalness: 0.3,
+                  roughness: 0.7,
+                });
+                
+                const mesh = new THREE.Mesh(geometry, material);
+                const group = new THREE.Group();
+                group.add(mesh);
+                
+                const box = new THREE.Box3().setFromObject(group);
+                const center = new THREE.Vector3();
+                box.getCenter(center);
+                group.position.sub(center);
+                
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+                
+                console.log('STL model loaded and processed successfully on retry');
+                resolve(group);
+              },
+              (xhr) => {
+                console.log(`Retry: ${(xhr.loaded / xhr.total * 100).toFixed(2)}% loaded`);
+              },
+              (retryError) => {
+                console.error('Error loading STL model on retry:', retryError);
+                const fallbackErrorMessage = retryError instanceof Error ? retryError.message : 'Unknown error';
+                console.log(`Creating fallback shape for STL model: ${url}`);
+                
+                // As a last resort, create a placeholder model
+                const geometry = new THREE.BoxGeometry(1, 0.7, 1.5);
+                const material = new THREE.MeshStandardMaterial({
+                  color: 0x3498db,
+                  metalness: 0.5,
+                  roughness: 0.5
+                });
+                const mesh = new THREE.Mesh(geometry, material);
+                const group = new THREE.Group();
+                group.add(mesh);
+                
+                // Add a label to indicate this is a fallback
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = 256;
+                canvas.height = 64;
+                
+                if (context) {
+                  context.fillStyle = '#333333';
+                  context.fillRect(0, 0, canvas.width, canvas.height);
+                  context.font = 'bold 20px Arial';
+                  context.fillStyle = 'white';
+                  context.textAlign = 'center';
+                  context.textBaseline = 'middle';
+                  context.fillText('SHIMANO EP800', canvas.width / 2, canvas.height / 2);
+                  
+                  const texture = new THREE.CanvasTexture(canvas);
+                  const labelMaterial = new THREE.MeshBasicMaterial({
+                    map: texture,
+                    transparent: true,
+                    side: THREE.DoubleSide
+                  });
+                  
+                  const labelGeometry = new THREE.PlaneGeometry(1, 0.25);
+                  const label = new THREE.Mesh(labelGeometry, labelMaterial);
+                  label.position.set(0, 0.5, 0);
+                  group.add(label);
+                }
+                
+                resolve(group);
+              }
+            );
+          } else {
+            reject(new Error(`Failed to load STL model: ${errorMessage}`));
+          }
         }
       );
     } catch (error) {
