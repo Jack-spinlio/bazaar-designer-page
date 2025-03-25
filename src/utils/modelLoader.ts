@@ -1,3 +1,4 @@
+
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
@@ -290,13 +291,25 @@ const loadGLTFModel = (url: string): Promise<THREE.Object3D> => {
       };
       loader.manager = manager;
       
+      // Set a longer timeout for large models
+      const timeoutId = setTimeout(() => {
+        console.warn('GLTF loading timeout reached, but continuing to wait...');
+      }, 30000); // 30 seconds timeout warning
+      
       loader.load(
         url,
         (gltf) => {
+          clearTimeout(timeoutId);
           console.log('GLTF/GLB model loaded successfully:', url);
           
           // Debug - log the scene hierarchy
           console.log('Model structure:', JSON.stringify(getSceneGraph(gltf.scene), null, 2));
+          
+          // Center the model
+          const box = new THREE.Box3().setFromObject(gltf.scene);
+          const center = new THREE.Vector3();
+          box.getCenter(center);
+          gltf.scene.position.sub(center); // Center model
           
           // Ensure all materials are properly set up
           gltf.scene.traverse((child) => {
@@ -312,6 +325,10 @@ const loadGLTFModel = (url: string): Promise<THREE.Object3D> => {
                 });
                 console.log('Applied standard material to mesh');
               }
+              
+              // Enable shadows for all meshes
+              child.castShadow = true;
+              child.receiveShadow = true;
             }
           });
           
@@ -326,6 +343,7 @@ const loadGLTFModel = (url: string): Promise<THREE.Object3D> => {
           console.log(`GLTF loading: ${(xhr.loaded / xhr.total * 100).toFixed(2)}% loaded`);
         },
         (error) => {
+          clearTimeout(timeoutId);
           console.error('Error loading GLTF/GLB model:', error);
           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
           reject(new Error(`Failed to load GLTF/GLB model: ${errorMessage}`));

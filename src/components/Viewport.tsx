@@ -1,3 +1,4 @@
+
 import React, { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -50,6 +51,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
                         (component.modelUrl ? component.modelUrl.split('.').pop()?.toUpperCase() : component.type);
       
       console.log(`Component ${component.name} has model type: ${modelType}`);
+      console.log(`Component details:`, component);
       
       if (component.modelUrl && (
           modelType === 'STL' || 
@@ -72,9 +74,10 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
               
               console.log("Original model dimensions:", size);
               
-              const targetWidth = 0.9;  // 90mm -> 0.9 units
-              const targetHeight = 1.3; // 130mm -> 1.3 units
-              const targetLength = 2.0; // 200mm -> 2.0 units
+              // For bikes, use a different scale to make sure it's visible properly
+              const targetWidth = component.folder === 'Bikes' ? 1.8 : 0.9;
+              const targetHeight = component.folder === 'Bikes' ? 1.5 : 1.3;
+              const targetLength = component.folder === 'Bikes' ? 3.0 : 2.0;
               
               const maxDim = Math.max(size.x, size.y, size.z);
               const targetMaxDim = Math.max(targetWidth, targetHeight, targetLength);
@@ -123,7 +126,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
           })
           .catch(error => {
             console.error('Error loading model:', error);
-            setLoadError(`Failed to load ${modelType} model`);
+            setLoadError(`Failed to load ${modelType} model: ${error.message || 'Unknown error'}`);
             toast.error(`Failed to load model: ${error.message || 'Unknown error'}`);
             
             const componentMesh = createComponentShape(component.shape || 'box');
@@ -390,6 +393,10 @@ export const Viewport: React.FC<ViewportProps> = ({
     if ((isSupplierParameters || isDesignPage) && selectedComponent && !hasLoadedModel) {
       console.log("Loading product model:", selectedComponent);
       
+      // Clear any existing objects first
+      setPlacedObjects([]);
+      
+      // Then add the selected component
       setPlacedObjects([
         { 
           id: `model-${Date.now()}`, 
