@@ -46,19 +46,24 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
         componentRef.current.remove(componentRef.current.children[0]);
       }
       
+      const modelType = component.modelType || 
+                        (component.modelUrl ? component.modelUrl.split('.').pop()?.toUpperCase() : component.type);
+      
+      console.log(`Component ${component.name} has model type: ${modelType}`);
+      
       if (component.modelUrl && (
-          component.type === 'STL' || 
-          component.type === 'OBJ' || 
-          component.type === 'STP' || 
-          component.type === 'STEP' ||
-          component.type === 'GLB' ||
-          component.type === 'GLTF'
+          modelType === 'STL' || 
+          modelType === 'OBJ' || 
+          modelType === 'STP' || 
+          modelType === 'STEP' ||
+          modelType === 'GLB' ||
+          modelType === 'GLTF'
         )) {
-        console.log(`Loading ${component.type} model from ${component.modelUrl}`);
+        console.log(`Loading ${modelType} model from ${component.modelUrl}`);
         setIsLoading(true);
         setLoadError(null);
         
-        loadModel(component.modelUrl, component.type as any)
+        loadModel(component.modelUrl, modelType as any)
           .then(model => {
             if (componentRef.current) {
               const box = new THREE.Box3().setFromObject(model);
@@ -105,7 +110,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
               
               componentRef.current.add(model);
               
-              if (component.type === 'STEP' || component.type === 'STP') {
+              if (modelType === 'STEP' || modelType === 'STP') {
                 toast.info(`${component.name} loaded as placeholder (STEP format)`, {
                   description: "STEP files display as placeholders in the 3D viewport",
                   duration: 5000,
@@ -118,7 +123,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
           })
           .catch(error => {
             console.error('Error loading model:', error);
-            setLoadError(`Failed to load ${component.type} model`);
+            setLoadError(`Failed to load ${modelType} model`);
             toast.error(`Failed to load model: ${error.message || 'Unknown error'}`);
             
             const componentMesh = createComponentShape(component.shape || 'box');

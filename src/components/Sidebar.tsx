@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -89,7 +88,8 @@ export const SHIMANO_COMPONENTS = [
     thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/EP8.jpeg',
     folder: 'eBike',
     shape: 'box' as const,
-    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl'
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
+    modelType: 'STL'
   },
   {
     id: 'shimano-11',
@@ -205,6 +205,7 @@ export interface ComponentItem {
   folder?: string;
   shape: 'box' | 'sphere' | 'cylinder' | 'cone' | 'torus';
   modelUrl?: string;
+  modelType?: string;
 }
 
 interface SidebarProps {

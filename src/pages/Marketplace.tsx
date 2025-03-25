@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ProductCategory } from '@/components/marketplace/ProductCategory';
 import { MarketplaceHeader } from '@/components/marketplace/MarketplaceHeader';
@@ -205,7 +206,8 @@ const eBikeComponents = [
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/EP8.jpeg',
     price: 610,
     manufacturer: 'Shimano',
-    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl'
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
+    modelType: 'STL'
   }
 ];
 

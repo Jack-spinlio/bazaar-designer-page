@@ -1,4 +1,3 @@
-
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
@@ -17,7 +16,13 @@ export type ModelType = 'STL' | 'OBJ' | 'STP' | 'STEP' | 'GLB' | 'GLTF';
 export const loadModel = async (url: string, type: ModelType): Promise<THREE.Object3D> => {
   console.log(`Loading model from URL: ${url}, type: ${type}`);
   
-  switch (type.toUpperCase()) {
+  // Check if the URL starts with http
+  if (!url.startsWith('http')) {
+    console.error('Invalid URL format:', url);
+    throw new Error('Invalid URL format');
+  }
+  
+  switch (type.toUpperCase() as ModelType) {
     case 'STL':
       console.log(`Using STL loader for ${url}`);
       return loadSTLModel(url);
