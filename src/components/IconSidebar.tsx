@@ -12,7 +12,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { FileUploader } from "@/components/FileUploader";
 import { ComponentItem } from "./Sidebar";
 
@@ -104,7 +104,7 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
       {/* Upload dialog for designers */}
       <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
         <DialogContent className="sm:max-w-md">
-          <h3 className="text-lg font-medium mb-4">Upload 3D Component</h3>
+          <DialogTitle>Upload 3D Component</DialogTitle>
           <FileUploader 
             onClose={() => setUploadDialogOpen(false)} 
             onFileUploaded={handleComponentUploaded}

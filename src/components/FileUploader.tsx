@@ -171,7 +171,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
               <p className="text-xs text-center text-app-gray-light">
                 Supported formats: {allowedTypes.join(', ')}
               </p>
-              <input
+              <Input
                 type="file"
                 accept={allowedTypes.join(',')}
                 onChange={handleFileChange}
@@ -201,7 +201,11 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
           <Button type="button" variant="outline" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="submit" disabled={!file || !componentName || uploading}>
+          <Button 
+            type="submit" 
+            disabled={!file || !componentName || uploading}
+            className="bg-black hover:bg-black/90"
+          >
             {uploading ? 'Uploading...' : 'Upload Component'}
           </Button>
         </div>
