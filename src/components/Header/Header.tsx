@@ -87,9 +87,6 @@ export const Header: React.FC = () => {
               <DropdownMenuItem>
                 <Link to="/marketplace" className="w-full">Marketplace</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link to="/saved" className="w-full">Saved Designs</Link>
-              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Logout</DropdownMenuItem>
             </DropdownMenuContent>

@@ -30,44 +30,18 @@ export const SupplierDashboard: React.FC = () => {
       try {
         setLoading(true);
         
-        // Get current user
-        const { data: { user } } = await supabase.auth.getUser();
+        // Mock data for development without login
+        const mockStats = {
+          totalProducts: 12,
+          categories: 5,
+          recentUploads: [
+            { id: '1', name: 'Shimano 105 Groupset', created_at: new Date().toISOString() },
+            { id: '2', name: 'Carbon Fiber Frame', created_at: new Date().toISOString() },
+            { id: '3', name: 'Tubeless Tires', created_at: new Date().toISOString() },
+          ]
+        };
         
-        if (!user) {
-          toast.error('You must be logged in to view the dashboard');
-          return;
-        }
-        
-        // Fetch product count
-        const { count: productCount, error: productError } = await supabase
-          .from('products')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.id);
-        
-        if (productError) throw productError;
-        
-        // Fetch category count
-        const { count: categoryCount, error: categoryError } = await supabase
-          .from('categories')
-          .select('*', { count: 'exact', head: true });
-        
-        if (categoryError) throw categoryError;
-        
-        // Fetch recent uploads
-        const { data: recentUploads, error: uploadsError } = await supabase
-          .from('products')
-          .select('id, name, created_at')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(5);
-        
-        if (uploadsError) throw uploadsError;
-        
-        setStats({
-          totalProducts: productCount || 0,
-          categories: categoryCount || 0,
-          recentUploads: recentUploads || []
-        });
+        setStats(mockStats);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
         toast.error('Failed to load dashboard data');
