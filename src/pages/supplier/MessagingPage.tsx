@@ -42,7 +42,7 @@ interface ProductCard {
   price: number;
 }
 
-// Mock data for conversations
+// Mock data for conversations with colorful backgrounds
 const mockConversations: ConversationPreview[] = [
   { 
     id: '1', 
@@ -50,7 +50,7 @@ const mockConversations: ConversationPreview[] = [
     lastMessage: 'You: Hey whats up', 
     timestamp: '15 Min', 
     initials: '', 
-    avatarBg: 'bg-orange-100' 
+    avatarBg: 'bg-orange-200' 
   },
   { 
     id: '2', 
@@ -66,7 +66,7 @@ const mockConversations: ConversationPreview[] = [
     lastMessage: 'Can you update th...', 
     timestamp: '12:36 PM', 
     initials: 'C', 
-    avatarBg: 'bg-orange-100' 
+    avatarBg: 'bg-pink-200' 
   },
   { 
     id: '4', 
@@ -82,7 +82,7 @@ const mockConversations: ConversationPreview[] = [
     lastMessage: 'Thanks for the sa...', 
     timestamp: '12:36 PM', 
     initials: 'MK', 
-    avatarBg: 'bg-green-500' 
+    avatarBg: 'bg-green-400' 
   },
   { 
     id: '6', 
@@ -90,7 +90,7 @@ const mockConversations: ConversationPreview[] = [
     lastMessage: 'Payment of GHS 3...', 
     timestamp: '12:36 PM', 
     initials: 'VC', 
-    avatarBg: 'bg-orange-100' 
+    avatarBg: 'bg-purple-200' 
   },
   { 
     id: '7', 
@@ -98,15 +98,15 @@ const mockConversations: ConversationPreview[] = [
     lastMessage: 'Amber where are...', 
     timestamp: '12:36 PM', 
     initials: 'B', 
-    avatarBg: 'bg-blue-300' 
+    avatarBg: 'bg-indigo-300' 
   },
 ];
 
-// Mock product card data
+// Mock product card data with updated image
 const mockProductCard: ProductCard = {
   id: '1',
   title: 'Mens Urban eBike V4',
-  imageSrc: '/lovable-uploads/9c58e550-42d4-4cf7-8834-f1dd115944ab.png',
+  imageSrc: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//Modmo.webp',
   details: [
     '7 Custom Components',
     'Components Compatible',
@@ -226,7 +226,12 @@ const MessagingPage = () => {
             <>
               {/* Chat header */}
               <div className="p-4 border-b border-gray-200 bg-white flex justify-between items-center">
-                <h2 className="text-xl font-semibold">{selectedConversation.name}</h2>
+                <div className="flex items-center">
+                  <Avatar className={`h-8 w-8 mr-3 ${selectedConversation.avatarBg}`}>
+                    <AvatarFallback>{selectedConversation.initials}</AvatarFallback>
+                  </Avatar>
+                  <h2 className="text-xl font-semibold">{selectedConversation.name}</h2>
+                </div>
                 <div className="flex items-center space-x-2">
                   <Bell className="h-5 w-5 text-gray-500 cursor-pointer" />
                   <MoreVertical className="h-5 w-5 text-gray-500 cursor-pointer" />
@@ -244,7 +249,7 @@ const MessagingPage = () => {
                       <img 
                         src={mockProductCard.imageSrc} 
                         alt="Product" 
-                        className="w-1/2 object-contain"
+                        className="w-1/2 h-40 object-cover rounded-md"
                       />
                       <div className="ml-4 flex-1">
                         <ul className="space-y-1">
@@ -282,9 +287,8 @@ const MessagingPage = () => {
                           className={`flex ${message.isCurrentUser ? 'justify-end' : 'justify-start'}`}
                         >
                           {!message.isCurrentUser && (
-                            <Avatar className="h-8 w-8 mr-2">
-                              <AvatarImage src="/placeholder.svg" />
-                              <AvatarFallback>MH</AvatarFallback>
+                            <Avatar className="h-8 w-8 mr-2 bg-blue-300">
+                              <AvatarFallback>ZD</AvatarFallback>
                             </Avatar>
                           )}
                           <div 
@@ -296,6 +300,11 @@ const MessagingPage = () => {
                           >
                             {message.content}
                           </div>
+                          {message.isCurrentUser && (
+                            <Avatar className="h-8 w-8 ml-2 bg-green-400">
+                              <AvatarFallback>ME</AvatarFallback>
+                            </Avatar>
+                          )}
                         </div>
                       </React.Fragment>
                     );
