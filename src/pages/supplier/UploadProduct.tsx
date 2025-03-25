@@ -60,14 +60,19 @@ export const UploadProduct: React.FC = () => {
   useEffect(() => {
     const fetchComponentGroups = async () => {
       try {
+        console.log('Fetching component groups...');
         const { data, error } = await supabase
           .from('Component_groups')
           .select('*')
           .order('name');
         
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching component groups:', error);
+          throw error;
+        }
         
         if (data) {
+          console.log('Component groups data:', data);
           setComponentGroups(data);
         }
       } catch (error) {
@@ -207,6 +212,7 @@ export const UploadProduct: React.FC = () => {
   };
   
   const handleComponentGroupChange = (value: string) => {
+    console.log("Selected component group:", value);
     setProductData(prev => ({
       ...prev,
       componentGroup: value
@@ -494,17 +500,20 @@ export const UploadProduct: React.FC = () => {
                   <Select 
                     value={productData.componentGroup} 
                     onValueChange={handleComponentGroupChange}
-                    required
                   >
                     <SelectTrigger className="text-left">
                       <SelectValue placeholder="Select a component group" />
                     </SelectTrigger>
                     <SelectContent>
-                      {componentGroups.map(group => (
-                        <SelectItem key={group.id} value={group.id.toString()}>
-                          {group.name}
-                        </SelectItem>
-                      ))}
+                      {componentGroups.length > 0 ? (
+                        componentGroups.map(group => (
+                          <SelectItem key={group.id} value={group.id.toString()}>
+                            {group.name || `Group ${group.id}`}
+                          </SelectItem>
+                        ))
+                      ) : (
+                        <SelectItem value="loading" disabled>Loading component groups...</SelectItem>
+                      )}
                     </SelectContent>
                   </Select>
                 </div>
@@ -522,7 +531,7 @@ export const UploadProduct: React.FC = () => {
                       <SelectContent>
                         {filteredCategories.map(category => (
                           <SelectItem key={category.id} value={category.id.toString()}>
-                            {category.name}
+                            {category.name || `Category ${category.id}`}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -543,7 +552,7 @@ export const UploadProduct: React.FC = () => {
                       <SelectContent>
                         {filteredSubcategories.map(subcategory => (
                           <SelectItem key={subcategory.id} value={subcategory.id.toString()}>
-                            {subcategory.name}
+                            {subcategory.name || `Subcategory ${subcategory.id}`}
                           </SelectItem>
                         ))}
                       </SelectContent>
