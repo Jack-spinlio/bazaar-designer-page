@@ -47,7 +47,7 @@ const components = [
     productionTime: "90 days",
     country: "Vietnam",
     price: "$97",
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-4 h-4 object-contain" />
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-6 h-6 object-cover" />
   },
   {
     id: "2",
@@ -151,7 +151,7 @@ const components = [
 ];
 
 const bikeComponents = [
-  { id: '1', name: 'Frame', icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-[18px] h-[18px] object-contain" />, days: 90, color: 'bg-blue-100', startWeek: 1 },
+  { id: '1', name: 'Frame', icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-[24px] h-[24px] object-cover" />, days: 90, color: 'bg-blue-100', startWeek: 1 },
   { id: '2', name: 'Fork', icon: <Utensils size={18} />, days: 42, color: 'bg-purple-100', startWeek: 8 },
   { id: '3', name: 'Motor', icon: <Cog size={18} />, days: 35, color: 'bg-green-100', startWeek: 11 },
   { id: '4', name: 'Rear Hub', icon: <Disc size={18} />, days: 40, color: 'bg-pink-100', startWeek: 9 },

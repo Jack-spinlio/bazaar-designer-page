@@ -45,7 +45,7 @@ const BOM = () => {
       productionTime: "90 days",
       country: "Vietnam",
       price: "$97",
-      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-4 h-4 object-contain" />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-6 h-6 object-cover" />
     },
     {
       id: "2",
