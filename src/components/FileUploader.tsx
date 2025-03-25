@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,7 +21,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   const [file, setFile] = useState<File | null>(null);
   const [componentName, setComponentName] = useState('');
   const [uploading, setUploading] = useState(false);
-  const fileInputRef = useState<HTMLInputElement | null>(null)[1];
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const allowedTypes = ['.stl', '.obj', '.step', '.stp'];
   
@@ -178,14 +178,14 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                 onChange={handleFileChange}
                 className="hidden"
                 id="file-upload"
-                ref={(el) => fileInputRef(el)}
+                ref={fileInputRef}
               />
               <Label htmlFor="file-upload" className="mt-4">
                 <Button 
                   type="button" 
                   variant="outline" 
                   size="sm"
-                  onClick={() => fileInputRef?.click()}
+                  onClick={() => fileInputRef.current?.click()}
                 >
                   Browse Files
                 </Button>
