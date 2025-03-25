@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 export const prepareStepFileForViewing = async (fileUrl: string): Promise<{ success: boolean, message: string, viewUrl?: string }> => {
   console.log('Preparing STEP file for viewing:', fileUrl);
   
-  // Currently, we're just returning the original file
+  // Currently, we're just returning a placeholder notification
   // In future, this could connect to a server-side conversion service
   return {
     success: false,
