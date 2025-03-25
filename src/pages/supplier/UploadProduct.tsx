@@ -11,6 +11,26 @@ import { ArrowLeft, Upload } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { ComponentItem } from '@/components/Sidebar';
 
+interface ComponentGroup {
+  id: number;
+  name: string;
+  description: string | null;
+}
+
+interface ComponentCategory {
+  id: number;
+  component_group: number;
+  name: string;
+  description: string | null;
+}
+
+interface ComponentSubcategory {
+  id: number;
+  component_category: number;
+  name: string;
+  description: string | null;
+}
+
 export const UploadProduct: React.FC = () => {
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
@@ -20,113 +40,163 @@ export const UploadProduct: React.FC = () => {
     name: '',
     price: '',
     manufacturer: '',
-    category: '',
-    subCategory: '',
+    componentGroup: '',
+    componentCategory: '',
+    componentSubcategory: '',
     description: ''
   });
-  const [categories, setCategories] = useState<{id: string, name: string}[]>([]);
-  const [subCategories, setSubCategories] = useState<{id: string, name: string, variants: string[]}[]>([]);
+  
+  // States for the hierarchical data
+  const [componentGroups, setComponentGroups] = useState<ComponentGroup[]>([]);
+  const [componentCategories, setComponentCategories] = useState<ComponentCategory[]>([]);
+  const [filteredCategories, setFilteredCategories] = useState<ComponentCategory[]>([]);
+  const [componentSubcategories, setComponentSubcategories] = useState<ComponentSubcategory[]>([]);
+  const [filteredSubcategories, setFilteredSubcategories] = useState<ComponentSubcategory[]>([]);
+  
   const [selectedVariants, setSelectedVariants] = useState<string[]>([]);
   const [availableVariants, setAvailableVariants] = useState<string[]>([]);
   
-  // Fetch categories from the database
+  // Fetch component groups from the database
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchComponentGroups = async () => {
       try {
         const { data, error } = await supabase
-          .from('categories')
-          .select('id, name, slug')
+          .from('Component_groups')
+          .select('*')
           .order('name');
         
         if (error) throw error;
         
         if (data) {
-          setCategories(data.map(cat => ({
-            id: cat.slug,
-            name: cat.name
-          })));
+          setComponentGroups(data);
         }
       } catch (error) {
-        console.error('Error fetching categories:', error);
-        toast.error('Failed to load categories');
+        console.error('Error fetching component groups:', error);
+        toast.error('Failed to load component groups');
       }
     };
     
-    fetchCategories();
+    fetchComponentGroups();
   }, []);
 
-  // This is a simplified mapping for demo purposes
-  // In production, this should be fetched from the database
+  // Fetch all component categories from the database
   useEffect(() => {
-    // Sample subcategory data based on the list provided
-    const subcategoryData = [
-      {
-        id: 'frame',
-        name: 'Frame',
-        variants: ['Step Thru', 'Gravel', 'Road', 'Mountain', 'Enduro', 'Cross Country', 'Hybrid']
-      },
-      {
-        id: 'fork',
-        name: 'Fork',
-        variants: ['Rigid', 'Suspension']
-      },
-      {
-        id: 'battery',
-        name: 'Battery',
-        variants: ['Internal', 'External']
-      },
-      {
-        id: 'motor',
-        name: 'Motor',
-        variants: ['Front Hub Motor', 'Rear Hub Motor', 'Mid-Motor']
-      },
-      {
-        id: 'display',
-        name: 'Display',
-        variants: ['External', 'Top Tube Integrated', 'Handlebar Integrated']
-      },
-      {
-        id: 'drivetrain',
-        name: 'Drivetrain',
-        variants: ['Chain', 'Belt Drive', 'Single Speed', 'Multi-Speed']
-      },
-      {
-        id: 'braking',
-        name: 'Brakes',
-        variants: ['Disc Brake', 'V-Brake', 'Hydraulic', 'Mechanical']
-      },
-      {
-        id: 'wheels',
-        name: 'Wheels',
-        variants: ['Aluminum', 'Carbon', 'Steel', 'Tubeless Ready']
-      },
-      {
-        id: 'pedals',
-        name: 'Pedals',
-        variants: ['Platform', 'SPD', 'Toe Clip']
-      },
-      {
-        id: 'ebike',
-        name: 'eBike Components',
-        variants: ['Controller', 'PAS Sensor', 'Throttle']
+    const fetchComponentCategories = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('Component Categories')
+          .select('*')
+          .order('name');
+        
+        if (error) throw error;
+        
+        if (data) {
+          setComponentCategories(data);
+        }
+      } catch (error) {
+        console.error('Error fetching component categories:', error);
+        toast.error('Failed to load component categories');
       }
-    ];
+    };
     
-    setSubCategories(subcategoryData);
+    fetchComponentCategories();
   }, []);
-  
-  // Update available variants when category changes
+
+  // Fetch all component subcategories from the database
   useEffect(() => {
-    if (productData.subCategory) {
-      const selectedSubCategory = subCategories.find(sc => sc.id === productData.subCategory);
-      if (selectedSubCategory) {
-        setAvailableVariants(selectedSubCategory.variants);
+    const fetchComponentSubcategories = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('Component subcategories')
+          .select('*')
+          .order('name');
+        
+        if (error) throw error;
+        
+        if (data) {
+          setComponentSubcategories(data);
+        }
+      } catch (error) {
+        console.error('Error fetching component subcategories:', error);
+        toast.error('Failed to load component subcategories');
+      }
+    };
+    
+    fetchComponentSubcategories();
+  }, []);
+
+  // Filter categories based on selected component group
+  useEffect(() => {
+    if (productData.componentGroup) {
+      const groupId = parseInt(productData.componentGroup);
+      const filtered = componentCategories.filter(
+        category => category.component_group === groupId
+      );
+      setFilteredCategories(filtered);
+      
+      // Reset the component category and subcategory when group changes
+      setProductData(prev => ({
+        ...prev,
+        componentCategory: '',
+        componentSubcategory: ''
+      }));
+      
+      setFilteredSubcategories([]);
+    } else {
+      setFilteredCategories([]);
+    }
+  }, [productData.componentGroup, componentCategories]);
+
+  // Filter subcategories based on selected component category
+  useEffect(() => {
+    if (productData.componentCategory) {
+      const categoryId = parseInt(productData.componentCategory);
+      const filtered = componentSubcategories.filter(
+        subcategory => subcategory.component_category === categoryId
+      );
+      setFilteredSubcategories(filtered);
+      
+      // Reset the component subcategory when category changes
+      setProductData(prev => ({
+        ...prev,
+        componentSubcategory: ''
+      }));
+    } else {
+      setFilteredSubcategories([]);
+    }
+  }, [productData.componentCategory, componentSubcategories]);
+  
+  // This is a simplified mapping for demo purposes based on the list provided
+  useEffect(() => {
+    // Sample variant data based on the list provided
+    const variantMapping: Record<string, string[]> = {
+      'Frame': ['Step Thru', 'Gravel', 'Road', 'Mountain', 'Enduro', 'Cross Country', 'Hybrid'],
+      'Fork': ['Rigid', 'Suspension'],
+      'Battery': ['Internal', 'External'],
+      'Motor': ['Front Hub Motor', 'Rear Hub Motor', 'Mid-Motor'],
+      'Display': ['External', 'Top Tube Integrated', 'Handlebar Integrated'],
+      'Drivetrain': ['Chain', 'Belt Drive', 'Single Speed', 'Multi-Speed'],
+      'Brakes': ['Disc Brake', 'V-Brake', 'Hydraulic', 'Mechanical'],
+      'Wheels': ['Aluminum', 'Carbon', 'Steel', 'Tubeless Ready'],
+      'Pedals': ['Platform', 'SPD', 'Toe Clip'],
+      'Handlebar': ['Riser Handlebars', 'Dropdown Bars', 'Bullhorn Bars'],
+      'Seat Post': ['Standard', 'Layback', 'Integrated Light', 'Dropper', 'Suspension']
+    };
+    
+    // Find the variant options based on selected category
+    if (productData.componentCategory) {
+      const categoryId = parseInt(productData.componentCategory);
+      const selectedCategory = componentCategories.find(cat => cat.id === categoryId);
+      
+      if (selectedCategory && selectedCategory.name && variantMapping[selectedCategory.name]) {
+        setAvailableVariants(variantMapping[selectedCategory.name]);
       } else {
         setAvailableVariants([]);
       }
+      
       setSelectedVariants([]);
     }
-  }, [productData.subCategory, subCategories]);
+  }, [productData.componentCategory, componentCategories]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
@@ -136,17 +206,24 @@ export const UploadProduct: React.FC = () => {
     }));
   };
   
-  const handleSelectChange = (value: string) => {
+  const handleComponentGroupChange = (value: string) => {
     setProductData(prev => ({
       ...prev,
-      category: value
+      componentGroup: value
     }));
   };
   
-  const handleSubCategoryChange = (value: string) => {
+  const handleComponentCategoryChange = (value: string) => {
     setProductData(prev => ({
       ...prev,
-      subCategory: value
+      componentCategory: value
+    }));
+  };
+  
+  const handleComponentSubcategoryChange = (value: string) => {
+    setProductData(prev => ({
+      ...prev,
+      componentSubcategory: value
     }));
   };
   
@@ -186,7 +263,7 @@ export const UploadProduct: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!productData.name || !productData.price || !productData.category) {
+    if (!productData.name || !productData.price || !productData.componentGroup) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -255,16 +332,9 @@ export const UploadProduct: React.FC = () => {
         modelUrl = modelUrlData.publicUrl;
       }
       
-      // Get the category ID
-      const { data: categoryData, error: categoryError } = await supabase
-        .from('categories')
-        .select('id')
-        .eq('slug', productData.category)
-        .single();
-      
-      if (categoryError) {
-        throw categoryError;
-      }
+      // Find the selected component group and category for reference
+      const selectedGroup = componentGroups.find(group => group.id.toString() === productData.componentGroup);
+      const selectedCategory = componentCategories.find(category => category.id.toString() === productData.componentCategory);
       
       // Insert product into database
       const { data: insertedProduct, error: productError } = await supabase
@@ -274,7 +344,7 @@ export const UploadProduct: React.FC = () => {
           price: parseFloat(productData.price),
           manufacturer: productData.manufacturer,
           description: productData.description,
-          category_id: categoryData.id,
+          category_id: null, // We'll store detailed category info in parameters
           model_url: modelUrl || null,
           thumbnail_url: thumbnailUrl || null,
           user_id: user.id
@@ -286,19 +356,47 @@ export const UploadProduct: React.FC = () => {
         throw productError;
       }
       
-      // Store parameters (subcategory and variants)
-      if (productData.subCategory && insertedProduct) {
-        await supabase
-          .from('product_parameters')
-          .insert({
-            product_id: insertedProduct.id,
-            name: 'subcategory',
-            value: productData.subCategory
-          });
-      }
-      
-      // Store selected variants as parameters
+      // Store parameters (component group, category, subcategory)
       if (insertedProduct) {
+        // Store component group
+        if (selectedGroup) {
+          await supabase
+            .from('product_parameters')
+            .insert({
+              product_id: insertedProduct.id,
+              name: 'component_group',
+              value: selectedGroup.name
+            });
+        }
+        
+        // Store component category
+        if (selectedCategory) {
+          await supabase
+            .from('product_parameters')
+            .insert({
+              product_id: insertedProduct.id,
+              name: 'component_category',
+              value: selectedCategory.name
+            });
+        }
+        
+        // Store component subcategory
+        if (productData.componentSubcategory) {
+          const subcategoryId = parseInt(productData.componentSubcategory);
+          const selectedSubcategory = componentSubcategories.find(subcat => subcat.id === subcategoryId);
+          
+          if (selectedSubcategory) {
+            await supabase
+              .from('product_parameters')
+              .insert({
+                product_id: insertedProduct.id,
+                name: 'component_subcategory',
+                value: selectedSubcategory.name
+              });
+          }
+        }
+        
+        // Store selected variants as parameters
         for (const variant of selectedVariants) {
           await supabase
             .from('product_parameters')
@@ -321,7 +419,7 @@ export const UploadProduct: React.FC = () => {
           name: insertedProduct.name,
           type: modelFile.name.split('.').pop()?.toUpperCase() || 'STL',
           thumbnail: thumbnailUrl || '/placeholder.svg',
-          folder: productData.category,
+          folder: selectedCategory?.name || 'Other',
           shape: 'box',
           modelUrl: modelUrl
         };
@@ -392,43 +490,66 @@ export const UploadProduct: React.FC = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="category">Main Category</Label>
+                  <Label htmlFor="componentGroup">Component Group</Label>
                   <Select 
-                    value={productData.category} 
-                    onValueChange={handleSelectChange}
+                    value={productData.componentGroup} 
+                    onValueChange={handleComponentGroupChange}
                     required
                   >
                     <SelectTrigger className="text-left">
-                      <SelectValue placeholder="Select a category" />
+                      <SelectValue placeholder="Select a component group" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map(category => (
-                        <SelectItem key={category.id} value={category.id}>
-                          {category.name}
+                      {componentGroups.map(group => (
+                        <SelectItem key={group.id} value={group.id.toString()}>
+                          {group.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
                 
-                <div>
-                  <Label htmlFor="subCategory">Sub Category</Label>
-                  <Select 
-                    value={productData.subCategory} 
-                    onValueChange={handleSubCategoryChange}
-                  >
-                    <SelectTrigger className="text-left">
-                      <SelectValue placeholder="Select a sub-category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {subCategories.map(subCategory => (
-                        <SelectItem key={subCategory.id} value={subCategory.id}>
-                          {subCategory.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                {filteredCategories.length > 0 && (
+                  <div>
+                    <Label htmlFor="componentCategory">Component Category</Label>
+                    <Select 
+                      value={productData.componentCategory} 
+                      onValueChange={handleComponentCategoryChange}
+                    >
+                      <SelectTrigger className="text-left">
+                        <SelectValue placeholder="Select a component category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {filteredCategories.map(category => (
+                          <SelectItem key={category.id} value={category.id.toString()}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                
+                {filteredSubcategories.length > 0 && (
+                  <div>
+                    <Label htmlFor="componentSubcategory">Component Subcategory</Label>
+                    <Select 
+                      value={productData.componentSubcategory} 
+                      onValueChange={handleComponentSubcategoryChange}
+                    >
+                      <SelectTrigger className="text-left">
+                        <SelectValue placeholder="Select a component subcategory" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {filteredSubcategories.map(subcategory => (
+                          <SelectItem key={subcategory.id} value={subcategory.id.toString()}>
+                            {subcategory.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
                 
                 {availableVariants.length > 0 && (
                   <div>

@@ -36,6 +36,66 @@ export type Database = {
         }
         Relationships: []
       }
+      "Component Categories": {
+        Row: {
+          component_group: number | null
+          description: string | null
+          id: number
+          name: string | null
+        }
+        Insert: {
+          component_group?: number | null
+          description?: string | null
+          id: number
+          name?: string | null
+        }
+        Update: {
+          component_group?: number | null
+          description?: string | null
+          id?: number
+          name?: string | null
+        }
+        Relationships: []
+      }
+      "Component subcategories": {
+        Row: {
+          component_category: number | null
+          description: string | null
+          id: number
+          name: string | null
+        }
+        Insert: {
+          component_category?: number | null
+          description?: string | null
+          id: number
+          name?: string | null
+        }
+        Update: {
+          component_category?: number | null
+          description?: string | null
+          id?: number
+          name?: string | null
+        }
+        Relationships: []
+      }
+      Component_groups: {
+        Row: {
+          description: string | null
+          id: number
+          name: string | null
+        }
+        Insert: {
+          description?: string | null
+          id: number
+          name?: string | null
+        }
+        Update: {
+          description?: string | null
+          id?: number
+          name?: string | null
+        }
+        Relationships: []
+      }
       designs: {
         Row: {
           created_at: string
@@ -141,6 +201,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      standard_product_attributes: {
+        Row: {
+          attributecategory: string | null
+          attributeid: number
+          attributename: string | null
+          datatype: string | null
+          description: string | null
+          unit: string | null
+        }
+        Insert: {
+          attributecategory?: string | null
+          attributeid: number
+          attributename?: string | null
+          datatype?: string | null
+          description?: string | null
+          unit?: string | null
+        }
+        Update: {
+          attributecategory?: string | null
+          attributeid?: number
+          attributename?: string | null
+          datatype?: string | null
+          description?: string | null
+          unit?: string | null
+        }
+        Relationships: []
       }
       "Taipei 3D models": {
         Row: {
