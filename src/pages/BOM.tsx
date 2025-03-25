@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Layout } from '@/components/Layout';
 import { 
@@ -12,7 +11,7 @@ import {
 import { Viewport } from '@/components/Viewport';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { 
-  FrameIcon, 
+  Box, 
   Battery, 
   Cog, 
   Gamepad, 
@@ -47,7 +46,7 @@ const BOM = () => {
       productionTime: "90 days",
       country: "Vietnam",
       price: "$97",
-      icon: <FrameIcon size={16} />
+      icon: <Box size={16} />
     },
     {
       id: "2",
