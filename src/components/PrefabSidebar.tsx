@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +9,15 @@ import { FileUploader } from './FileUploader';
 
 // Bike models for the prefabs library
 const BIKE_PREFABS = [
+  {
+    id: 'bike-15',
+    name: "Men's Urban eBike",
+    type: 'BIKE',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//modmo-urban-ebike.jpg',
+    folder: 'Bikes',
+    shape: 'box' as const,
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//CompleteBike.gltf'
+  },
   {
     id: 'bike-1',
     name: 'Road bike',
