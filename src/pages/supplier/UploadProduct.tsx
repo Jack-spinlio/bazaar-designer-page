@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,28 +21,112 @@ export const UploadProduct: React.FC = () => {
     price: '',
     manufacturer: '',
     category: '',
+    subCategory: '',
     description: ''
   });
+  const [categories, setCategories] = useState<{id: string, name: string}[]>([]);
+  const [subCategories, setSubCategories] = useState<{id: string, name: string, variants: string[]}[]>([]);
+  const [selectedVariants, setSelectedVariants] = useState<string[]>([]);
+  const [availableVariants, setAvailableVariants] = useState<string[]>([]);
   
-  const categories = [{
-    id: 'drivetrain',
-    name: 'Drivetrain'
-  }, {
-    id: 'braking',
-    name: 'Braking Systems'
-  }, {
-    id: 'wheels',
-    name: 'Wheels & Hubs'
-  }, {
-    id: 'pedals',
-    name: 'Pedals'
-  }, {
-    id: 'ebike',
-    name: 'eBike Components'
-  }, {
-    id: 'frame',
-    name: 'Frames'
-  }];
+  // Fetch categories from the database
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('categories')
+          .select('id, name, slug')
+          .order('name');
+        
+        if (error) throw error;
+        
+        if (data) {
+          setCategories(data.map(cat => ({
+            id: cat.slug,
+            name: cat.name
+          })));
+        }
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        toast.error('Failed to load categories');
+      }
+    };
+    
+    fetchCategories();
+  }, []);
+
+  // This is a simplified mapping for demo purposes
+  // In production, this should be fetched from the database
+  useEffect(() => {
+    // Sample subcategory data based on the list provided
+    const subcategoryData = [
+      {
+        id: 'frame',
+        name: 'Frame',
+        variants: ['Step Thru', 'Gravel', 'Road', 'Mountain', 'Enduro', 'Cross Country', 'Hybrid']
+      },
+      {
+        id: 'fork',
+        name: 'Fork',
+        variants: ['Rigid', 'Suspension']
+      },
+      {
+        id: 'battery',
+        name: 'Battery',
+        variants: ['Internal', 'External']
+      },
+      {
+        id: 'motor',
+        name: 'Motor',
+        variants: ['Front Hub Motor', 'Rear Hub Motor', 'Mid-Motor']
+      },
+      {
+        id: 'display',
+        name: 'Display',
+        variants: ['External', 'Top Tube Integrated', 'Handlebar Integrated']
+      },
+      {
+        id: 'drivetrain',
+        name: 'Drivetrain',
+        variants: ['Chain', 'Belt Drive', 'Single Speed', 'Multi-Speed']
+      },
+      {
+        id: 'braking',
+        name: 'Brakes',
+        variants: ['Disc Brake', 'V-Brake', 'Hydraulic', 'Mechanical']
+      },
+      {
+        id: 'wheels',
+        name: 'Wheels',
+        variants: ['Aluminum', 'Carbon', 'Steel', 'Tubeless Ready']
+      },
+      {
+        id: 'pedals',
+        name: 'Pedals',
+        variants: ['Platform', 'SPD', 'Toe Clip']
+      },
+      {
+        id: 'ebike',
+        name: 'eBike Components',
+        variants: ['Controller', 'PAS Sensor', 'Throttle']
+      }
+    ];
+    
+    setSubCategories(subcategoryData);
+  }, []);
+  
+  // Update available variants when category changes
+  useEffect(() => {
+    if (productData.subCategory) {
+      const selectedSubCategory = subCategories.find(sc => sc.id === productData.subCategory);
+      if (selectedSubCategory) {
+        setAvailableVariants(selectedSubCategory.variants);
+      } else {
+        setAvailableVariants([]);
+      }
+      setSelectedVariants([]);
+    }
+  }, [productData.subCategory, subCategories]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
@@ -57,6 +141,21 @@ export const UploadProduct: React.FC = () => {
       ...prev,
       category: value
     }));
+  };
+  
+  const handleSubCategoryChange = (value: string) => {
+    setProductData(prev => ({
+      ...prev,
+      subCategory: value
+    }));
+  };
+  
+  const handleVariantToggle = (variant: string) => {
+    setSelectedVariants(prev => 
+      prev.includes(variant) 
+        ? prev.filter(v => v !== variant) 
+        : [...prev, variant]
+    );
   };
   
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,56 +186,156 @@ export const UploadProduct: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!productData.name || !productData.price || !productData.category || !modelFile) {
-      toast.error('Please fill in all required fields and upload a 3D model');
+    if (!productData.name || !productData.price || !productData.category) {
+      toast.error('Please fill in all required fields');
       return;
     }
     
     setIsUploading(true);
     
     try {
-      // Upload model file to Supabase
-      const fileExt = modelFile.name.split('.').pop();
-      const filePath = `${Date.now()}_${productData.name.replace(/\s+/g, '_')}.${fileExt}`;
+      // Get the current user
+      const { data: { user } } = await supabase.auth.getUser();
       
-      const { data: modelData, error: modelError } = await supabase.storage
-        .from('models')
-        .upload(filePath, modelFile, {
-          cacheControl: '3600',
-          upsert: true
-        });
-      
-      if (modelError) {
-        throw modelError;
+      if (!user) {
+        toast.error('You must be logged in to upload products');
+        setIsUploading(false);
+        return;
       }
       
-      // Get the public URL for the uploaded model
-      const { data: modelUrlData } = supabase.storage
-        .from('models')
-        .getPublicUrl(filePath);
+      let modelUrl = '';
+      let thumbnailUrl = '';
       
-      // Create component object for the viewport
-      const component: ComponentItem = {
-        id: `product-${Date.now()}`,
-        name: productData.name,
-        type: fileExt?.toUpperCase() || 'STL',
-        thumbnail: imagePreview || '/placeholder.svg',
-        folder: productData.category,
-        shape: 'box',
-        modelUrl: modelUrlData.publicUrl
-      };
+      // Upload the image if provided
+      if (imagePreview) {
+        // Convert data URL to blob
+        const imageBlob = await fetch(imagePreview).then(r => r.blob());
+        const imageFile = new File([imageBlob], `product_${Date.now()}.jpg`, { type: 'image/jpeg' });
+        
+        const { data: imageData, error: imageError } = await supabase.storage
+          .from('product-images')
+          .upload(`${user.id}/${Date.now()}_${productData.name.replace(/\s+/g, '_')}.jpg`, imageFile, {
+            cacheControl: '3600',
+            upsert: true
+          });
+        
+        if (imageError) {
+          throw imageError;
+        }
+        
+        // Get the public URL for the uploaded image
+        const { data: imageUrlData } = supabase.storage
+          .from('product-images')
+          .getPublicUrl(imageData?.path || '');
+        
+        thumbnailUrl = imageUrlData.publicUrl;
+      }
       
-      // Store component in local storage for now to pass to parameters page
-      localStorage.setItem('currentUploadedProduct', JSON.stringify({
-        ...component,
-        price: productData.price,
-        manufacturer: productData.manufacturer,
-        description: productData.description
-      }));
+      // Upload model file if provided
+      if (modelFile) {
+        const fileExt = modelFile.name.split('.').pop();
+        const filePath = `${user.id}/${Date.now()}_${productData.name.replace(/\s+/g, '_')}.${fileExt}`;
+        
+        const { data: modelData, error: modelError } = await supabase.storage
+          .from('product-models')
+          .upload(filePath, modelFile, {
+            cacheControl: '3600',
+            upsert: true
+          });
+        
+        if (modelError) {
+          throw modelError;
+        }
+        
+        // Get the public URL for the uploaded model
+        const { data: modelUrlData } = supabase.storage
+          .from('product-models')
+          .getPublicUrl(filePath);
+        
+        modelUrl = modelUrlData.publicUrl;
+      }
+      
+      // Get the category ID
+      const { data: categoryData, error: categoryError } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('slug', productData.category)
+        .single();
+      
+      if (categoryError) {
+        throw categoryError;
+      }
+      
+      // Insert product into database
+      const { data: productData, error: productError } = await supabase
+        .from('products')
+        .insert([{
+          name: productData.name,
+          price: parseFloat(productData.price),
+          manufacturer: productData.manufacturer,
+          description: productData.description,
+          category_id: categoryData.id,
+          model_url: modelUrl || null,
+          thumbnail_url: thumbnailUrl || null,
+          user_id: user.id
+        }])
+        .select('id')
+        .single();
+      
+      if (productError) {
+        throw productError;
+      }
+      
+      // Store parameters (subcategory and variants)
+      if (productData.subCategory) {
+        await supabase
+          .from('product_parameters')
+          .insert({
+            product_id: productData.id,
+            name: 'subcategory',
+            value: productData.subCategory
+          });
+      }
+      
+      // Store selected variants as parameters
+      for (const variant of selectedVariants) {
+        await supabase
+          .from('product_parameters')
+          .insert({
+            product_id: productData.id,
+            name: 'variant',
+            value: variant
+          });
+      }
       
       setIsUploading(false);
-      toast.success('Product uploaded, continue to add parameters');
-      navigate('/supplier/parameters');
+      toast.success('Product uploaded successfully');
+      
+      // If model file exists, go to parameters page, otherwise go back to products list
+      if (modelFile) {
+        // Create component object for the viewport
+        const component: ComponentItem = {
+          id: `product-${Date.now()}`,
+          name: productData.name,
+          type: modelFile.name.split('.').pop()?.toUpperCase() || 'STL',
+          thumbnail: thumbnailUrl || '/placeholder.svg',
+          folder: productData.category,
+          shape: 'box',
+          modelUrl: modelUrl
+        };
+        
+        // Store component in local storage for parameters page
+        localStorage.setItem('currentUploadedProduct', JSON.stringify({
+          ...component,
+          price: productData.price,
+          manufacturer: productData.manufacturer,
+          description: productData.description
+        }));
+        
+        navigate('/supplier/parameters');
+      } else {
+        navigate('/supplier/products');
+      }
     } catch (error: any) {
       console.error('Error uploading product:', error);
       toast.error(`Upload failed: ${error.message || 'Unknown error'}`);
@@ -191,7 +390,7 @@ export const UploadProduct: React.FC = () => {
                 </div>
 
                 <div>
-                  <Label htmlFor="category">Category</Label>
+                  <Label htmlFor="category">Main Category</Label>
                   <Select 
                     value={productData.category} 
                     onValueChange={handleSelectChange}
@@ -209,6 +408,46 @@ export const UploadProduct: React.FC = () => {
                     </SelectContent>
                   </Select>
                 </div>
+                
+                <div>
+                  <Label htmlFor="subCategory">Sub Category</Label>
+                  <Select 
+                    value={productData.subCategory} 
+                    onValueChange={handleSubCategoryChange}
+                  >
+                    <SelectTrigger className="text-left">
+                      <SelectValue placeholder="Select a sub-category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subCategories.map(subCategory => (
+                        <SelectItem key={subCategory.id} value={subCategory.id}>
+                          {subCategory.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                {availableVariants.length > 0 && (
+                  <div>
+                    <Label>Variants</Label>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      {availableVariants.map(variant => (
+                        <div 
+                          key={variant}
+                          className={`border rounded-md p-2 cursor-pointer text-sm ${
+                            selectedVariants.includes(variant) 
+                              ? 'bg-black text-white' 
+                              : 'bg-white'
+                          }`}
+                          onClick={() => handleVariantToggle(variant)}
+                        >
+                          {variant}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -249,7 +488,6 @@ export const UploadProduct: React.FC = () => {
                         accept="image/*" 
                         className="hidden" 
                         onChange={handleImageChange} 
-                        required 
                       />
                     </div>
                   </label>
@@ -257,7 +495,7 @@ export const UploadProduct: React.FC = () => {
               </div>
 
               <div>
-                <Label htmlFor="model-file">3D Model File (required)</Label>
+                <Label htmlFor="model-file">3D Model File (optional)</Label>
                 <div className="mt-1">
                   <label className="block w-full">
                     <div className="flex items-center justify-center h-12 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
@@ -273,7 +511,6 @@ export const UploadProduct: React.FC = () => {
                         accept=".obj,.glb,.gltf,.stl" 
                         className="hidden" 
                         onChange={handleModelFileChange}
-                        required
                       />
                     </div>
                   </label>
@@ -286,7 +523,7 @@ export const UploadProduct: React.FC = () => {
           </div>
 
           <div className="flex justify-end pt-4">
-            <Button type="button" variant="outline" className="mr-2" onClick={() => navigate('/supplier')}>
+            <Button type="button" variant="outline" className="mr-2" onClick={() => navigate('/supplier/products')}>
               Cancel
             </Button>
             <Button type="submit" disabled={isUploading} className="bg-black hover:bg-black/90">
