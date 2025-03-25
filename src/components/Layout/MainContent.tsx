@@ -34,7 +34,7 @@ export const MainContent: React.FC<MainContentProps> = ({
     id: 'bike-15',
     name: "Men's Urban eBike",
     type: 'GLTF',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/Modmo.jpg.pdf',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails/complete_bike.jpg',
     folder: 'Bikes',
     modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/CompleteBike.gltf',
     modelType: 'GLTF',

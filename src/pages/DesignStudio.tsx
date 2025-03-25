@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Viewport } from '@/components/Viewport';
 import { IconSidebar } from '@/components/IconSidebar';
 import { Sidebar, ComponentItem } from '@/components/Sidebar';
@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Pencil, Puzzle, FileSpreadsheet, Bookmark, Lightbulb, Shield, Link, Footprints } from "lucide-react";
 import EditToolbar from '@/components/EditToolbar';
 import { TimelineChart } from '@/components/TimelineChart';
+import { toast } from 'sonner';
 
 const DesignStudio = () => {
   // State for active tab
@@ -19,21 +20,31 @@ const DesignStudio = () => {
   const [selectedPrefab, setSelectedPrefab] = useState<PrefabItem | null>(null);
   const [selectedDesign, setSelectedDesign] = useState<SavedDesign | null>(null);
 
-  // Default Shimano motor model
-  const defaultShimanoModel: ComponentItem = {
-    id: 'shimano-ep800',
-    name: 'Shimano EP800',
-    type: 'STL',
-    thumbnail: '/placeholder.svg',
-    folder: 'Default Models',
-    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//1742796907092_Shimano_Ep800.stl',
+  // Default bike model
+  const defaultBikeModel: ComponentItem = {
+    id: 'bike-15',
+    name: "Men's Urban eBike",
+    type: 'GLTF',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails/complete_bike.jpg',
+    folder: 'Bikes',
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/CompleteBike.gltf',
+    modelType: 'GLTF',
     shape: 'box'
   };
+
+  useEffect(() => {
+    // Check if we have a selected model, if not use the default
+    if (!selectedComponent) {
+      console.log('No component selected, using default bike model');
+      setSelectedComponent(defaultBikeModel);
+    }
+  }, []);
 
   // Handlers for component selection
   const handleComponentSelected = (component: ComponentItem) => {
     setSelectedComponent(component);
     console.log('Component selected:', component.name);
+    toast.success(`Selected component: ${component.name}`);
   };
   
   const handlePrefabSelected = (prefab: PrefabItem) => {
@@ -148,7 +159,7 @@ const DesignStudio = () => {
         {/* Main viewport */}
         <div className={`flex-1 ml-2.5 h-full bg-white rounded-2xl shadow-sm overflow-hidden`}>
           <Viewport 
-            selectedComponent={selectedComponent || defaultShimanoModel} 
+            selectedComponent={selectedComponent || defaultBikeModel} 
             onComponentPlaced={handleComponentPlaced} 
           />
         </div>

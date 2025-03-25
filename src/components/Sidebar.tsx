@@ -205,6 +205,16 @@ const CUSTOM_COMPONENTS = [
     shape: 'box' as const,
     modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//Handlebar+HeadLight+SpeedController.gltf',
     modelType: 'GLTF'
+  },
+  {
+    id: 'complete-bike',
+    name: "Men's Urban eBike",
+    type: 'GLTF',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails/complete_bike.jpg',
+    folder: 'Bikes',
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/CompleteBike.gltf',
+    modelType: 'GLTF',
+    shape: 'box' as const
   }
 ];
 
