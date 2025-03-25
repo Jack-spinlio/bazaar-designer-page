@@ -23,7 +23,7 @@ const SupplierPage: React.FC = () => {
           <SupplierSidebar />
         </div>
         {/* Main content area with appropriate padding for sidebar */}
-        <div className="ml-20 flex-1 p-6 w-full h-[calc(100vh-78px)] overflow-hidden">
+        <div className="ml-20 flex-1 p-6 w-full h-[calc(100vh-78px)] overflow-auto">
           <Routes>
             <Route path="/" element={<SupplierDashboard />} />
             <Route path="/products" element={<ProductsList />} />
