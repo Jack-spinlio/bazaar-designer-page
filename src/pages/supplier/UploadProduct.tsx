@@ -858,7 +858,7 @@ export const UploadProduct: React.FC = () => {
         }
       }
       
-      // Reset form
+      // Reset form completely
       setProductData({
         name: '',
         price: '',
@@ -880,4 +880,4 @@ export const UploadProduct: React.FC = () => {
         componentSubcategory: '',
         description: ''
       });
-      setImagePreviews
+      setImage
