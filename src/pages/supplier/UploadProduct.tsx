@@ -97,6 +97,18 @@ export const UploadProduct: React.FC = () => {
     name: '',
     price: '',
     manufacturer: '',
+    brand: '',
+    sku: '',
+    currency: 'USD',
+    color: '',
+    material: '',
+    surfaceFinish: '',
+    weight: '',
+    countryOfOrigin: '',
+    warrantyPeriod: '',
+    leadTime: '',
+    minOrderQuantity: '',
+    application: '',
     componentGroup: '',
     componentCategory: '',
     componentSubcategory: '',
@@ -494,7 +506,7 @@ export const UploadProduct: React.FC = () => {
     }
   }, [selectedComponent, productData.componentGroup, productData.componentCategory, productData.componentSubcategory, componentGroups, componentCategories, componentSubcategories]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { id, value } = e.target;
     setProductData(prev => ({
       ...prev,
@@ -743,6 +755,18 @@ export const UploadProduct: React.FC = () => {
           name: productData.name,
           price: parseFloat(productData.price),
           manufacturer: productData.manufacturer,
+          brand: productData.brand,
+          sku: productData.sku,
+          currency: productData.currency,
+          color: productData.color,
+          material: productData.material,
+          surface_finish: productData.surfaceFinish,
+          weight: productData.weight,
+          country_of_origin: productData.countryOfOrigin,
+          warranty_period: productData.warrantyPeriod,
+          lead_time: productData.leadTime,
+          min_order_quantity: productData.minOrderQuantity,
+          application: productData.application,
           description: productData.description,
           category_id: null,
           model_url: modelUrl || null,
@@ -865,9 +889,54 @@ export const UploadProduct: React.FC = () => {
             />
           </div>
           
+          <div>
+            <Label htmlFor="description" className="block text-gray-700 mb-1">Product Description</Label>
+            <Textarea
+              id="description"
+              value={productData.description}
+              onChange={handleChange}
+              placeholder="Enter product description"
+              rows={4}
+            />
+          </div>
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <Label htmlFor="price" className="block text-gray-700 mb-1">Price (USD) <span className="text-red-500">*</span></Label>
+              <Label htmlFor="manufacturer" className="block text-gray-700 mb-1">Manufacturer</Label>
+              <Input
+                id="manufacturer"
+                value={productData.manufacturer}
+                onChange={handleChange}
+                placeholder="Enter manufacturer name"
+                suggestions={manufacturerSuggestions}
+                onSelectSuggestion={(suggestion) => setProductData(prev => ({ ...prev, manufacturer: suggestion }))}
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="brand" className="block text-gray-700 mb-1">Brand</Label>
+              <Input
+                id="brand"
+                value={productData.brand}
+                onChange={handleChange}
+                placeholder="Enter brand name"
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Label htmlFor="sku" className="block text-gray-700 mb-1">SKU</Label>
+              <Input
+                id="sku"
+                value={productData.sku}
+                onChange={handleChange}
+                placeholder="Enter product SKU"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="price" className="block text-gray-700 mb-1">Price <span className="text-red-500">*</span></Label>
               <Input
                 id="price"
                 type="number"
@@ -879,16 +948,122 @@ export const UploadProduct: React.FC = () => {
                 required
               />
             </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Label htmlFor="currency" className="block text-gray-700 mb-1">Currency</Label>
+              <select
+                id="currency"
+                value={productData.currency}
+                onChange={handleChange}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+              >
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+                <option value="JPY">JPY</option>
+                <option value="CAD">CAD</option>
+                <option value="AUD">AUD</option>
+                <option value="CNY">CNY</option>
+              </select>
+            </div>
             
             <div>
-              <Label htmlFor="manufacturer" className="block text-gray-700 mb-1">Manufacturer</Label>
+              <Label htmlFor="color" className="block text-gray-700 mb-1">Color</Label>
               <Input
-                id="manufacturer"
-                value={productData.manufacturer}
+                id="color"
+                value={productData.color}
                 onChange={handleChange}
-                placeholder="Enter manufacturer name"
-                suggestions={manufacturerSuggestions}
-                onSelectSuggestion={(suggestion) => setProductData(prev => ({ ...prev, manufacturer: suggestion }))}
+                placeholder="Enter product color"
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Label htmlFor="material" className="block text-gray-700 mb-1">Material</Label>
+              <Input
+                id="material"
+                value={productData.material}
+                onChange={handleChange}
+                placeholder="Enter product material"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="surfaceFinish" className="block text-gray-700 mb-1">Surface Finish</Label>
+              <Input
+                id="surfaceFinish"
+                value={productData.surfaceFinish}
+                onChange={handleChange}
+                placeholder="Enter surface finish"
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Label htmlFor="weight" className="block text-gray-700 mb-1">Weight</Label>
+              <Input
+                id="weight"
+                value={productData.weight}
+                onChange={handleChange}
+                placeholder="Enter product weight"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="countryOfOrigin" className="block text-gray-700 mb-1">Country of Origin</Label>
+              <Input
+                id="countryOfOrigin"
+                value={productData.countryOfOrigin}
+                onChange={handleChange}
+                placeholder="Enter country of origin"
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Label htmlFor="warrantyPeriod" className="block text-gray-700 mb-1">Warranty Period</Label>
+              <Input
+                id="warrantyPeriod"
+                value={productData.warrantyPeriod}
+                onChange={handleChange}
+                placeholder="Enter warranty period (e.g., 12 months)"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="leadTime" className="block text-gray-700 mb-1">Lead Time</Label>
+              <Input
+                id="leadTime"
+                value={productData.leadTime}
+                onChange={handleChange}
+                placeholder="Enter lead time (e.g., 2-3 weeks)"
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <Label htmlFor="minOrderQuantity" className="block text-gray-700 mb-1">Minimum Order Quantity</Label>
+              <Input
+                id="minOrderQuantity"
+                value={productData.minOrderQuantity}
+                onChange={handleChange}
+                placeholder="Enter minimum order quantity"
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="application" className="block text-gray-700 mb-1">Application</Label>
+              <Input
+                id="application"
+                value={productData.application}
+                onChange={handleChange}
+                placeholder="Enter product application"
               />
             </div>
           </div>
@@ -1010,17 +1185,6 @@ export const UploadProduct: React.FC = () => {
                 </div>
               </div>
             )}
-          </div>
-          
-          <div>
-            <Label htmlFor="description" className="block text-gray-700 mb-1">Description</Label>
-            <Textarea
-              id="description"
-              value={productData.description}
-              onChange={handleChange}
-              placeholder="Enter product description"
-              rows={4}
-            />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
