@@ -6,8 +6,22 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Upload, AlertCircle } from 'lucide-react';
+import { 
+  Select, 
+  SelectContent, 
+  SelectItem, 
+  SelectTrigger, 
+  SelectValue
+} from '@/components/ui/select';
+import { 
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { ArrowLeft, Upload, AlertCircle, Plus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { ComponentItem } from '@/components/Sidebar';
 
@@ -101,9 +115,21 @@ export const UploadProduct: React.FC = () => {
   const [isLoadingSubcategories, setIsLoadingSubcategories] = useState(true);
   const [filteredSubcategories, setFilteredSubcategories] = useState<ComponentSubcategory[]>([]);
   
+  // New state for dialogs
+  const [showNewGroupDialog, setShowNewGroupDialog] = useState(false);
+  const [showNewCategoryDialog, setShowNewCategoryDialog] = useState(false);
+  const [showNewSubcategoryDialog, setShowNewSubcategoryDialog] = useState(false);
+  const [newItemName, setNewItemName] = useState('');
+  const [newItemDescription, setNewItemDescription] = useState('');
+  
+  // State for variants
   const [selectedVariants, setSelectedVariants] = useState<string[]>([]);
   const [availableVariants, setAvailableVariants] = useState<string[]>([]);
   
+  // Autosuggest product names
+  const [productNameSuggestions, setProductNameSuggestions] = useState<string[]>([]);
+  const [manufacturerSuggestions, setManufacturerSuggestions] = useState<string[]>([]);
+
   // Fetch component groups from the database
   useEffect(() => {
     const fetchComponentGroups = async () => {
@@ -123,6 +149,10 @@ export const UploadProduct: React.FC = () => {
         if (data && data.length > 0) {
           console.log('Component groups data:', data);
           setComponentGroups(data);
+          
+          // Extract unique product names and manufacturers for autosuggest
+          const productNames = data.map(group => group.name).filter(Boolean);
+          setProductNameSuggestions(prev => [...new Set([...prev, ...productNames])]);
         } else {
           console.log('No component groups found in database, using default groups');
           
@@ -277,6 +307,35 @@ export const UploadProduct: React.FC = () => {
     fetchComponentSubcategories();
   }, []);
 
+  // Fetch unique product names and manufacturers for autosuggest
+  useEffect(() => {
+    const fetchProductSuggestions = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('products')
+          .select('name, manufacturer')
+          .limit(100);
+        
+        if (error) {
+          console.error('Error fetching product suggestions:', error);
+          return;
+        }
+        
+        if (data && data.length > 0) {
+          const names = data.map(p => p.name).filter(Boolean);
+          const manufacturers = data.map(p => p.manufacturer).filter(Boolean);
+          
+          setProductNameSuggestions(prev => [...new Set([...prev, ...names])]);
+          setManufacturerSuggestions([...new Set(manufacturers)]);
+        }
+      } catch (error) {
+        console.error('Error fetching product suggestions:', error);
+      }
+    };
+    
+    fetchProductSuggestions();
+  }, []);
+
   // Filter categories based on selected component group
   useEffect(() => {
     if (productData.componentGroup) {
@@ -363,6 +422,11 @@ export const UploadProduct: React.FC = () => {
   };
   
   const handleComponentGroupChange = (value: string) => {
+    if (value === 'new') {
+      setShowNewGroupDialog(true);
+      return;
+    }
+    
     console.log("Selected component group:", value);
     setProductData(prev => ({
       ...prev,
@@ -371,6 +435,11 @@ export const UploadProduct: React.FC = () => {
   };
   
   const handleComponentCategoryChange = (value: string) => {
+    if (value === 'new') {
+      setShowNewCategoryDialog(true);
+      return;
+    }
+    
     console.log("Selected component category:", value);
     setProductData(prev => ({
       ...prev,
@@ -379,6 +448,11 @@ export const UploadProduct: React.FC = () => {
   };
   
   const handleComponentSubcategoryChange = (value: string) => {
+    if (value === 'new') {
+      setShowNewSubcategoryDialog(true);
+      return;
+    }
+    
     console.log("Selected component subcategory:", value);
     setProductData(prev => ({
       ...prev,
@@ -416,6 +490,151 @@ export const UploadProduct: React.FC = () => {
       
       setModelFile(file);
       toast.success(`3D model "${file.name}" selected`);
+    }
+  };
+  
+  const addNewGroup = async () => {
+    if (!newItemName) {
+      toast.error('Please enter a name for the new group');
+      return;
+    }
+    
+    try {
+      // Find the highest ID to generate a new one
+      const maxId = Math.max(...componentGroups.map(g => g.id), 0);
+      const newId = maxId + 1;
+      
+      const newGroup = {
+        id: newId,
+        name: newItemName,
+        description: newItemDescription || null
+      };
+      
+      const { data, error } = await supabase
+        .from('Component_groups')
+        .insert(newGroup)
+        .select()
+        .single();
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Update state
+      setComponentGroups(prev => [...prev, data]);
+      toast.success(`Added new component group: ${newItemName}`);
+      
+      // Select the new group
+      setProductData(prev => ({
+        ...prev,
+        componentGroup: newId.toString()
+      }));
+      
+      // Reset form
+      setNewItemName('');
+      setNewItemDescription('');
+      setShowNewGroupDialog(false);
+    } catch (error) {
+      console.error('Error adding new group:', error);
+      toast.error('Failed to add new component group');
+    }
+  };
+  
+  const addNewCategory = async () => {
+    if (!newItemName || !productData.componentGroup) {
+      toast.error('Please enter a name for the new category and select a component group');
+      return;
+    }
+    
+    try {
+      // Find the highest ID to generate a new one
+      const maxId = Math.max(...componentCategories.map(c => c.id), 0);
+      const newId = maxId + 1;
+      
+      const newCategory = {
+        id: newId,
+        component_group: parseInt(productData.componentGroup),
+        name: newItemName,
+        description: newItemDescription || null
+      };
+      
+      const { data, error } = await supabase
+        .from('Component Categories')
+        .insert(newCategory)
+        .select()
+        .single();
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Update state
+      setComponentCategories(prev => [...prev, data]);
+      setFilteredCategories(prev => [...prev, data]);
+      toast.success(`Added new component category: ${newItemName}`);
+      
+      // Select the new category
+      setProductData(prev => ({
+        ...prev,
+        componentCategory: newId.toString()
+      }));
+      
+      // Reset form
+      setNewItemName('');
+      setNewItemDescription('');
+      setShowNewCategoryDialog(false);
+    } catch (error) {
+      console.error('Error adding new category:', error);
+      toast.error('Failed to add new component category');
+    }
+  };
+  
+  const addNewSubcategory = async () => {
+    if (!newItemName || !productData.componentCategory) {
+      toast.error('Please enter a name for the new subcategory and select a component category');
+      return;
+    }
+    
+    try {
+      // Find the highest ID to generate a new one
+      const maxId = Math.max(...componentSubcategories.map(s => s.id), 0);
+      const newId = maxId + 1;
+      
+      const newSubcategory = {
+        id: newId,
+        component_category: parseInt(productData.componentCategory),
+        name: newItemName,
+        description: newItemDescription || null
+      };
+      
+      const { data, error } = await supabase
+        .from('Component subcategories')
+        .insert(newSubcategory)
+        .select()
+        .single();
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Update state
+      setComponentSubcategories(prev => [...prev, data]);
+      setFilteredSubcategories(prev => [...prev, data]);
+      toast.success(`Added new component subcategory: ${newItemName}`);
+      
+      // Select the new subcategory
+      setProductData(prev => ({
+        ...prev,
+        componentSubcategory: newId.toString()
+      }));
+      
+      // Reset form
+      setNewItemName('');
+      setNewItemDescription('');
+      setShowNewSubcategoryDialog(false);
+    } catch (error) {
+      console.error('Error adding new subcategory:', error);
+      toast.error('Failed to add new component subcategory');
     }
   };
   
@@ -619,6 +838,13 @@ export const UploadProduct: React.FC = () => {
                     placeholder="e.g., Carbon Fiber Handlebar" 
                     value={productData.name}
                     onChange={handleChange}
+                    suggestions={productNameSuggestions}
+                    onSelectSuggestion={(suggestion) => {
+                      setProductData(prev => ({
+                        ...prev,
+                        name: suggestion
+                      }));
+                    }}
                     required 
                   />
                 </div>
@@ -644,6 +870,13 @@ export const UploadProduct: React.FC = () => {
                     placeholder="e.g., Shimano" 
                     value={productData.manufacturer}
                     onChange={handleChange}
+                    suggestions={manufacturerSuggestions}
+                    onSelectSuggestion={(suggestion) => {
+                      setProductData(prev => ({
+                        ...prev,
+                        manufacturer: suggestion
+                      }));
+                    }}
                     required 
                   />
                 </div>
@@ -681,11 +914,16 @@ export const UploadProduct: React.FC = () => {
                       </SelectTrigger>
                       <SelectContent className="bg-white">
                         {componentGroups.length > 0 ? (
-                          componentGroups.map(group => (
-                            <SelectItem key={group.id} value={group.id.toString()}>
-                              {group.name || `Group ${group.id}`}
+                          <>
+                            {componentGroups.map(group => (
+                              <SelectItem key={group.id} value={group.id.toString()}>
+                                {group.name || `Group ${group.id}`}
+                              </SelectItem>
+                            ))}
+                            <SelectItem key="new-group" value="new" isNewItem>
+                              Add new component group
                             </SelectItem>
-                          ))
+                          </>
                         ) : (
                           <div className="p-2 text-center text-sm text-red-500 flex items-center justify-center">
                             <AlertCircle className="h-4 w-4 mr-2" />
@@ -731,11 +969,16 @@ export const UploadProduct: React.FC = () => {
                         </SelectTrigger>
                         <SelectContent className="bg-white">
                           {filteredCategories.length > 0 ? (
-                            filteredCategories.map(category => (
-                              <SelectItem key={category.id} value={category.id.toString()}>
-                                {category.name || `Category ${category.id}`}
+                            <>
+                              {filteredCategories.map(category => (
+                                <SelectItem key={category.id} value={category.id.toString()}>
+                                  {category.name || `Category ${category.id}`}
+                                </SelectItem>
+                              ))}
+                              <SelectItem key="new-category" value="new" isNewItem>
+                                Add new category
                               </SelectItem>
-                            ))
+                            </>
                           ) : (
                             <div className="p-2 text-center text-sm text-gray-500 flex items-center justify-center">
                               <AlertCircle className="h-4 w-4 mr-2" />
@@ -748,7 +991,7 @@ export const UploadProduct: React.FC = () => {
                   </div>
                 )}
                 
-                {productData.componentCategory && (
+                {productData.componentCategory && filteredSubcategories.length > 0 && (
                   <div>
                     <Label htmlFor="componentSubcategory">Component Subcategory</Label>
                     {isLoadingSubcategories ? (
@@ -781,18 +1024,14 @@ export const UploadProduct: React.FC = () => {
                           <SelectValue placeholder="Select a component subcategory" />
                         </SelectTrigger>
                         <SelectContent className="bg-white">
-                          {filteredSubcategories.length > 0 ? (
-                            filteredSubcategories.map(subcategory => (
-                              <SelectItem key={subcategory.id} value={subcategory.id.toString()}>
-                                {subcategory.name || `Subcategory ${subcategory.id}`}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <div className="p-2 text-center text-sm text-gray-500 flex items-center justify-center">
-                              <AlertCircle className="h-4 w-4 mr-2" />
-                              No subcategories available for this category
-                            </div>
-                          )}
+                          {filteredSubcategories.map(subcategory => (
+                            <SelectItem key={subcategory.id} value={subcategory.id.toString()}>
+                              {subcategory.name || `Subcategory ${subcategory.id}`}
+                            </SelectItem>
+                          ))}
+                          <SelectItem key="new-subcategory" value="new" isNewItem>
+                            Add new subcategory
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     )}
@@ -903,5 +1142,146 @@ export const UploadProduct: React.FC = () => {
           </div>
         </form>
       </div>
+      
+      {/* Dialog for adding new component group */}
+      <Dialog open={showNewGroupDialog} onOpenChange={setShowNewGroupDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Component Group</DialogTitle>
+            <DialogDescription>
+              Create a new component group for your products.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-group-name">Group Name</Label>
+              <Input
+                id="new-group-name"
+                placeholder="e.g., Suspension"
+                value={newItemName}
+                onChange={(e) => setNewItemName(e.target.value)}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="new-group-desc">Description (optional)</Label>
+              <Textarea
+                id="new-group-desc"
+                placeholder="Description of the component group"
+                value={newItemDescription}
+                onChange={(e) => setNewItemDescription(e.target.value)}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => {
+              setNewItemName('');
+              setNewItemDescription('');
+              setShowNewGroupDialog(false);
+            }}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={addNewGroup}>
+              Add Group
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Dialog for adding new component category */}
+      <Dialog open={showNewCategoryDialog} onOpenChange={setShowNewCategoryDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Category</DialogTitle>
+            <DialogDescription>
+              Create a new category for the selected component group.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-category-name">Category Name</Label>
+              <Input
+                id="new-category-name"
+                placeholder="e.g., Brakes"
+                value={newItemName}
+                onChange={(e) => setNewItemName(e.target.value)}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="new-category-desc">Description (optional)</Label>
+              <Textarea
+                id="new-category-desc"
+                placeholder="Description of the category"
+                value={newItemDescription}
+                onChange={(e) => setNewItemDescription(e.target.value)}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => {
+              setNewItemName('');
+              setNewItemDescription('');
+              setShowNewCategoryDialog(false);
+            }}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={addNewCategory}>
+              Add Category
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Dialog for adding new component subcategory */}
+      <Dialog open={showNewSubcategoryDialog} onOpenChange={setShowNewSubcategoryDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Subcategory</DialogTitle>
+            <DialogDescription>
+              Create a new subcategory for the selected category.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-subcategory-name">Subcategory Name</Label>
+              <Input
+                id="new-subcategory-name"
+                placeholder="e.g., Disc Brakes"
+                value={newItemName}
+                onChange={(e) => setNewItemName(e.target.value)}
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="new-subcategory-desc">Description (optional)</Label>
+              <Textarea
+                id="new-subcategory-desc"
+                placeholder="Description of the subcategory"
+                value={newItemDescription}
+                onChange={(e) => setNewItemDescription(e.target.value)}
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => {
+              setNewItemName('');
+              setNewItemDescription('');
+              setShowNewSubcategoryDialog(false);
+            }}>
+              Cancel
+            </Button>
+            <Button type="button" onClick={addNewSubcategory}>
+              Add Subcategory
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>;
 };
