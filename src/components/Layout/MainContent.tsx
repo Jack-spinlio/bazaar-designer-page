@@ -31,15 +31,19 @@ export const MainContent: React.FC<MainContentProps> = ({
 
   // Define the default component for the design page
   const defaultShimanoModel: ComponentItem | null = location.pathname === '/design' ? {
-    id: 'shimano-ep800',
-    name: 'Shimano EP800',
-    type: 'STL',
-    thumbnail: '/placeholder.svg',
-    folder: 'Default Models',
-    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
-    modelType: 'STL',
-    shape: 'box' // Added the required shape property
+    id: 'bike-15',
+    name: "Men's Urban eBike",
+    type: 'GLTF',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/Modmo.jpg.pdf',
+    folder: 'Bikes',
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/CompleteBike.gltf',
+    modelType: 'GLTF',
+    shape: 'box'
   } : null;
+
+  console.log('MainContent - Current pathname:', location.pathname);
+  console.log('MainContent - Default model:', defaultShimanoModel);
+  console.log('MainContent - Selected component:', selectedComponent);
 
   return (
     <main className="flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5 bg-white shadow-sm">
@@ -49,7 +53,6 @@ export const MainContent: React.FC<MainContentProps> = ({
           onComponentPlaced={onComponentPlaced} 
         />
       )}
-      {/* Only render children if they exist and we're not showing the viewport, or we're on a supplier route */}
       {children && (!shouldRenderViewport || isSupplierRoute) && children}
     </main>
   );

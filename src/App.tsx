@@ -7,6 +7,8 @@ import ProducerProfile from './pages/ProducerProfile';
 import NotFound from './pages/NotFound';
 import ProductDetail from './pages/ProductDetail';
 import SupplierPage from './pages/supplier/SupplierPage';
+import Edit from './pages/Edit';
+import Prefabs from './pages/Prefabs';
 import './App.css';
 import { Toaster as SonnerToaster } from 'sonner';
 import { Toaster } from '@/components/ui/toaster';
@@ -30,6 +32,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/marketplace" replace />} />
         <Route path="/design" element={<DesignStudio />} />
+        <Route path="/edit" element={<Edit />} />
+        <Route path="/prefabs" element={<Prefabs />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/producer/:id" element={<ProducerProfile />} />
         <Route path="/product/:id" element={<ProductDetail />} />

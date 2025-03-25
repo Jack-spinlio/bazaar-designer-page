@@ -31,26 +31,31 @@ const Edit = () => {
         const prefab = location.state.selectedPrefab as PrefabItem;
         console.log('Received prefab from navigation:', prefab);
         
-        // Clone the prefab to avoid reference issues
-        const prefabToUse = {...prefab};
+        // Ensure we have proper debugging for the prefab
+        console.log(`Prefab model URL: ${prefab.modelUrl}`);
+        console.log(`Prefab model type: ${prefab.modelType}`);
         
-        // Ensure we have modelType if it's not already specified
-        if (prefabToUse.modelUrl && !prefabToUse.modelType) {
-          const extension = prefabToUse.modelUrl.split('.').pop()?.toUpperCase();
-          prefabToUse.modelType = extension;
-          console.log(`Inferred model type from URL extension: ${extension}`);
-        }
+        // Create a properly typed component from the prefab
+        const componentFromPrefab: ComponentItem = {
+          id: prefab.id,
+          name: prefab.name,
+          type: prefab.modelType || 'GLTF',  // Default to GLTF if not specified
+          thumbnail: prefab.thumbnail,
+          folder: prefab.folder || 'Prefabs',
+          modelUrl: prefab.modelUrl,
+          modelType: prefab.modelType || 'GLTF', // Ensure model type is specified
+          shape: prefab.shape
+        };
         
-        // For CompleteBike.gltf, ensure we're using GLTF type
-        if (prefabToUse.modelUrl && prefabToUse.modelUrl.includes('CompleteBike.gltf')) {
-          prefabToUse.modelType = 'GLTF';
+        // For CompleteBike.gltf, ensure we're explicitly setting GLTF type
+        if (componentFromPrefab.modelUrl && componentFromPrefab.modelUrl.includes('CompleteBike.gltf')) {
+          componentFromPrefab.modelType = 'GLTF';
           console.log('Setting explicit GLTF type for CompleteBike model');
         }
         
-        // Set the component with processed data
-        setSelectedComponent(prefabToUse);
-        console.log('Setting component with prefab:', prefabToUse);
-        toast.success(`Loaded prefab: ${prefabToUse.name}`);
+        console.log('Setting component with processed prefab:', componentFromPrefab);
+        setSelectedComponent(componentFromPrefab);
+        toast.success(`Loaded prefab: ${componentFromPrefab.name}`);
       } catch (error) {
         console.error('Error processing prefab:', error);
         toast.error('Failed to load the prefab model');
