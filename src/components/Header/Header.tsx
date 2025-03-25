@@ -88,14 +88,6 @@ export const Header: React.FC = () => {
                 <Link to="/marketplace" className="w-full">Marketplace</Link>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Link to="/design" className="w-full">Design</Link>
-              </DropdownMenuItem>
-              {userRole === 'supplier' && (
-                <DropdownMenuItem>
-                  <Link to="/supplier" className="w-full">Supplier Dashboard</Link>
-                </DropdownMenuItem>
-              )}
-              <DropdownMenuItem>
                 <Link to="/saved" className="w-full">Saved Designs</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
