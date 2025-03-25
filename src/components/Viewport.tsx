@@ -58,7 +58,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
         setIsLoading(true);
         setLoadError(null);
         
-        loadModel(component.modelUrl, component.type)
+        loadModel(component.modelUrl, component.type as any)
           .then(model => {
             if (componentRef.current) {
               const box = new THREE.Box3().setFromObject(model);
@@ -375,6 +375,13 @@ export const Viewport: React.FC<ViewportProps> = ({
   }, [selectedComponent]);
   
   useEffect(() => {
+    if (selectedComponent) {
+      console.log('Viewport: Selected component changed:', selectedComponent);
+      setHasLoadedModel(false);
+    }
+  }, [selectedComponent]);
+  
+  useEffect(() => {
     if ((isSupplierParameters || isDesignPage) && selectedComponent && !hasLoadedModel) {
       console.log("Loading product model:", selectedComponent);
       
@@ -398,6 +405,8 @@ export const Viewport: React.FC<ViewportProps> = ({
           folder: 'Default Models',
           shape: 'box',
         };
+        
+        console.log("Placing component:", componentToPlace);
         
         setPlacedObjects([
           { 
@@ -434,13 +443,6 @@ export const Viewport: React.FC<ViewportProps> = ({
     }
   }, [hasLoadedModel, selectedComponent, isSupplierParameters, isDesignPage]);
   
-  useEffect(() => {
-    if (selectedComponent) {
-      console.log('Viewport: Selected component changed:', selectedComponent.name);
-      setHasLoadedModel(false);
-    }
-  }, [selectedComponent]);
-
   const handlePlaceObject = (position: [number, number, number]) => {
     if (selectedComponent) {
       const newId = `object-${Date.now()}`;

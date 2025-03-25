@@ -1,3 +1,4 @@
+
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
@@ -33,8 +34,8 @@ export const loadModel = async (url: string, type: ModelType): Promise<THREE.Obj
       console.log(`Creating placeholder for STEP file: ${url}`);
       return createPlaceholderForSTEPModel(url);
     default:
-      console.log(`Unknown model type: ${type}, defaulting to STL loader`);
-      return loadSTLModel(url);
+      console.log(`Unknown model type: ${type}, defaulting to OBJ loader for ${url}`);
+      return loadOBJModel(url);
   }
 };
 
@@ -175,6 +176,7 @@ const loadSTLModel = (url: string): Promise<THREE.Object3D> => {
 const loadOBJModel = (url: string): Promise<THREE.Object3D> => {
   return new Promise((resolve, reject) => {
     try {
+      console.log(`Starting OBJ loader for ${url}`);
       const loader = new OBJLoader();
       
       loader.load(
@@ -193,11 +195,16 @@ const loadOBJModel = (url: string): Promise<THREE.Object3D> => {
             }
           });
           
-          resolve(object);
+          // Create a group to hold the model
+          const group = new THREE.Group();
+          group.add(object);
+          
+          console.log('OBJ model processed and added to group');
+          resolve(group);
         },
         (xhr) => {
           // Progress callback
-          // console.log(`${(xhr.loaded / xhr.total * 100).toFixed(2)}% loaded`);
+          console.log(`OBJ loading: ${(xhr.loaded / xhr.total * 100).toFixed(2)}% loaded`);
         },
         (error) => {
           console.error('Error loading OBJ model:', error);

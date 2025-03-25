@@ -208,7 +208,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [components, setComponents] = useState<ComponentItem[]>([...SHIMANO_COMPONENTS, ...BASIC_SHAPES]);
+  const [components, setComponents] = useState<ComponentItem[]>([...SHIMANO_COMPONENTS, ...BASIC_SHAPES, ...CUSTOM_COMPONENTS]);
   const [uploadedModels, setUploadedModels] = useState<ComponentItem[]>([...CUSTOM_COMPONENTS]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'marketplace' | 'uploads'>('marketplace');
@@ -254,6 +254,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//K5347%20Integrated%203D%20Drawings%2020240220(1)%20(1).STEP'
           };
           
+          console.log("Custom Fork component:", CUSTOM_COMPONENTS[0]);
+          
           // Ensure Front Fork component is included in both arrays
           setUploadedModels([...CUSTOM_COMPONENTS, kingMeterComponent, ...modelComponents]);
           
@@ -286,6 +288,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   const handleComponentSelect = (component: ComponentItem) => {
     console.log('Component selected in Sidebar:', component.name);
+    console.log('Component details:', component);
     if (onSelectComponent) {
       onSelectComponent(component);
       toast.success(`Selected component: ${component.name}`);

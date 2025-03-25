@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Upload } from 'lucide-react';
 import { ComponentItem } from './Sidebar';
 import { DragDropZone } from './upload/DragDropZone';
+import { FileTypeGuide } from './upload/FileTypeGuide';
 import { 
   allowedModelTypes, 
   validateFile, 
@@ -66,6 +67,8 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   return (
     <div className="animate-fade-in">
       <form onSubmit={handleSubmit} className="space-y-4">
+        <FileTypeGuide />
+        
         <DragDropZone 
           file={file}
           setFile={setFile}
