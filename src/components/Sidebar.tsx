@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -194,6 +195,16 @@ const CUSTOM_COMPONENTS = [
     folder: 'Custom Components',
     shape: 'box' as const,
     modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//Frame.gltf'
+  },
+  {
+    id: 'kingmeter-handlebar',
+    name: 'King-Meter Handlebar',
+    type: 'GLTF',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//King-Meter%20integrated.png',
+    folder: 'Custom Components',
+    shape: 'box' as const,
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//Handlebar+HeadLight+SpeedController.gltf',
+    modelType: 'GLTF'
   }
 ];
 
