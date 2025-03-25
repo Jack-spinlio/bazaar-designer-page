@@ -1,12 +1,26 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PrefabSidebar } from '@/components/PrefabSidebar';
+import { PrefabSidebar, PrefabItem } from '@/components/PrefabSidebar';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const Prefabs = () => {
-  const handlePrefabSelected = (prefab) => {
+  const navigate = useNavigate();
+  const [selectedPrefab, setSelectedPrefab] = useState<PrefabItem | null>(null);
+
+  const handlePrefabSelected = (prefab: PrefabItem) => {
     console.log('Selected prefab:', prefab);
+    setSelectedPrefab(prefab);
+    
+    // Navigate to the edit page with the selected prefab
+    if (prefab.modelUrl) {
+      navigate('/edit', { state: { selectedPrefab: prefab } });
+      toast.success(`Loading ${prefab.name} in the editor`);
+    } else {
+      toast.error(`No model URL found for ${prefab.name}`);
+    }
   };
 
   return (

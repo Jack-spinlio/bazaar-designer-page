@@ -1,13 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout } from '@/components/Layout';
 import EditToolbar from '@/components/EditToolbar';
 import { Viewport } from '@/components/Viewport';
 import { ComponentItem } from '@/components/Sidebar';
+import { PrefabItem } from '@/components/PrefabSidebar';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useLocation } from 'react-router-dom';
 
 const Edit = () => {
   // Default Shimano motor model
@@ -22,8 +21,19 @@ const Edit = () => {
     shape: 'box' // Added the required shape property
   };
 
-  const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(defaultShimanoModel);
+  const location = useLocation();
+  const [selectedComponent, setSelectedComponent] = useState<ComponentItem | PrefabItem | null>(defaultShimanoModel);
   
+  // Check if there's a prefab passed from the Prefabs page
+  useEffect(() => {
+    if (location.state && location.state.selectedPrefab) {
+      const prefab = location.state.selectedPrefab as PrefabItem;
+      console.log('Received prefab from navigation:', prefab);
+      setSelectedComponent(prefab);
+      toast.success(`Loaded prefab: ${prefab.name}`);
+    }
+  }, [location.state]);
+
   const handleComponentPlaced = () => {
     setSelectedComponent(defaultShimanoModel);
   };
