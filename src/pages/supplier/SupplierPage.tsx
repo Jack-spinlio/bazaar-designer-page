@@ -14,10 +14,10 @@ const SupplierPage: React.FC = () => {
       <div className="fixed top-0 left-0 right-0 z-50 bg-white">
         <Header />
       </div>
-      {/* Content area below fixed header with padding for header height */}
-      <div className="flex flex-1 pt-[68px]">
+      {/* Content area below fixed header with padding for header height plus 10px gap */}
+      <div className="flex flex-1 pt-[78px]">
         {/* Fixed sidebar on the left */}
-        <div className="fixed left-0 top-[68px] h-[calc(100vh-68px)] z-40">
+        <div className="fixed left-0 top-[78px] h-[calc(100vh-78px)] z-40">
           <SupplierSidebar />
         </div>
         {/* Main content area with appropriate padding for sidebar */}
