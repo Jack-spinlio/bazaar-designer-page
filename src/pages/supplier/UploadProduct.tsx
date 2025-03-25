@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -7,13 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue
-} from '@/components/ui/select';
-import { 
   Dialog,
   DialogContent,
   DialogDescription,
@@ -21,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { ArrowLeft, Upload, AlertCircle, Plus } from 'lucide-react';
+import { ArrowLeft, Upload, AlertCircle, Plus, Search } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { ComponentItem } from '@/components/Sidebar';
 
@@ -90,6 +82,16 @@ const DEFAULT_COMPONENT_SUBCATEGORIES: ComponentSubcategory[] = [
   { id: 9, component_category: 16, name: 'External Battery', description: 'External mounted batteries' }
 ];
 
+// Interface for the unified component search item
+interface ComponentSearchItem {
+  id: string;
+  name: string;
+  type: 'group' | 'category' | 'subcategory';
+  parentId?: number;
+  originalId: number;
+  description?: string | null;
+}
+
 export const UploadProduct: React.FC = () => {
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
@@ -114,6 +116,11 @@ export const UploadProduct: React.FC = () => {
   const [componentSubcategories, setComponentSubcategories] = useState<ComponentSubcategory[]>([]);
   const [isLoadingSubcategories, setIsLoadingSubcategories] = useState(true);
   const [filteredSubcategories, setFilteredSubcategories] = useState<ComponentSubcategory[]>([]);
+  
+  // New state for unified component search
+  const [componentSearchItems, setComponentSearchItems] = useState<ComponentSearchItem[]>([]);
+  const [componentSearchTerm, setComponentSearchTerm] = useState('');
+  const [selectedComponent, setSelectedComponent] = useState<ComponentSearchItem | null>(null);
   
   // New state for dialogs
   const [showNewGroupDialog, setShowNewGroupDialog] = useState(false);
@@ -307,6 +314,139 @@ export const UploadProduct: React.FC = () => {
     fetchComponentSubcategories();
   }, []);
 
+  // Create unified searchable items from all component data
+  useEffect(() => {
+    if (!isLoadingGroups && !isLoadingCategories && !isLoadingSubcategories) {
+      const searchItems: ComponentSearchItem[] = [];
+      
+      // Add groups
+      componentGroups.forEach(group => {
+        searchItems.push({
+          id: `group-${group.id}`,
+          name: group.name || `Group ${group.id}`,
+          type: 'group',
+          originalId: group.id,
+          description: group.description
+        });
+      });
+      
+      // Add categories
+      componentCategories.forEach(category => {
+        searchItems.push({
+          id: `category-${category.id}`,
+          name: category.name || `Category ${category.id}`,
+          type: 'category',
+          parentId: category.component_group,
+          originalId: category.id,
+          description: category.description
+        });
+      });
+      
+      // Add subcategories
+      componentSubcategories.forEach(subcategory => {
+        searchItems.push({
+          id: `subcategory-${subcategory.id}`,
+          name: subcategory.name || `Subcategory ${subcategory.id}`,
+          type: 'subcategory',
+          parentId: subcategory.component_category,
+          originalId: subcategory.id,
+          description: subcategory.description
+        });
+      });
+      
+      setComponentSearchItems(searchItems);
+    }
+  }, [componentGroups, componentCategories, componentSubcategories, isLoadingGroups, isLoadingCategories, isLoadingSubcategories]);
+
+  // Filter component search items based on search term
+  const filteredComponentItems = componentSearchTerm.trim() === '' 
+    ? componentSearchItems 
+    : componentSearchItems.filter(item => 
+        item.name.toLowerCase().includes(componentSearchTerm.toLowerCase()) ||
+        item.description?.toLowerCase().includes(componentSearchTerm.toLowerCase())
+      );
+
+  // Handle component selection
+  const handleComponentSelection = (component: ComponentSearchItem) => {
+    setSelectedComponent(component);
+    
+    // Set appropriate values in productData
+    if (component.type === 'group') {
+      setProductData(prev => ({
+        ...prev,
+        componentGroup: component.originalId.toString(),
+        componentCategory: '',
+        componentSubcategory: ''
+      }));
+      
+      // Filter categories for this group
+      const filtered = componentCategories.filter(
+        category => category.component_group === component.originalId
+      );
+      setFilteredCategories(filtered);
+      setFilteredSubcategories([]);
+      
+    } else if (component.type === 'category') {
+      // Find parent group
+      const parentGroup = componentCategories.find(cat => cat.id === component.originalId)?.component_group;
+      
+      setProductData(prev => ({
+        ...prev,
+        componentGroup: parentGroup ? parentGroup.toString() : prev.componentGroup,
+        componentCategory: component.originalId.toString(),
+        componentSubcategory: ''
+      }));
+      
+      // Filter categories for the parent group (if found)
+      if (parentGroup) {
+        const filteredCats = componentCategories.filter(
+          category => category.component_group === parentGroup
+        );
+        setFilteredCategories(filteredCats);
+      }
+      
+      // Filter subcategories for this category
+      const filteredSubs = componentSubcategories.filter(
+        subcategory => subcategory.component_category === component.originalId
+      );
+      setFilteredSubcategories(filteredSubs);
+      
+    } else if (component.type === 'subcategory') {
+      // Find parent category
+      const parentCategory = componentSubcategories.find(sub => sub.id === component.originalId)?.component_category;
+      
+      // Find parent group if we have a parent category
+      let parentGroup = undefined;
+      if (parentCategory) {
+        parentGroup = componentCategories.find(cat => cat.id === parentCategory)?.component_group;
+      }
+      
+      setProductData(prev => ({
+        ...prev,
+        componentGroup: parentGroup ? parentGroup.toString() : prev.componentGroup,
+        componentCategory: parentCategory ? parentCategory.toString() : prev.componentCategory,
+        componentSubcategory: component.originalId.toString()
+      }));
+      
+      // Update filtered categories and subcategories
+      if (parentGroup) {
+        const filteredCats = componentCategories.filter(
+          category => category.component_group === parentGroup
+        );
+        setFilteredCategories(filteredCats);
+      }
+      
+      if (parentCategory) {
+        const filteredSubs = componentSubcategories.filter(
+          subcategory => subcategory.component_category === parentCategory
+        );
+        setFilteredSubcategories(filteredSubs);
+      }
+    }
+    
+    setComponentSearchTerm('');
+  };
+
   // Fetch unique product names and manufacturers for autosuggest
   useEffect(() => {
     const fetchProductSuggestions = async () => {
@@ -336,51 +476,6 @@ export const UploadProduct: React.FC = () => {
     fetchProductSuggestions();
   }, []);
 
-  // Filter categories based on selected component group
-  useEffect(() => {
-    if (productData.componentGroup) {
-      const groupId = parseInt(productData.componentGroup);
-      console.log('Filtering categories for group ID:', groupId);
-      const filtered = componentCategories.filter(
-        category => category.component_group === groupId
-      );
-      console.log('Filtered categories:', filtered);
-      setFilteredCategories(filtered);
-      
-      // Reset the component category and subcategory when group changes
-      setProductData(prev => ({
-        ...prev,
-        componentCategory: '',
-        componentSubcategory: ''
-      }));
-      
-      setFilteredSubcategories([]);
-    } else {
-      setFilteredCategories([]);
-    }
-  }, [productData.componentGroup, componentCategories]);
-
-  // Filter subcategories based on selected component category
-  useEffect(() => {
-    if (productData.componentCategory) {
-      const categoryId = parseInt(productData.componentCategory);
-      console.log('Filtering subcategories for category ID:', categoryId);
-      const filtered = componentSubcategories.filter(
-        subcategory => subcategory.component_category === categoryId
-      );
-      console.log('Filtered subcategories:', filtered);
-      setFilteredSubcategories(filtered);
-      
-      // Reset the component subcategory when category changes
-      setProductData(prev => ({
-        ...prev,
-        componentSubcategory: ''
-      }));
-    } else {
-      setFilteredSubcategories([]);
-    }
-  }, [productData.componentCategory, componentSubcategories]);
-  
   // This is a simplified mapping for demo purposes based on the list provided
   useEffect(() => {
     // Sample variant data based on the list provided
@@ -398,65 +493,55 @@ export const UploadProduct: React.FC = () => {
       'Seat Post': ['Standard', 'Layback', 'Integrated Light', 'Dropper', 'Suspension']
     };
     
-    // Find the variant options based on selected category
-    if (productData.componentCategory) {
+    // Find the variant options based on selected category or subcategory
+    let variantKey = '';
+    
+    if (selectedComponent) {
+      variantKey = selectedComponent.name;
+    } else if (productData.componentSubcategory) {
+      const subcategoryId = parseInt(productData.componentSubcategory);
+      const selectedSubcategory = componentSubcategories.find(sub => sub.id === subcategoryId);
+      if (selectedSubcategory?.name) {
+        variantKey = selectedSubcategory.name;
+      }
+    } else if (productData.componentCategory) {
       const categoryId = parseInt(productData.componentCategory);
       const selectedCategory = componentCategories.find(cat => cat.id === categoryId);
+      if (selectedCategory?.name) {
+        variantKey = selectedCategory.name;
+      }
+    } else if (productData.componentGroup) {
+      const groupId = parseInt(productData.componentGroup);
+      const selectedGroup = componentGroups.find(group => group.id === groupId);
+      if (selectedGroup?.name) {
+        variantKey = selectedGroup.name;
+      }
+    }
+    
+    if (variantKey && variantMapping[variantKey]) {
+      setAvailableVariants(variantMapping[variantKey]);
+    } else {
+      // Check if we can match any partial keys
+      const matchingKeys = Object.keys(variantMapping).filter(key => 
+        variantKey.includes(key) || key.includes(variantKey)
+      );
       
-      if (selectedCategory && selectedCategory.name && variantMapping[selectedCategory.name]) {
-        setAvailableVariants(variantMapping[selectedCategory.name]);
+      if (matchingKeys.length > 0) {
+        // Combine variants from all matching keys
+        const combinedVariants = matchingKeys.flatMap(key => variantMapping[key]);
+        setAvailableVariants([...new Set(combinedVariants)]);
       } else {
         setAvailableVariants([]);
       }
-      
-      setSelectedVariants([]);
     }
-  }, [productData.componentCategory, componentCategories]);
+    
+  }, [selectedComponent, productData.componentGroup, productData.componentCategory, productData.componentSubcategory, componentGroups, componentCategories, componentSubcategories]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     setProductData(prev => ({
       ...prev,
       [id]: value
-    }));
-  };
-  
-  const handleComponentGroupChange = (value: string) => {
-    if (value === 'new') {
-      setShowNewGroupDialog(true);
-      return;
-    }
-    
-    console.log("Selected component group:", value);
-    setProductData(prev => ({
-      ...prev,
-      componentGroup: value
-    }));
-  };
-  
-  const handleComponentCategoryChange = (value: string) => {
-    if (value === 'new') {
-      setShowNewCategoryDialog(true);
-      return;
-    }
-    
-    console.log("Selected component category:", value);
-    setProductData(prev => ({
-      ...prev,
-      componentCategory: value
-    }));
-  };
-  
-  const handleComponentSubcategoryChange = (value: string) => {
-    if (value === 'new') {
-      setShowNewSubcategoryDialog(true);
-      return;
-    }
-    
-    console.log("Selected component subcategory:", value);
-    setProductData(prev => ({
-      ...prev,
-      componentSubcategory: value
     }));
   };
   
@@ -814,474 +899,4 @@ export const UploadProduct: React.FC = () => {
       } else {
         navigate('/supplier/products');
       }
-    } catch (error: any) {
-      console.error('Error uploading product:', error);
-      toast.error(`Upload failed: ${error.message || 'Unknown error'}`);
-      setIsUploading(false);
     }
-  };
-  
-  return <div className="text-left">
-      <div className="flex items-center mb-6">
-        <h1 className="text-2xl font-bold">Upload New Product</h1>
-      </div>
-
-      <div className="bg-white p-6 rounded-lg shadow-sm">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="name">Product Name</Label>
-                  <Input 
-                    id="name" 
-                    placeholder="e.g., Carbon Fiber Handlebar" 
-                    value={productData.name}
-                    onChange={handleChange}
-                    suggestions={productNameSuggestions}
-                    onSelectSuggestion={(suggestion) => {
-                      setProductData(prev => ({
-                        ...prev,
-                        name: suggestion
-                      }));
-                    }}
-                    required 
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="price">Price ($)</Label>
-                  <Input 
-                    id="price" 
-                    type="number" 
-                    min="0.01" 
-                    step="0.01" 
-                    placeholder="e.g., 99.99" 
-                    value={productData.price}
-                    onChange={handleChange}
-                    required 
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="manufacturer">Manufacturer</Label>
-                  <Input 
-                    id="manufacturer" 
-                    placeholder="e.g., Shimano" 
-                    value={productData.manufacturer}
-                    onChange={handleChange}
-                    suggestions={manufacturerSuggestions}
-                    onSelectSuggestion={(suggestion) => {
-                      setProductData(prev => ({
-                        ...prev,
-                        manufacturer: suggestion
-                      }));
-                    }}
-                    required 
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="componentGroup">Component Group</Label>
-                  {isLoadingGroups ? (
-                    <div className="flex items-center text-gray-500 text-sm mt-1">
-                      <div className="animate-spin mr-2">
-                        <svg className="h-4 w-4" viewBox="0 0 24 24">
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
-                        </svg>
-                      </div>
-                      Loading component groups...
-                    </div>
-                  ) : (
-                    <Select 
-                      value={productData.componentGroup} 
-                      onValueChange={handleComponentGroupChange}
-                    >
-                      <SelectTrigger className="text-left bg-white">
-                        <SelectValue placeholder="Select a component group" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white">
-                        {componentGroups.length > 0 ? (
-                          <>
-                            {componentGroups.map(group => (
-                              <SelectItem key={group.id} value={group.id.toString()}>
-                                {group.name || `Group ${group.id}`}
-                              </SelectItem>
-                            ))}
-                            <SelectItem key="new-group" value="new" isNewItem>
-                              Add new component group
-                            </SelectItem>
-                          </>
-                        ) : (
-                          <div className="p-2 text-center text-sm text-red-500 flex items-center justify-center">
-                            <AlertCircle className="h-4 w-4 mr-2" />
-                            No component groups available
-                          </div>
-                        )}
-                      </SelectContent>
-                    </Select>
-                  )}
-                </div>
-                
-                {productData.componentGroup && (
-                  <div>
-                    <Label htmlFor="componentCategory">Component Category</Label>
-                    {isLoadingCategories ? (
-                      <div className="flex items-center text-gray-500 text-sm mt-1">
-                        <div className="animate-spin mr-2">
-                          <svg className="h-4 w-4" viewBox="0 0 24 24">
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            ></path>
-                          </svg>
-                        </div>
-                        Loading component categories...
-                      </div>
-                    ) : (
-                      <Select 
-                        value={productData.componentCategory} 
-                        onValueChange={handleComponentCategoryChange}
-                      >
-                        <SelectTrigger className="text-left bg-white">
-                          <SelectValue placeholder="Select a component category" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white">
-                          {filteredCategories.length > 0 ? (
-                            <>
-                              {filteredCategories.map(category => (
-                                <SelectItem key={category.id} value={category.id.toString()}>
-                                  {category.name || `Category ${category.id}`}
-                                </SelectItem>
-                              ))}
-                              <SelectItem key="new-category" value="new" isNewItem>
-                                Add new category
-                              </SelectItem>
-                            </>
-                          ) : (
-                            <div className="p-2 text-center text-sm text-gray-500 flex items-center justify-center">
-                              <AlertCircle className="h-4 w-4 mr-2" />
-                              No categories available for this group
-                            </div>
-                          )}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </div>
-                )}
-                
-                {productData.componentCategory && filteredSubcategories.length > 0 && (
-                  <div>
-                    <Label htmlFor="componentSubcategory">Component Subcategory</Label>
-                    {isLoadingSubcategories ? (
-                      <div className="flex items-center text-gray-500 text-sm mt-1">
-                        <div className="animate-spin mr-2">
-                          <svg className="h-4 w-4" viewBox="0 0 24 24">
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="currentColor"
-                              strokeWidth="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="currentColor"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            ></path>
-                          </svg>
-                        </div>
-                        Loading component subcategories...
-                      </div>
-                    ) : (
-                      <Select 
-                        value={productData.componentSubcategory} 
-                        onValueChange={handleComponentSubcategoryChange}
-                      >
-                        <SelectTrigger className="text-left bg-white">
-                          <SelectValue placeholder="Select a component subcategory" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white">
-                          {filteredSubcategories.map(subcategory => (
-                            <SelectItem key={subcategory.id} value={subcategory.id.toString()}>
-                              {subcategory.name || `Subcategory ${subcategory.id}`}
-                            </SelectItem>
-                          ))}
-                          <SelectItem key="new-subcategory" value="new" isNewItem>
-                            Add new subcategory
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </div>
-                )}
-                
-                {availableVariants.length > 0 && (
-                  <div>
-                    <Label>Variants</Label>
-                    <div className="grid grid-cols-2 gap-2 mt-2">
-                      {availableVariants.map(variant => (
-                        <div 
-                          key={variant}
-                          className={`border rounded-md p-2 cursor-pointer text-sm ${
-                            selectedVariants.includes(variant) 
-                              ? 'bg-black text-white' 
-                              : 'bg-white'
-                          }`}
-                          onClick={() => handleVariantToggle(variant)}
-                        >
-                          {variant}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="description">Product Description</Label>
-                <Textarea 
-                  id="description" 
-                  placeholder="Describe your product in detail..." 
-                  className="h-32 text-left"
-                  value={productData.description}
-                  onChange={handleChange}
-                  required 
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="product-image">Product Image</Label>
-                <div className="mt-1 flex items-center">
-                  <label className="block w-full">
-                    <div className="flex flex-col items-center justify-center h-32 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
-                      {imagePreview ? (
-                        <img src={imagePreview} alt="Preview" className="h-full object-contain" />
-                      ) : (
-                        <div className="space-y-1 text-center p-4">
-                          <Upload className="mx-auto h-8 w-8 text-gray-400" />
-                          <div className="text-sm text-gray-600">
-                            <span className="text-black font-medium">Click to upload</span> or drag and drop
-                          </div>
-                          <p className="text-xs text-gray-500">
-                            PNG, JPG, WEBP up to 10MB
-                          </p>
-                        </div>
-                      )}
-                      <Input 
-                        id="product-image" 
-                        type="file" 
-                        accept="image/*" 
-                        className="hidden" 
-                        onChange={handleImageChange} 
-                      />
-                    </div>
-                  </label>
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="model-file">3D Model File (optional)</Label>
-                <div className="mt-1">
-                  <label className="block w-full">
-                    <div className="flex items-center justify-center h-12 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:bg-gray-50">
-                      <div className="space-y-1 text-center">
-                        <div className="text-sm text-gray-600 flex items-center">
-                          <Upload className="h-4 w-4 mr-1 text-gray-400" />
-                          <span className="text-black font-medium">Upload 3D model</span>
-                        </div>
-                      </div>
-                      <Input 
-                        id="model-file" 
-                        type="file" 
-                        accept=".obj,.glb,.gltf,.stl" 
-                        className="hidden" 
-                        onChange={handleModelFileChange}
-                      />
-                    </div>
-                  </label>
-                </div>
-                <p className="text-xs text-gray-500 mt-1 text-left">
-                  {modelFile ? `Selected: ${modelFile.name}` : 'Supported formats: OBJ, GLB, GLTF, STL'}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-end pt-4">
-            <Button type="button" variant="outline" className="mr-2" onClick={() => navigate('/supplier/products')}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isUploading} className="bg-black hover:bg-black/90">
-              {isUploading ? 'Uploading...' : 'Upload Product'}
-            </Button>
-          </div>
-        </form>
-      </div>
-      
-      {/* Dialog for adding new component group */}
-      <Dialog open={showNewGroupDialog} onOpenChange={setShowNewGroupDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Component Group</DialogTitle>
-            <DialogDescription>
-              Create a new component group for your products.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="new-group-name">Group Name</Label>
-              <Input
-                id="new-group-name"
-                placeholder="e.g., Suspension"
-                value={newItemName}
-                onChange={(e) => setNewItemName(e.target.value)}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="new-group-desc">Description (optional)</Label>
-              <Textarea
-                id="new-group-desc"
-                placeholder="Description of the component group"
-                value={newItemDescription}
-                onChange={(e) => setNewItemDescription(e.target.value)}
-              />
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => {
-              setNewItemName('');
-              setNewItemDescription('');
-              setShowNewGroupDialog(false);
-            }}>
-              Cancel
-            </Button>
-            <Button type="button" onClick={addNewGroup}>
-              Add Group
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Dialog for adding new component category */}
-      <Dialog open={showNewCategoryDialog} onOpenChange={setShowNewCategoryDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Category</DialogTitle>
-            <DialogDescription>
-              Create a new category for the selected component group.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="new-category-name">Category Name</Label>
-              <Input
-                id="new-category-name"
-                placeholder="e.g., Brakes"
-                value={newItemName}
-                onChange={(e) => setNewItemName(e.target.value)}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="new-category-desc">Description (optional)</Label>
-              <Textarea
-                id="new-category-desc"
-                placeholder="Description of the category"
-                value={newItemDescription}
-                onChange={(e) => setNewItemDescription(e.target.value)}
-              />
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => {
-              setNewItemName('');
-              setNewItemDescription('');
-              setShowNewCategoryDialog(false);
-            }}>
-              Cancel
-            </Button>
-            <Button type="button" onClick={addNewCategory}>
-              Add Category
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Dialog for adding new component subcategory */}
-      <Dialog open={showNewSubcategoryDialog} onOpenChange={setShowNewSubcategoryDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Subcategory</DialogTitle>
-            <DialogDescription>
-              Create a new subcategory for the selected category.
-            </DialogDescription>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="new-subcategory-name">Subcategory Name</Label>
-              <Input
-                id="new-subcategory-name"
-                placeholder="e.g., Disc Brakes"
-                value={newItemName}
-                onChange={(e) => setNewItemName(e.target.value)}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="new-subcategory-desc">Description (optional)</Label>
-              <Textarea
-                id="new-subcategory-desc"
-                placeholder="Description of the subcategory"
-                value={newItemDescription}
-                onChange={(e) => setNewItemDescription(e.target.value)}
-              />
-            </div>
-          </div>
-          
-          <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => {
-              setNewItemName('');
-              setNewItemDescription('');
-              setShowNewSubcategoryDialog(false);
-            }}>
-              Cancel
-            </Button>
-            <Button type="button" onClick={addNewSubcategory}>
-              Add Subcategory
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>;
-};

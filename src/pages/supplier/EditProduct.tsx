@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Upload } from 'lucide-react';
+import { ArrowLeft, Upload, Search } from 'lucide-react';
 
 // Sample products data - would typically come from an API/database
 const products = [{
@@ -146,7 +146,7 @@ export const EditProduct: React.FC = () => {
                     <SelectTrigger>
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent showSearch>
                       {categories.map(category => (
                         <SelectItem key={category.id} value={category.id}>{category.name}</SelectItem>
                       ))}
