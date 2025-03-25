@@ -133,7 +133,7 @@ const ProductDetail = () => {
   };
   
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white h-screen w-full overflow-y-auto">
       <header className="border-b border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Bazaar</h1>
@@ -154,7 +154,7 @@ const ProductDetail = () => {
         </div>
       </header>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 pb-20">
         <Link 
           to="/marketplace" 
           className="flex items-center text-sm text-gray-600 mb-4 hover:text-gray-900"

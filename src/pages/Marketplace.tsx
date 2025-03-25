@@ -215,7 +215,7 @@ const Marketplace = () => {
   const [searchQuery, setSearchQuery] = useState('');
   
   return (
-    <div className="bg-white min-h-screen w-full overflow-auto">
+    <div className="bg-white h-screen w-full overflow-y-auto">
       <MarketplaceHeader />
       
       <div className="w-full mx-auto py-6 px-4 sm:px-6 lg:px-8 pb-20">
