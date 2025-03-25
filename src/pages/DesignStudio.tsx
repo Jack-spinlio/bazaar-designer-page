@@ -161,7 +161,7 @@ const DesignStudio = () => {
 const components = [
   {
     id: "1",
-    image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#frame",
+    image: "https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png",
     component: "Frame",
     manufacturer: "ModMo",
     model: "Saigon S2",
