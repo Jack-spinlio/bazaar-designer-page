@@ -9,13 +9,13 @@ import { toast } from 'sonner';
 import { useLocation } from 'react-router-dom';
 
 const Edit = () => {
-  // Default Shimano motor model
+  // Default Shimano motor model from "My Uploads"
   const defaultShimanoModel: ComponentItem = {
-    id: 'shimano-ep800',
-    name: 'Shimano EP800',
+    id: 'shimano-ep800-uploaded',
+    name: 'Shimano Ep800',
     type: 'STL',
     thumbnail: '/placeholder.svg',
-    folder: 'Default Models',
+    folder: 'Uploads',
     modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
     modelType: 'STL',
     shape: 'box'

@@ -20,23 +20,23 @@ const DesignStudio = () => {
   const [selectedPrefab, setSelectedPrefab] = useState<PrefabItem | null>(null);
   const [selectedDesign, setSelectedDesign] = useState<SavedDesign | null>(null);
 
-  // Default bike model
-  const defaultBikeModel: ComponentItem = {
-    id: 'bike-15',
-    name: "Men's Urban eBike",
-    type: 'GLTF',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails/complete_bike.jpg',
-    folder: 'Bikes',
-    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/CompleteBike.gltf',
-    modelType: 'GLTF',
+  // Default Shimano motor model from "My Uploads"
+  const defaultShimanoModel: ComponentItem = {
+    id: 'shimano-ep800-uploaded',
+    name: 'Shimano Ep800',
+    type: 'STL',
+    thumbnail: '/placeholder.svg',
+    folder: 'Uploads',
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
+    modelType: 'STL',
     shape: 'box'
   };
 
   useEffect(() => {
     // Check if we have a selected model, if not use the default
     if (!selectedComponent) {
-      console.log('No component selected, using default bike model');
-      setSelectedComponent(defaultBikeModel);
+      console.log('No component selected, using default Shimano model');
+      setSelectedComponent(defaultShimanoModel);
     }
   }, []);
 
@@ -159,7 +159,7 @@ const DesignStudio = () => {
         {/* Main viewport */}
         <div className={`flex-1 ml-2.5 h-full bg-white rounded-2xl shadow-sm overflow-hidden`}>
           <Viewport 
-            selectedComponent={selectedComponent || defaultBikeModel} 
+            selectedComponent={selectedComponent || defaultShimanoModel} 
             onComponentPlaced={handleComponentPlaced} 
           />
         </div>

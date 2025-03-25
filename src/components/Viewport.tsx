@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, useHelper } from '@react-three/drei';
@@ -40,6 +39,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
   const componentRef = useRef<THREE.Group>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [loadAttempt, setLoadAttempt] = useState(0);
   
   useEffect(() => {
     if (componentRef.current) {
@@ -65,7 +65,13 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
         setIsLoading(true);
         setLoadError(null);
         
-        loadModel(component.modelUrl, modelType as any)
+        let modelUrl = component.modelUrl;
+        if (modelUrl.includes('1742796907092_Shimano_Ep800.stl')) {
+          modelUrl = `${modelUrl}?t=${Date.now()}`;
+          console.log(`Using cache-busted URL for Shimano model: ${modelUrl}`);
+        }
+        
+        loadModel(modelUrl, modelType as any)
           .then(model => {
             if (componentRef.current) {
               const box = new THREE.Box3().setFromObject(model);
@@ -74,7 +80,6 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
               
               console.log("Original model dimensions:", size);
               
-              // For bikes, use a different scale to make sure it's visible properly
               const targetWidth = component.folder === 'Bikes' ? 1.8 : 0.9;
               const targetHeight = component.folder === 'Bikes' ? 1.5 : 1.3;
               const targetLength = component.folder === 'Bikes' ? 3.0 : 2.0;
@@ -129,6 +134,28 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
             setLoadError(`Failed to load ${modelType} model: ${error.message || 'Unknown error'}`);
             toast.error(`Failed to load model: ${error.message || 'Unknown error'}`);
             
+            if (component.modelUrl.includes('1742796907092_Shimano_Ep800.stl') && loadAttempt < 2) {
+              console.log(`Retrying Shimano model load, attempt ${loadAttempt + 1}`);
+              setLoadAttempt(prev => prev + 1);
+              setTimeout(() => {
+                if (componentRef.current) {
+                  const shimanoPlaceholder = createComponentShape('box');
+                  shimanoPlaceholder.scale.set(1.0, 0.8, 0.6);
+                  shimanoPlaceholder.userData = { 
+                    componentId: id, 
+                    componentName: component.name,
+                    isComponent: true,
+                    isPlaceholder: true,
+                    originalModelUrl: component.modelUrl
+                  };
+                  componentRef.current.add(shimanoPlaceholder);
+                  toast.info(`Loaded placeholder for ${component.name}`);
+                }
+                setIsLoading(false);
+              }, 500);
+              return;
+            }
+            
             const componentMesh = createComponentShape(component.shape || 'box');
             componentMesh.userData = { 
               componentId: id, 
@@ -167,7 +194,7 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
       
       console.log(`Placed component "${component.name}" at position (${position.join(', ')})`);
     }
-  }, [component, position, id]);
+  }, [component, position, id, loadAttempt]);
 
   const handleClick = (e: any) => {
     if (isSnapPointMode) {
@@ -393,10 +420,8 @@ export const Viewport: React.FC<ViewportProps> = ({
     if ((isSupplierParameters || isDesignPage) && selectedComponent && !hasLoadedModel) {
       console.log("Loading product model:", selectedComponent);
       
-      // Clear any existing objects first
       setPlacedObjects([]);
       
-      // Then add the selected component
       setPlacedObjects([
         { 
           id: `model-${Date.now()}`, 

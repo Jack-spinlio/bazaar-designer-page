@@ -29,17 +29,17 @@ export const MainContent: React.FC<MainContentProps> = ({
     location.pathname !== '/settings' &&
     location.pathname !== '/uploads';
 
-  // Define the default Shimano motor model for the design page
-  const defaultShimanoModel: ComponentItem | null = location.pathname === '/design' ? {
-    id: 'shimano-ep800',
-    name: 'Shimano EP800',
+  // Define the Shimano motor model from "My Uploads" as the default model
+  const defaultShimanoModel: ComponentItem | null = {
+    id: 'shimano-ep800-uploaded',
+    name: 'Shimano Ep800',
     type: 'STL',
     thumbnail: '/placeholder.svg',
-    folder: 'Default Models',
+    folder: 'Uploads',
     modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
     modelType: 'STL',
     shape: 'box'
-  } : null;
+  };
 
   console.log('MainContent - Current pathname:', location.pathname);
   console.log('MainContent - Default model:', defaultShimanoModel);

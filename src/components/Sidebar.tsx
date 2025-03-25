@@ -179,6 +179,16 @@ const BASIC_SHAPES = [
 
 const CUSTOM_COMPONENTS = [
   {
+    id: 'shimano-ep800-uploaded',
+    name: 'Shimano Ep800',
+    type: 'STL',
+    thumbnail: '/placeholder.svg',
+    folder: 'Uploads',
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
+    modelType: 'STL',
+    shape: 'box'
+  },
+  {
     id: 'custom-fork-1',
     name: 'Front Fork',
     type: 'OBJ',
