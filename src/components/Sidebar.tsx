@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -253,12 +254,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
             modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//K5347%20Integrated%203D%20Drawings%2020240220(1)%20(1).STEP'
           };
           
-          // Update uploadedModels with the custom fork component included
+          // Ensure Front Fork component is included in both arrays
           setUploadedModels([...CUSTOM_COMPONENTS, kingMeterComponent, ...modelComponents]);
-          setComponents(prev => {
-            const filteredComponents = prev.filter(comp => !comp.id.startsWith('supabase-') && !comp.id.startsWith('uploaded-') && comp.id !== 'king-meter-k5347');
-            return [...filteredComponents, kingMeterComponent, ...modelComponents];
-          });
+          
+          // Update components without duplicating
+          const filteredComponents = components.filter(comp => 
+            !comp.id.startsWith('supabase-') && 
+            !comp.id.startsWith('uploaded-') && 
+            comp.id !== 'king-meter-k5347' &&
+            comp.id !== 'custom-fork-1'
+          );
+          setComponents([...filteredComponents, ...CUSTOM_COMPONENTS, kingMeterComponent, ...modelComponents]);
         }
       } catch (error) {
         console.error('Error fetching uploaded models:', error);
@@ -341,23 +347,21 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     ))}
                   </div>
                 ) : (
-                  !searchQuery && (
-                    <div className="grid grid-cols-2 gap-3 pr-2">
-                      {SHIMANO_COMPONENTS.map(component => (
-                        <div 
-                          key={component.id} 
-                          onClick={() => handleComponentSelect(component)} 
-                          className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
-                        >
-                          <div className="w-full h-24 mb-2">
-                            <img src={component.thumbnail} alt={component.name} className="w-full h-full object-cover rounded-md" />
-                          </div>
-                          <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
-                          <span className="text-xs text-center text-gray-500">{component.type}</span>
+                  <div className="grid grid-cols-2 gap-3 pr-2">
+                    {SHIMANO_COMPONENTS.map(component => (
+                      <div 
+                        key={component.id} 
+                        onClick={() => handleComponentSelect(component)} 
+                        className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
+                      >
+                        <div className="w-full h-24 mb-2">
+                          <img src={component.thumbnail} alt={component.name} className="w-full h-full object-cover rounded-md" />
                         </div>
-                      ))}
-                    </div>
-                  )
+                        <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
+                        <span className="text-xs text-center text-gray-500">{component.type}</span>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </ScrollArea>
             </TabsContent>
