@@ -54,56 +54,56 @@ const drivetrainComponents = [
   {
     id: 'dt-1',
     name: 'Shimano 105 Front Calliper',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20front%20calliper.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/105%20front%20calliper.jpeg',
     price: 55,
     manufacturer: 'Shimano'
   },
   {
     id: 'dt-2',
     name: 'Shimano 105 Rear Hub',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20hub.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/105%20hub.jpeg',
     price: 89,
     manufacturer: 'Shimano'
   },
   {
     id: 'dt-3',
     name: 'Shimano XTR Cassette',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//cassette.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/cassette.jpeg',
     price: 112,
     manufacturer: 'Shimano'
   },
   {
     id: 'dt-4',
     name: 'Shimano CUES Road Bike Lever',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//CUES%20lever.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/CUES%20lever.jpeg',
     price: 78,
     manufacturer: 'Shimano'
   },
   {
     id: 'dt-5',
     name: 'Shimano Dura-Ace Calliper',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Dura-ace%20calliper.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/Dura-ace%20calliper.jpeg',
     price: 195,
     manufacturer: 'Shimano'
   },
   {
     id: 'dt-6',
     name: 'Shimano GRX Pedals',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//GRX%20Pedals.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/GRX%20Pedals.jpeg',
     price: 95,
     manufacturer: 'Shimano'
   },
   {
     id: 'dt-7',
     name: 'Shimano XTR Derailleur',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//xrt%20di2%20deralier.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/xrt%20di2%20deralier.jpeg',
     price: 210,
     manufacturer: 'Shimano'
   },
   {
     id: 'dt-8',
     name: 'Shimano XTR Lever',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//xtra%20lever.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/xtra%20lever.jpeg',
     price: 145,
     manufacturer: 'Shimano'
   }
@@ -167,44 +167,45 @@ const eBikeComponents = [
   {
     id: 'ebc-1',
     name: 'Shimano eBike Display',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//sim%20disp.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/sim%20disp.jpeg',
     price: 182,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-2',
     name: 'Shimano Steps 504Wh Battery',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//504wh.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/504wh.jpeg',
     price: 435,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-3',
     name: 'Shimano 630Wh Battery',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//630wh.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/630wh.jpeg',
     price: 520,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-4',
     name: 'Shimano Di2 Switch',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Di2%20Switch.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/Di2%20Switch.jpeg',
     price: 85,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-5',
     name: 'Shimano STEPS Switch',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//disp.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/disp.jpeg',
     price: 95,
     manufacturer: 'Shimano'
   },
   {
     id: 'ebc-6',
     name: 'Shimano EP8 Motor',
-    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//EP8.jpeg',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/EP8.jpeg',
     price: 610,
-    manufacturer: 'Shimano'
+    manufacturer: 'Shimano',
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl'
   }
 ];
 

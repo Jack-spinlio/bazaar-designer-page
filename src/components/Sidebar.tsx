@@ -14,7 +14,7 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-1',
     name: 'Shimano 105 Front Calliper',
     type: 'BRAKE',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20front%20calliper.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/105%20front%20calliper.jpeg',
     folder: 'Brakes',
     shape: 'box' as const
   },
@@ -22,7 +22,7 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-2',
     name: 'Shimano 105 Rear Hub',
     type: 'HUB',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20hub.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/105%20hub.jpeg',
     folder: 'Wheels',
     shape: 'cylinder' as const
   },
@@ -30,7 +30,7 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-3',
     name: 'Shimano Steps 504Wh Battery',
     type: 'BATTERY',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//504wh.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/504wh.jpeg',
     folder: 'eBike',
     shape: 'box' as const
   },
@@ -38,7 +38,7 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-4',
     name: 'Shimano 630Wh Battery',
     type: 'BATTERY',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//630wh.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/630wh.jpeg',
     folder: 'eBike',
     shape: 'box' as const
   },
@@ -46,7 +46,7 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-5',
     name: 'Shimano XTR Cassette',
     type: 'DRIVETRAIN',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//cassette.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/cassette.jpeg',
     folder: 'Drivetrain',
     shape: 'cylinder' as const
   },
@@ -54,7 +54,7 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-6',
     name: 'Shimano CUES Road Bike Lever',
     type: 'CONTROL',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//CUES%20lever.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/CUES%20lever.jpeg',
     folder: 'Controls',
     shape: 'box' as const
   },
@@ -62,7 +62,7 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-7',
     name: 'Shimano Di2 Switch',
     type: 'CONTROL',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Di2%20Switch.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/Di2%20Switch.jpeg',
     folder: 'Controls',
     shape: 'box' as const
   },
@@ -70,7 +70,7 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-8',
     name: 'Shimano STEPS Switch',
     type: 'CONTROL',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//disp.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/disp.jpeg',
     folder: 'eBike',
     shape: 'box' as const
   },
@@ -78,7 +78,7 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-9',
     name: 'Shimano Dura-Ace Calliper',
     type: 'BRAKE',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Dura-ace%20calliper.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/Dura-ace%20calliper.jpeg',
     folder: 'Brakes',
     shape: 'box' as const
   },
@@ -86,15 +86,16 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-10',
     name: 'Shimano EP8 Motor',
     type: 'MOTOR',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//EP8.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/EP8.jpeg',
     folder: 'eBike',
-    shape: 'box' as const
+    shape: 'box' as const,
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl'
   },
   {
     id: 'shimano-11',
     name: 'Shimano GRX Pedals',
     type: 'PEDAL',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//GRX%20Pedals.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/GRX%20Pedals.jpeg',
     folder: 'Drivetrain',
     shape: 'box' as const
   },
@@ -102,7 +103,7 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-12',
     name: 'Shimano GRX Shifters',
     type: 'CONTROL',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//GRX%20shifter.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/GRX%20shifter.jpeg',
     folder: 'Controls',
     shape: 'box' as const
   },
@@ -110,7 +111,7 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-13',
     name: 'Shimano eBike Display',
     type: 'DISPLAY',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//sim%20disp.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/sim%20disp.jpeg',
     folder: 'eBike',
     shape: 'box' as const
   },
@@ -118,7 +119,7 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-14',
     name: 'Shimano XTR Derailleur',
     type: 'DRIVETRAIN',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//xrt%20di2%20deralier.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/xrt%20di2%20deralier.jpeg',
     folder: 'Drivetrain',
     shape: 'box' as const
   },
@@ -126,7 +127,7 @@ export const SHIMANO_COMPONENTS = [
     id: 'shimano-15',
     name: 'Shimano XTR Lever',
     type: 'CONTROL',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//xtra%20lever.jpeg',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images/xtra%20lever.jpeg',
     folder: 'Controls',
     shape: 'box' as const
   }
