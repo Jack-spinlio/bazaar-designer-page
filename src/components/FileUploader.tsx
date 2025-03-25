@@ -204,7 +204,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
           <Button 
             type="submit" 
             disabled={!file || !componentName || uploading}
-            className="bg-black hover:bg-black/90"
+            className="bg-black hover:bg-black/90 text-white"
           >
             {uploading ? 'Uploading...' : 'Upload Component'}
           </Button>
