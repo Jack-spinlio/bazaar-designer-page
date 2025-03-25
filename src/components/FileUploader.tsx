@@ -1,11 +1,18 @@
-import { useState, useRef } from 'react';
+
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
-import { Upload, X, FileType } from 'lucide-react';
+import { Upload } from 'lucide-react';
 import { ComponentItem } from './Sidebar';
-import { supabase } from '@/integrations/supabase/client';
+import { DragDropZone } from './upload/DragDropZone';
+import { 
+  allowedModelTypes, 
+  validateFile, 
+  getFileNameWithoutExtension,
+  uploadModelFile 
+} from '@/utils/fileUpload';
 
 interface FileUploaderProps {
   onClose: () => void;
@@ -16,55 +23,18 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   onClose,
   onFileUploaded 
 }) => {
-  const [dragging, setDragging] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [componentName, setComponentName] = useState('');
   const [uploading, setUploading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const allowedTypes = ['.stl', '.obj', '.step', '.stp'];
-  
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragging(true);
-  };
-  
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragging(false);
-  };
-  
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragging(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      validateAndSetFile(e.dataTransfer.files[0]);
-    }
-  };
-  
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      validateAndSetFile(e.target.files[0]);
-    }
-  };
   
   const validateAndSetFile = (file: File) => {
-    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
-    
-    if (!allowedTypes.includes(fileExtension)) {
-      toast.error(`Invalid file type. Please upload ${allowedTypes.join(', ')} files.`);
-      return;
+    if (validateFile(file, allowedModelTypes)) {
+      setFile(file);
+      
+      // Auto-set the component name from the file name (remove extension)
+      const nameWithoutExtension = getFileNameWithoutExtension(file.name);
+      setComponentName(nameWithoutExtension);
     }
-    
-    setFile(file);
-    
-    // Auto-set the component name from the file name (remove extension)
-    const nameWithoutExtension = file.name.replace(/\.[^/.]+$/, "");
-    setComponentName(nameWithoutExtension);
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -82,116 +52,26 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     
     setUploading(true);
     
-    try {
-      // Create a unique file path with timestamp to avoid collisions
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${Date.now()}_${componentName.replace(/\s+/g, '_')}.${fileExt}`;
-      
-      // Upload the file to Supabase storage
-      const { data, error } = await supabase.storage
-        .from('models')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: true
-        });
-      
-      if (error) {
-        throw error;
-      }
-      
-      // Get the public URL for the uploaded file
-      const { data: urlData } = supabase.storage
-        .from('models')
-        .getPublicUrl(filePath);
-      
-      // Create a new component
-      const newComponent: ComponentItem = {
-        id: `uploaded-${Date.now()}`,
-        name: componentName,
-        type: fileExt?.toUpperCase() || 'STL',
-        thumbnail: '/placeholder.svg',
-        folder: 'Uploads',
-        shape: 'box', // Default shape
-        modelUrl: urlData.publicUrl // Store the public URL
-      };
-      
-      // Add to components list
-      if (onFileUploaded) {
-        onFileUploaded(newComponent);
-      }
-      
+    const newComponent = await uploadModelFile(file, componentName);
+    
+    if (newComponent && onFileUploaded) {
+      onFileUploaded(newComponent);
       toast.success(`Component "${componentName}" uploaded successfully!`);
-      setUploading(false);
       onClose();
-    } catch (error: any) {
-      console.error('Error uploading file:', error);
-      toast.error(`Upload failed: ${error.message || 'Unknown error'}`);
-      setUploading(false);
     }
+    
+    setUploading(false);
   };
 
   return (
     <div className="animate-fade-in">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div
-          className={`border-2 border-dashed rounded-lg p-6 transition-colors flex flex-col items-center justify-center ${
-            dragging
-              ? 'border-app-blue bg-app-blue/5'
-              : file
-              ? 'border-green-500 bg-green-50'
-              : 'border-app-gray-light/50 hover:border-app-blue/50 hover:bg-app-blue/5'
-          }`}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-        >
-          {file ? (
-            <div className="text-center">
-              <FileType size={40} className="mx-auto mb-2 text-green-500" />
-              <p className="font-medium text-app-gray-dark">{file.name}</p>
-              <p className="text-sm text-app-gray-light">
-                {(file.size / 1024 / 1024).toFixed(2)} MB
-              </p>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="mt-2 text-red-500 hover:text-red-700 hover:bg-red-50"
-                onClick={() => setFile(null)}
-              >
-                Remove
-              </Button>
-            </div>
-          ) : (
-            <>
-              <Upload size={40} className="text-app-gray-light mb-2" />
-              <p className="text-sm text-center text-app-gray-dark mb-2">
-                Drag & drop a 3D model file here, or click to browse
-              </p>
-              <p className="text-xs text-center text-app-gray-light">
-                Supported formats: {allowedTypes.join(', ')}
-              </p>
-              <Input
-                type="file"
-                accept={allowedTypes.join(',')}
-                onChange={handleFileChange}
-                className="hidden"
-                id="file-upload"
-                ref={fileInputRef}
-              />
-              <Label htmlFor="file-upload" className="mt-4">
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                >
-                  Browse Files
-                </Button>
-              </Label>
-            </>
-          )}
-        </div>
+        <DragDropZone 
+          file={file}
+          setFile={setFile}
+          validateAndSetFile={validateAndSetFile}
+          allowedTypes={allowedModelTypes}
+        />
         
         <div className="space-y-2">
           <Label htmlFor="componentName">Component Name</Label>
