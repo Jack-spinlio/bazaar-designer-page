@@ -1,10 +1,10 @@
+
 import { Button } from "@/components/ui/button";
 import { 
   Pencil, 
   Bike, 
   Puzzle, 
   Bookmark, 
-  Clock, 
   Upload,
   FileSpreadsheet
 } from "lucide-react";
@@ -45,7 +45,11 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
     { id: "components", icon: Puzzle, label: "Components" },
     { id: "bom", icon: FileSpreadsheet, label: "BOM" },
     { id: "saved", icon: Bookmark, label: "Saved" },
-    { id: "timeline", icon: Clock, label: "Timeline" },
+    { 
+      id: "timeline", 
+      icon: () => <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//Vector%20(1).svg" alt="Timeline" className="w-5 h-5" />, 
+      label: "Timeline" 
+    },
   ];
 
   const handleComponentUploaded = (component: ComponentItem) => {
