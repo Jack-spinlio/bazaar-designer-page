@@ -29,10 +29,23 @@ export const MainContent: React.FC<MainContentProps> = ({
     location.pathname !== '/settings' &&
     location.pathname !== '/uploads';
 
+  // Define the default component for the design page
+  const defaultShimanoModel: ComponentItem | null = location.pathname === '/design' ? {
+    id: 'shimano-ep800',
+    name: 'Shimano EP800',
+    type: 'STL',
+    thumbnail: '/placeholder.svg',
+    folder: 'Default Models',
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//1742796907092_Shimano_Ep800.stl'
+  } : null;
+
   return (
     <main className="flex-1 flex flex-col relative rounded-2xl overflow-hidden ml-2.5 bg-white shadow-sm">
       {shouldRenderViewport && (
-        <Viewport selectedComponent={selectedComponent} onComponentPlaced={onComponentPlaced} />
+        <Viewport 
+          selectedComponent={selectedComponent || defaultShimanoModel} 
+          onComponentPlaced={onComponentPlaced} 
+        />
       )}
       {/* Only render children if they exist and we're not showing the viewport, or we're on a supplier route */}
       {children && (!shouldRenderViewport || isSupplierRoute) && children}

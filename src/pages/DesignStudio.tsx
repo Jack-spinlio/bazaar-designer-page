@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Viewport } from '@/components/Viewport';
 import { IconSidebar } from '@/components/IconSidebar';
@@ -18,6 +19,16 @@ const DesignStudio = () => {
   const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
   const [selectedPrefab, setSelectedPrefab] = useState<PrefabItem | null>(null);
   const [selectedDesign, setSelectedDesign] = useState<SavedDesign | null>(null);
+
+  // Default Shimano motor model
+  const defaultShimanoModel: ComponentItem = {
+    id: 'shimano-ep800',
+    name: 'Shimano EP800',
+    type: 'STL',
+    thumbnail: '/placeholder.svg',
+    folder: 'Default Models',
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//1742796907092_Shimano_Ep800.stl'
+  };
 
   // Handlers for component selection
   const handleComponentSelected = (component: ComponentItem) => {
@@ -136,7 +147,10 @@ const DesignStudio = () => {
 
         {/* Main viewport */}
         <div className={`flex-1 ml-2.5 h-full bg-white rounded-2xl shadow-sm overflow-hidden`}>
-          <Viewport selectedComponent={selectedComponent} onComponentPlaced={handleComponentPlaced} />
+          <Viewport 
+            selectedComponent={selectedComponent || defaultShimanoModel} 
+            onComponentPlaced={handleComponentPlaced} 
+          />
         </div>
       </div>
     </div>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Layout } from '@/components/Layout';
 import EditToolbar from '@/components/EditToolbar';
@@ -13,7 +12,17 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 
 const Edit = () => {
-  const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
+  // Default Shimano motor model
+  const defaultShimanoModel: ComponentItem = {
+    id: 'shimano-ep800',
+    name: 'Shimano EP800',
+    type: 'STL',
+    thumbnail: '/placeholder.svg',
+    folder: 'Default Models',
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//1742796907092_Shimano_Ep800.stl'
+  };
+
+  const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(defaultShimanoModel);
   const [snapPoints, setSnapPoints] = useState<SnapPoint[]>([]);
   const [isSnapPointMode, setIsSnapPointMode] = useState(false);
   const [selectedSnapPointId, setSelectedSnapPointId] = useState<string | null>(null);
@@ -27,7 +36,7 @@ const Edit = () => {
   const [snapPointName, setSnapPointName] = useState("New Snap Point");
   
   const handleComponentPlaced = () => {
-    setSelectedComponent(null);
+    setSelectedComponent(defaultShimanoModel);
   };
 
   const handleAddSnapPoint = (snapPoint: SnapPoint) => {

@@ -66,22 +66,17 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
               
               console.log("Original model dimensions:", size);
               
-              // Convert real-world mm to Three.js units (assuming 1 unit = 100mm)
               const targetWidth = 0.9;  // 90mm -> 0.9 units
               const targetHeight = 1.3; // 130mm -> 1.3 units
               const targetLength = 2.0; // 200mm -> 2.0 units
               
-              // Calculate scale factor based on dimensions
-              // Use the largest dimension for uniform scaling
               const maxDim = Math.max(size.x, size.y, size.z);
               const targetMaxDim = Math.max(targetWidth, targetHeight, targetLength);
               
               if (maxDim > 0) {
-                // Scale to match target dimensions while preserving aspect ratio
                 const scale = targetMaxDim / maxDim;
                 model.scale.set(scale, scale, scale);
                 
-                // After scaling, check new dimensions
                 const newBox = new THREE.Box3().setFromObject(model);
                 const newSize = new THREE.Vector3();
                 newBox.getSize(newSize);
@@ -90,7 +85,6 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
               
               model.position.set(0, 0, 0);
               
-              // Set userData on the model and all its children to enable snap point placement
               model.userData = { 
                 ...model.userData, 
                 componentId: id, 
@@ -137,10 +131,8 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
           isComponent: true
         };
         
-        // Scale basic shape to match real-world dimensions
         if (component.shape === 'box') {
-          // Set dimensions based on real-world size (in Three.js units)
-          componentMesh.scale.set(2.0, 1.3, 0.9); // 200mm x 130mm x 90mm
+          componentMesh.scale.set(2.0, 1.3, 0.9);
         }
         
         if (componentRef.current) {
@@ -162,7 +154,6 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
 
   const handleClick = (e: any) => {
     if (isSnapPointMode) {
-      // In snap point mode, don't select the object - let the snap point editor handle the click
       return;
     }
     
@@ -248,12 +239,10 @@ const Scene: React.FC<SceneProps> = ({
     if (parentObject && parentObject.userData?.componentId) {
       parentId = parentObject.userData.componentId;
       
-      // Calculate local position relative to parent
       const invMatrix = new THREE.Matrix4().copy(parentObject.matrixWorld).invert();
       localPosition = position.clone().applyMatrix4(invMatrix);
       
       if (normal) {
-        // Calculate local normal relative to parent
         const invNormalMatrix = new THREE.Matrix3().getNormalMatrix(invMatrix);
         localNormal = normal.clone().applyMatrix3(invNormalMatrix).normalize();
       }
@@ -362,10 +351,11 @@ export const Viewport: React.FC<ViewportProps> = ({
   const location = useLocation();
   const isEditPage = location.pathname === '/edit';
   const isSupplierParameters = location.pathname === '/supplier/parameters';
+  const isDesignPage = location.pathname === '/design';
   
   useEffect(() => {
-    if (isSupplierParameters && selectedComponent && !hasLoadedModel) {
-      console.log("Loading product model in parameters page:", selectedComponent);
+    if ((isSupplierParameters || isDesignPage) && selectedComponent && !hasLoadedModel) {
+      console.log("Loading product model:", selectedComponent);
       
       setPlacedObjects([
         { 
@@ -379,7 +369,7 @@ export const Viewport: React.FC<ViewportProps> = ({
       
     } else if (!hasLoadedModel) {
       try {
-        const defaultComponent: ComponentItem = {
+        const componentToPlace = selectedComponent || {
           id: 'cm18-default',
           name: 'CM18 3D Model',
           type: 'box',
@@ -387,8 +377,6 @@ export const Viewport: React.FC<ViewportProps> = ({
           folder: 'Default Models',
           shape: 'box',
         };
-        
-        const componentToPlace = selectedComponent || defaultComponent;
         
         setPlacedObjects([
           { 
@@ -400,7 +388,7 @@ export const Viewport: React.FC<ViewportProps> = ({
         
         setHasLoadedModel(true);
         
-        if (!isSupplierParameters && !selectedComponent) {
+        if (!isSupplierParameters && !isDesignPage && !selectedComponent) {
           const boxComponent: ComponentItem = {
             id: 'sample-box',
             name: 'Sample Box',
@@ -423,7 +411,7 @@ export const Viewport: React.FC<ViewportProps> = ({
         console.error('Error loading default models:', error);
       }
     }
-  }, [hasLoadedModel, selectedComponent, isSupplierParameters]);
+  }, [hasLoadedModel, selectedComponent, isSupplierParameters, isDesignPage]);
   
   useEffect(() => {
     if (selectedComponent) {
