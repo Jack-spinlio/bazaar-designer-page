@@ -1,4 +1,3 @@
-
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
@@ -23,13 +22,28 @@ export const loadModel = async (url: string, type: ModelType): Promise<THREE.Obj
     throw new Error('Invalid URL format');
   }
   
-  // Handle special case for CompleteBike.gltf which needs special treatment
+  // Force uppercase for the type to ensure consistency
+  const normalizedType = type.toUpperCase() as ModelType;
+  
+  // Special handling for the CompleteBike.gltf model which needs special treatment
   if (url.includes('CompleteBike.gltf')) {
-    console.log('Loading special bike model: CompleteBike.gltf');
+    console.log('Loading special bike model: CompleteBike.gltf with GLTF loader');
     return loadGLTFModel(url);
   }
   
-  switch (type.toUpperCase() as ModelType) {
+  // Determine file type from extension if not matched with the provided type
+  const extension = url.split('.').pop()?.toUpperCase();
+  console.log(`File extension detected: ${extension}`);
+  
+  // If the provided type doesn't match the file extension for certain types, prioritize the extension
+  if ((extension === 'GLTF' || extension === 'GLB') && 
+      (normalizedType !== 'GLTF' && normalizedType !== 'GLB')) {
+    console.log(`Type mismatch: Provided ${normalizedType} but file is ${extension}, using ${extension} loader`);
+    return loadGLTFModel(url);
+  }
+  
+  // Proceed with normal loading based on the type
+  switch (normalizedType) {
     case 'STL':
       console.log(`Using STL loader for ${url}`);
       return loadSTLModel(url);
@@ -46,8 +60,7 @@ export const loadModel = async (url: string, type: ModelType): Promise<THREE.Obj
       console.log(`Creating placeholder for STEP file: ${url}`);
       return createPlaceholderForSTEPModel(url);
     default:
-      // Try to infer the type from the URL
-      const extension = url.split('.').pop()?.toUpperCase();
+      // Try to infer the type from the URL extension if not already handled
       if (extension === 'GLTF' || extension === 'GLB') {
         console.log(`Inferred GLB/GLTF type from URL: ${url}`);
         return loadGLTFModel(url);
@@ -59,7 +72,7 @@ export const loadModel = async (url: string, type: ModelType): Promise<THREE.Obj
         return loadSTLModel(url);
       }
       
-      console.log(`Unknown model type: ${type}, defaulting to OBJ loader for ${url}`);
+      console.log(`Unknown model type: ${normalizedType}, defaulting to OBJ loader for ${url}`);
       return loadOBJModel(url);
   }
 };
@@ -253,6 +266,8 @@ const loadOBJModel = (url: string): Promise<THREE.Object3D> => {
 const loadGLTFModel = (url: string): Promise<THREE.Object3D> => {
   return new Promise((resolve, reject) => {
     try {
+      console.log(`Starting GLTF loader for URL: ${url}`);
+      
       // Initialize the GLTF loader with DRACO support
       const loader = new GLTFLoader();
       
@@ -278,11 +293,16 @@ const loadGLTFModel = (url: string): Promise<THREE.Object3D> => {
       loader.load(
         url,
         (gltf) => {
-          console.log('GLTF/GLB model loaded successfully');
+          console.log('GLTF/GLB model loaded successfully:', url);
+          
+          // Debug - log the scene hierarchy
+          console.log('Model structure:', JSON.stringify(getSceneGraph(gltf.scene), null, 2));
           
           // Ensure all materials are properly set up
           gltf.scene.traverse((child) => {
             if (child instanceof THREE.Mesh) {
+              console.log(`Processing mesh in GLTF: ${child.name || 'unnamed'}`);
+              
               // If the mesh has no material or uses a MeshBasicMaterial, replace it
               if (!child.material || child.material instanceof THREE.MeshBasicMaterial) {
                 child.material = new THREE.MeshStandardMaterial({
@@ -290,9 +310,14 @@ const loadGLTFModel = (url: string): Promise<THREE.Object3D> => {
                   metalness: 0.2,
                   roughness: 0.8,
                 });
+                console.log('Applied standard material to mesh');
               }
             }
           });
+          
+          // Add debug axes helper to model
+          const axesHelper = new THREE.AxesHelper(2);
+          gltf.scene.add(axesHelper);
           
           resolve(gltf.scene);
         },
@@ -313,3 +338,29 @@ const loadGLTFModel = (url: string): Promise<THREE.Object3D> => {
     }
   });
 };
+
+// Helper function to get the scene graph for debugging
+function getSceneGraph(object: THREE.Object3D): any {
+  const result: any = {
+    name: object.name || 'unnamed',
+    type: object.type,
+    children: []
+  };
+  
+  if (object instanceof THREE.Mesh) {
+    result.geometry = object.geometry ? object.geometry.type : 'No geometry';
+    result.material = object.material ? 
+                      (Array.isArray(object.material) ? 
+                       object.material.map(m => m.type) : 
+                       object.material.type) : 
+                      'No material';
+  }
+  
+  if (object.children && object.children.length > 0) {
+    object.children.forEach(child => {
+      result.children.push(getSceneGraph(child));
+    });
+  }
+  
+  return result;
+}

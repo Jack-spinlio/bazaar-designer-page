@@ -31,15 +31,26 @@ const Edit = () => {
         const prefab = location.state.selectedPrefab as PrefabItem;
         console.log('Received prefab from navigation:', prefab);
         
+        // Clone the prefab to avoid reference issues
+        const prefabToUse = {...prefab};
+        
         // Ensure we have modelType if it's not already specified
-        if (prefab.modelUrl && !prefab.modelType) {
-          const extension = prefab.modelUrl.split('.').pop()?.toUpperCase();
-          prefab.modelType = extension;
-          console.log(`Inferred model type from URL: ${extension}`);
+        if (prefabToUse.modelUrl && !prefabToUse.modelType) {
+          const extension = prefabToUse.modelUrl.split('.').pop()?.toUpperCase();
+          prefabToUse.modelType = extension;
+          console.log(`Inferred model type from URL extension: ${extension}`);
         }
         
-        setSelectedComponent(prefab);
-        toast.success(`Loaded prefab: ${prefab.name}`);
+        // For CompleteBike.gltf, ensure we're using GLTF type
+        if (prefabToUse.modelUrl && prefabToUse.modelUrl.includes('CompleteBike.gltf')) {
+          prefabToUse.modelType = 'GLTF';
+          console.log('Setting explicit GLTF type for CompleteBike model');
+        }
+        
+        // Set the component with processed data
+        setSelectedComponent(prefabToUse);
+        console.log('Setting component with prefab:', prefabToUse);
+        toast.success(`Loaded prefab: ${prefabToUse.name}`);
       } catch (error) {
         console.error('Error processing prefab:', error);
         toast.error('Failed to load the prefab model');

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +17,7 @@ const BIKE_PREFABS = [
     folder: 'Bikes',
     shape: 'box' as const,
     modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/CompleteBike.gltf',
-    modelType: 'GLTF'
+    modelType: 'GLTF' // Explicitly setting the model type
   },
   {
     id: 'bike-1',
