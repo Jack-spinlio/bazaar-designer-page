@@ -115,7 +115,6 @@ export const UploadProduct: React.FC = () => {
     description: ''
   });
   
-  // Text formatting state for description
   const [descriptionFormat, setDescriptionFormat] = useState({
     bold: false,
     italic: false,
@@ -363,7 +362,6 @@ export const UploadProduct: React.FC = () => {
   const handleComponentSelection = (component: ComponentSearchItem) => {
     setSelectedComponent(component);
     
-    // Update product data based on selected component
     if (component.type === 'group') {
       setProductData(prev => ({
         ...prev,
@@ -512,13 +510,11 @@ export const UploadProduct: React.FC = () => {
         setDescriptionFormat(prev => ({ ...prev, underline: !prev.underline }));
         break;
       case 'list':
-        // Add bullet points to each line
         const bulletLines = selectedText.split('\n').map(line => `• ${line}`).join('\n');
         newText = `${beforeText}${bulletLines}${afterText}`;
         newCursorPos = start + bulletLines.length;
         break;
       case 'ordered-list':
-        // Add numbers to each line
         const numberedLines = selectedText.split('\n').map((line, i) => `${i + 1}. ${line}`).join('\n');
         newText = `${beforeText}${numberedLines}${afterText}`;
         newCursorPos = start + numberedLines.length;
@@ -527,7 +523,6 @@ export const UploadProduct: React.FC = () => {
     
     setProductData(prev => ({ ...prev, description: newText }));
     
-    // After state update, reset cursor position
     setTimeout(() => {
       if (descriptionRef.current) {
         descriptionRef.current.focus();
@@ -591,14 +586,25 @@ export const UploadProduct: React.FC = () => {
   const handleModelFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const fileExt = file.name.split('.').pop()?.toLowerCase();
-      if (!['stl', 'obj', 'glb', 'gltf'].includes(fileExt || '')) {
-        toast.error('Unsupported file format. Please upload STL, OBJ, GLB, or GLTF files.');
-        return;
+      const fileExt = file.name.split('.').pop();
+      const filePath = `${Date.now()}_${productData.name.replace(/\s+/g, '_')}.${fileExt}`;
+      
+      const { data: modelData, error: modelError } = await supabase.storage
+        .from('product-models')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
+      
+      if (modelError) {
+        throw modelError;
       }
       
-      setModelFile(file);
-      toast.success(`3D model "${file.name}" selected`);
+      const { data: modelUrlData } = supabase.storage
+        .from('product-models')
+        .getPublicUrl(filePath);
+      
+      setModelFile(modelUrlData.publicUrl);
     }
   };
   
@@ -733,7 +739,6 @@ export const UploadProduct: React.FC = () => {
     }
   };
   
-  // Update handleSubmit to handle multiple images
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -756,7 +761,6 @@ export const UploadProduct: React.FC = () => {
       let modelUrl = '';
       let thumbnailUrls: string[] = [];
       
-      // Upload multiple images
       if (imagePreviews.length > 0) {
         for (let i = 0; i < imagePreviews.length; i++) {
           const imagePreview = imagePreviews[i];
@@ -808,7 +812,6 @@ export const UploadProduct: React.FC = () => {
       const selectedGroup = componentGroups.find(group => group.id.toString() === productData.componentGroup);
       const selectedCategory = componentCategories.find(category => category.id.toString() === productData.componentCategory);
       
-      // Update product insert to use first image as thumbnail
       const { data: insertedProduct, error: productError } = await supabase
         .from('products')
         .insert([{
@@ -842,23 +845,17 @@ export const UploadProduct: React.FC = () => {
       
       toast.success(`Product "${insertedProduct.name}" uploaded successfully!`);
       
-      // If we have additional images, store references in the database
       if (thumbnailUrls.length > 1) {
-        // Use the existing tables for storing additional product images
         for (const imageUrl of thumbnailUrls.slice(1)) {
           await supabase
             .from('products')
             .update({
-              // Just add a reference to the image URL
-              // Note: This is a temporary solution since there's no proper product_images table
-              // In a real app, you'd have a separate table for product images
               description: productData.description + `\n\n[Additional Image](${imageUrl})`
             })
             .eq('id', insertedProduct.id);
         }
       }
       
-      // Reset form completely
       setProductData({
         name: '',
         price: '',
@@ -880,4 +877,693 @@ export const UploadProduct: React.FC = () => {
         componentSubcategory: '',
         description: ''
       });
-      setImage
+      
+      setImagePreviews([]);
+      setModelFile(null);
+      setSelectedComponent(null);
+      setSelectedVariants([]);
+      setIsUploading(false);
+      
+      navigate('/supplier/products');
+    } catch (error) {
+      console.error('Error uploading product:', error);
+      toast.error('Failed to upload product');
+      setIsUploading(false);
+    }
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-2xl font-bold mb-6">Upload New Product</h1>
+      
+      <form onSubmit={handleSubmit} className="space-y-8">
+        <div className="bg-white p-6 rounded-lg shadow-sm border space-y-6">
+          <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="name">Product Name*</Label>
+              <Input 
+                id="name" 
+                value={productData.name} 
+                onChange={handleChange} 
+                placeholder="Enter product name"
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="manufacturer">Manufacturer</Label>
+              <Input 
+                id="manufacturer" 
+                value={productData.manufacturer} 
+                onChange={handleChange} 
+                placeholder="Enter manufacturer name"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="price">Price*</Label>
+              <div className="flex">
+                <select 
+                  className="bg-muted px-3 py-2 rounded-l-md border-r-0 border"
+                  value={productData.currency}
+                  onChange={(e) => setProductData(prev => ({ ...prev, currency: e.target.value }))}
+                >
+                  <option value="USD">$</option>
+                  <option value="EUR">€</option>
+                  <option value="GBP">£</option>
+                </select>
+                <Input 
+                  id="price" 
+                  type="number" 
+                  value={productData.price} 
+                  onChange={handleChange} 
+                  placeholder="0.00"
+                  className="rounded-l-none"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="brand">Brand</Label>
+              <Input 
+                id="brand" 
+                value={productData.brand} 
+                onChange={handleChange} 
+                placeholder="Enter brand name"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="sku">SKU</Label>
+              <Input 
+                id="sku" 
+                value={productData.sku} 
+                onChange={handleChange} 
+                placeholder="Enter product SKU"
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-6 rounded-lg shadow-sm border space-y-6">
+          <h2 className="text-xl font-semibold mb-4">Component Classification*</h2>
+          
+          <div className="space-y-4">
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="componentSearch">Search Components</Label>
+              <div className="relative">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="componentSearch"
+                  value={componentSearchTerm}
+                  onChange={(e) => setComponentSearchTerm(e.target.value)}
+                  placeholder="Search for component groups, categories, or subcategories"
+                  className="pl-10"
+                />
+              </div>
+              
+              {componentSearchTerm && (
+                <div className="mt-2 border rounded-md max-h-48 overflow-y-auto">
+                  {filteredComponentItems.length > 0 ? (
+                    <ul className="py-1">
+                      {filteredComponentItems.map((item) => (
+                        <li 
+                          key={item.id}
+                          className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                          onClick={() => handleComponentSelection(item)}
+                        >
+                          <span className={`inline-block w-2 h-2 rounded-full mr-2 ${
+                            item.type === 'group' ? 'bg-blue-500' : 
+                            item.type === 'category' ? 'bg-green-500' : 'bg-purple-500'
+                          }`}></span>
+                          <span>{item.name}</span>
+                          <span className="text-xs text-gray-500 ml-2">
+                            ({item.type})
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="px-3 py-2 text-gray-500">No results found</p>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="componentGroup">Component Group*</Label>
+                  <Button 
+                    type="button"
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setShowNewCategoryDialog(true)}
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    <span>Add New</span>
+                  </Button>
+                </div>
+                <select
+                  id="componentGroup"
+                  value={productData.componentGroup}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                  required
+                >
+                  <option value="">Select Component Group</option>
+                  {componentGroups.map((group) => (
+                    <option key={group.id} value={group.id.toString()}>
+                      {group.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="componentCategory">Component Category</Label>
+                  <Button 
+                    type="button"
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setShowNewCategoryDialog(true)}
+                    disabled={!productData.componentGroup}
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    <span>Add New</span>
+                  </Button>
+                </div>
+                <select
+                  id="componentCategory"
+                  value={productData.componentCategory}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                  disabled={!productData.componentGroup}
+                >
+                  <option value="">Select Category</option>
+                  {componentCategories
+                    .filter(cat => !productData.componentGroup || cat.component_group.toString() === productData.componentGroup)
+                    .map((category) => (
+                      <option key={category.id} value={category.id.toString()}>
+                        {category.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="componentSubcategory">Component Subcategory</Label>
+                  <Button 
+                    type="button"
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setShowNewSubcategoryDialog(true)}
+                    disabled={!productData.componentCategory}
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    <span>Add New</span>
+                  </Button>
+                </div>
+                <select
+                  id="componentSubcategory"
+                  value={productData.componentSubcategory}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                  disabled={!productData.componentCategory}
+                >
+                  <option value="">Select Subcategory</option>
+                  {componentSubcategories
+                    .filter(sub => !productData.componentCategory || sub.component_category.toString() === productData.componentCategory)
+                    .map((subcategory) => (
+                      <option key={subcategory.id} value={subcategory.id.toString()}>
+                        {subcategory.name}
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-6 rounded-lg shadow-sm border">
+          <h2 className="text-xl font-semibold mb-4">Variants</h2>
+          <div className="flex flex-wrap gap-2">
+            {availableVariants.map((variant) => (
+              <button
+                key={variant}
+                type="button"
+                className={`px-3 py-1.5 rounded-full text-sm ${
+                  selectedVariants.includes(variant)
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted text-muted-foreground'
+                }`}
+                onClick={() => handleVariantToggle(variant)}
+              >
+                {variant}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div className="bg-white p-6 rounded-lg shadow-sm border space-y-6">
+          <h2 className="text-xl font-semibold mb-4">Product Details</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="material">Material</Label>
+              <Input 
+                id="material" 
+                value={productData.material} 
+                onChange={handleChange} 
+                placeholder="e.g. Aluminum, Carbon Fiber"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="color">Color</Label>
+              <Input 
+                id="color" 
+                value={productData.color} 
+                onChange={handleChange} 
+                placeholder="e.g. Black, Red"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="surfaceFinish">Surface Finish</Label>
+              <Input 
+                id="surfaceFinish" 
+                value={productData.surfaceFinish} 
+                onChange={handleChange} 
+                placeholder="e.g. Matte, Glossy"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="weight">Weight</Label>
+              <Input 
+                id="weight" 
+                value={productData.weight} 
+                onChange={handleChange} 
+                placeholder="e.g. 350g"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="countryOfOrigin">Country of Origin</Label>
+              <Input 
+                id="countryOfOrigin" 
+                value={productData.countryOfOrigin} 
+                onChange={handleChange} 
+                placeholder="e.g. USA, Taiwan"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="application">Application</Label>
+              <Input 
+                id="application" 
+                value={productData.application} 
+                onChange={handleChange} 
+                placeholder="e.g. Mountain Biking, Road Cycling"
+              />
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Label htmlFor="description">Description</Label>
+              <div className="flex items-center gap-1 ml-2">
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="sm" 
+                  className={`p-1 ${descriptionFormat.bold ? 'bg-muted' : ''}`}
+                  onClick={() => handleFormatText('bold')}
+                >
+                  <Bold className="h-4 w-4" />
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="sm" 
+                  className={`p-1 ${descriptionFormat.italic ? 'bg-muted' : ''}`}
+                  onClick={() => handleFormatText('italic')}
+                >
+                  <Italic className="h-4 w-4" />
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="sm" 
+                  className={`p-1 ${descriptionFormat.underline ? 'bg-muted' : ''}`}
+                  onClick={() => handleFormatText('underline')}
+                >
+                  <Underline className="h-4 w-4" />
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="sm" 
+                  className="p-1"
+                  onClick={() => handleFormatText('list')}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+                <Button 
+                  type="button" 
+                  variant="ghost" 
+                  size="sm" 
+                  className="p-1"
+                  onClick={() => handleFormatText('ordered-list')}
+                >
+                  <ListOrdered className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <Textarea 
+              id="description" 
+              ref={descriptionRef}
+              value={productData.description} 
+              onChange={handleChange} 
+              placeholder="Enter product description (supports Markdown formatting)"
+              className="min-h-[150px]"
+            />
+          </div>
+        </div>
+        
+        <div className="bg-white p-6 rounded-lg shadow-sm border space-y-6">
+          <h2 className="text-xl font-semibold mb-4">Supply Chain Details</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="leadTime">Lead Time</Label>
+              <Input 
+                id="leadTime" 
+                value={productData.leadTime} 
+                onChange={handleChange} 
+                placeholder="e.g. 2-3 weeks"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="minOrderQuantity">Min. Order Quantity</Label>
+              <Input 
+                id="minOrderQuantity" 
+                value={productData.minOrderQuantity} 
+                onChange={handleChange} 
+                placeholder="e.g. 10 units"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="warrantyPeriod">Warranty Period</Label>
+              <Input 
+                id="warrantyPeriod" 
+                value={productData.warrantyPeriod} 
+                onChange={handleChange} 
+                placeholder="e.g. 2 years"
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white p-6 rounded-lg shadow-sm border space-y-6">
+          <h2 className="text-xl font-semibold mb-4">Product Images & 3D Model</h2>
+          
+          <div className="space-y-4">
+            <div>
+              <Label className="block mb-2">Product Images</Label>
+              <div 
+                className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+                onClick={triggerImageFileSelect}
+              >
+                <Upload className="h-8 w-8 mx-auto mb-2 text-gray-400" />
+                <p className="text-sm text-gray-600">
+                  Click to upload images, or drag and drop image files here
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  PNG, JPG, or WEBP up to 5MB each
+                </p>
+                <input 
+                  type="file"
+                  ref={productImageInputRef}
+                  onChange={handleImageChange}
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                />
+              </div>
+              
+              {imagePreviews.length > 0 && (
+                <div className="mt-4">
+                  <h3 className="text-sm font-medium mb-2">Selected Images</h3>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    {imagePreviews.map((preview, index) => (
+                      <div key={index} className="relative group">
+                        <img 
+                          src={preview} 
+                          alt={`Preview ${index}`} 
+                          className="aspect-square object-cover rounded-md border"
+                        />
+                        <button
+                          type="button"
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => removeImage(index)}
+                        >
+                          <AlertCircle className="h-4 w-4" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="pt-4 border-t">
+              <Label className="block mb-2">3D Model (Optional)</Label>
+              <div 
+                className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 transition-colors"
+                onClick={triggerModelFileSelect}
+              >
+                <div className="w-12 h-12 mx-auto mb-2 bg-gray-100 rounded-lg flex items-center justify-center">
+                  <span className="text-lg font-bold text-gray-400">3D</span>
+                </div>
+                <p className="text-sm text-gray-600">
+                  Click to upload a 3D model file
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  STL, OBJ, GLB, or GLTF up to 20MB
+                </p>
+                <input 
+                  type="file"
+                  ref={modelFileInputRef}
+                  onChange={handleModelFileChange}
+                  accept=".stl,.obj,.glb,.gltf"
+                  className="hidden"
+                />
+              </div>
+              
+              {modelFile && (
+                <div className="mt-4 p-3 bg-gray-50 rounded-lg flex items-center">
+                  <div className="w-10 h-10 bg-gray-100 rounded flex items-center justify-center mr-3">
+                    <span className="text-sm font-bold text-gray-500">3D</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{modelFile.name}</p>
+                    <p className="text-xs text-gray-500">{(modelFile.size / (1024 * 1024)).toFixed(2)} MB</p>
+                  </div>
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => setModelFile(null)}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex justify-end">
+          <Button 
+            type="submit" 
+            className="px-8"
+            disabled={isUploading}
+          >
+            {isUploading ? 'Uploading...' : 'Upload Product'}
+          </Button>
+        </div>
+      </form>
+      
+      <Dialog open={showNewGroupDialog} onOpenChange={setShowNewCategoryDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Component Group</DialogTitle>
+            <DialogDescription>
+              Create a new top-level component group
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="newGroupName">Group Name</Label>
+              <Input 
+                id="newGroupName" 
+                value={newItemName} 
+                onChange={(e) => setNewItemName(e.target.value)} 
+                placeholder="Enter component group name"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="newGroupDescription">Description (Optional)</Label>
+              <Textarea 
+                id="newGroupDescription" 
+                value={newItemDescription} 
+                onChange={(e) => setNewItemDescription(e.target.value)} 
+                placeholder="Describe this component group"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNewCategoryDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={addNewGroup}>
+              Add Group
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={showNewCategoryDialog} onOpenChange={setShowNewCategoryDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Component Category</DialogTitle>
+            <DialogDescription>
+              Create a new category within a component group
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="newCategoryParent">Parent Group</Label>
+              <select
+                id="newCategoryParent"
+                value={productData.componentGroup}
+                onChange={(e) => setProductData(prev => ({ ...prev, componentGroup: e.target.value }))}
+                className="w-full p-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">Select Component Group</option>
+                {componentGroups.map((group) => (
+                  <option key={group.id} value={group.id.toString()}>
+                    {group.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="newCategoryName">Category Name</Label>
+              <Input 
+                id="newCategoryName" 
+                value={newItemName} 
+                onChange={(e) => setNewItemName(e.target.value)} 
+                placeholder="Enter category name"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="newCategoryDescription">Description (Optional)</Label>
+              <Textarea 
+                id="newCategoryDescription" 
+                value={newItemDescription} 
+                onChange={(e) => setNewItemDescription(e.target.value)} 
+                placeholder="Describe this component category"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNewCategoryDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={addNewCategory} disabled={!productData.componentGroup}>
+              Add Category
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      <Dialog open={showNewSubcategoryDialog} onOpenChange={setShowNewSubcategoryDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Component Subcategory</DialogTitle>
+            <DialogDescription>
+              Create a new subcategory within a category
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="newSubcategoryParent">Parent Category</Label>
+              <select
+                id="newSubcategoryParent"
+                value={productData.componentCategory}
+                onChange={(e) => setProductData(prev => ({ ...prev, componentCategory: e.target.value }))}
+                className="w-full p-2 border rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+              >
+                <option value="">Select Component Category</option>
+                {componentCategories
+                  .filter(cat => !productData.componentGroup || cat.component_group.toString() === productData.componentGroup)
+                  .map((category) => (
+                    <option key={category.id} value={category.id.toString()}>
+                      {category.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="newSubcategoryName">Subcategory Name</Label>
+              <Input 
+                id="newSubcategoryName" 
+                value={newItemName} 
+                onChange={(e) => setNewItemName(e.target.value)} 
+                placeholder="Enter subcategory name"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="newSubcategoryDescription">Description (Optional)</Label>
+              <Textarea 
+                id="newSubcategoryDescription" 
+                value={newItemDescription} 
+                onChange={(e) => setNewItemDescription(e.target.value)} 
+                placeholder="Describe this component subcategory"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNewSubcategoryDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={addNewSubcategory} disabled={!productData.componentCategory}>
+              Add Subcategory
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
