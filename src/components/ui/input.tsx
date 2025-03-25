@@ -6,10 +6,11 @@ import { cn } from "@/lib/utils"
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   suggestions?: string[];
   onSelectSuggestion?: (suggestion: string) => void;
+  showSuggestionsOnFocus?: boolean;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, suggestions = [], onSelectSuggestion, ...props }, ref) => {
+  ({ className, type, suggestions = [], onSelectSuggestion, showSuggestionsOnFocus = true, ...props }, ref) => {
     const [showSuggestions, setShowSuggestions] = React.useState(false);
     const inputRef = React.useRef<HTMLInputElement>(null);
     const suggestionRef = React.useRef<HTMLDivElement>(null);
@@ -27,8 +28,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     // Filter suggestions based on input value
     const filteredSuggestions = React.useMemo(() => {
       if (!props.value || typeof props.value !== 'string') return suggestions;
+      const inputValue = props.value.toString().toLowerCase();
       return suggestions.filter(item => 
-        item.toLowerCase().includes(props.value?.toString().toLowerCase() || '')
+        item.toLowerCase().includes(inputValue)
       );
     }, [props.value, suggestions]);
 
@@ -60,7 +62,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className
           )}
           ref={mergedRef}
-          onFocus={() => setShowSuggestions(true)}
+          onFocus={() => showSuggestionsOnFocus && setShowSuggestions(true)}
+          onChange={(e) => {
+            if (props.onChange) {
+              props.onChange(e);
+            }
+            setShowSuggestions(true);
+          }}
           {...props}
         />
         {showSuggestions && filteredSuggestions.length > 0 && (

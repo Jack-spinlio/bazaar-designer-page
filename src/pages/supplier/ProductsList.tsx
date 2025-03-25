@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ProductCard } from '@/components/supplier/ProductCard';
 import { Input } from '@/components/ui/input';
@@ -14,7 +15,7 @@ interface Product {
   price: number;
   manufacturer: string;
   category: string;
-  thumbnail_url?: string; // Make thumbnail_url optional to match our usage
+  thumbnail_url?: string;
   subcategory?: string;
   variants?: string[];
 }

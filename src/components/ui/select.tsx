@@ -1,9 +1,10 @@
 
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
-import { Check, ChevronDown, ChevronUp, Plus } from "lucide-react"
+import { Check, ChevronDown, ChevronUp, Plus, Search } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { Input } from "./input"
 
 const Select = SelectPrimitive.Root
 
@@ -11,10 +12,17 @@ const SelectGroup = SelectPrimitive.Group
 
 const SelectValue = SelectPrimitive.Value
 
+interface SelectTriggerProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger> {
+  showSearch?: boolean;
+  onSearch?: (value: string) => void;
+  searchValue?: string;
+  searchPlaceholder?: string;
+}
+
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+  SelectTriggerProps
+>(({ className, children, showSearch, onSearch, searchValue, searchPlaceholder, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
@@ -66,10 +74,17 @@ const SelectScrollDownButton = React.forwardRef<
 SelectScrollDownButton.displayName =
   SelectPrimitive.ScrollDownButton.displayName
 
+interface SelectContentProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content> {
+  showSearch?: boolean;
+  onSearch?: (value: string) => void;
+  searchValue?: string;
+  searchPlaceholder?: string;
+}
+
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
+  SelectContentProps
+>(({ className, children, position = "popper", showSearch, onSearch, searchValue, searchPlaceholder, ...props }, ref) => (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
@@ -82,6 +97,20 @@ const SelectContent = React.forwardRef<
       position={position}
       {...props}
     >
+      {showSearch && (
+        <div className="px-2 pt-2 pb-1">
+          <div className="relative">
+            <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Input 
+              value={searchValue}
+              onChange={(e) => onSearch && onSearch(e.target.value)}
+              className="pl-8 h-8 text-sm"
+              placeholder={searchPlaceholder || "Search..."}
+              showSuggestionsOnFocus={false}
+            />
+          </div>
+        </div>
+      )}
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
         className={cn(
