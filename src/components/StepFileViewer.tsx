@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
-import { Info, FileWarning, FileIcon } from 'lucide-react';
+import { Info, FileIcon } from 'lucide-react';
 import { ComponentItem } from './Sidebar';
 
 interface StepFileViewerProps {
@@ -49,7 +49,10 @@ export const StepFileViewer: React.FC<StepFileViewerProps> = ({
                 <h3 className="font-medium text-gray-800 mb-2 text-sm">File Details</h3>
                 <div className="space-y-1">
                   <p className="text-sm text-gray-600">Name: <span className="text-gray-800">{component.name}</span></p>
-                  <p className="text-sm text-gray-600 truncate">Location: <span className="text-gray-800 text-xs">{fileUrl}</span></p>
+                  <div className="text-sm text-gray-600">
+                    <span>Location: </span>
+                    <span className="text-gray-800 text-xs break-all">{fileUrl}</span>
+                  </div>
                 </div>
               </div>
               
