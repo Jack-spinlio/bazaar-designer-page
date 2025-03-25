@@ -6,6 +6,7 @@ import { Search, Bike } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export const SHIMANO_COMPONENTS = [
   {
@@ -206,8 +207,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [components, setComponents] = useState<ComponentItem[]>([...SHIMANO_COMPONENTS, ...BASIC_SHAPES, ...CUSTOM_COMPONENTS]);
-  const [uploadedModels, setUploadedModels] = useState<ComponentItem[]>([]);
+  const [components, setComponents] = useState<ComponentItem[]>([...SHIMANO_COMPONENTS, ...BASIC_SHAPES]);
+  const [uploadedModels, setUploadedModels] = useState<ComponentItem[]>([...CUSTOM_COMPONENTS]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'marketplace' | 'uploads'>('marketplace');
 
@@ -252,7 +253,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//K5347%20Integrated%203D%20Drawings%2020240220(1)%20(1).STEP'
           };
           
-          setUploadedModels([kingMeterComponent, ...modelComponents]);
+          // Update uploadedModels with the custom fork component included
+          setUploadedModels([...CUSTOM_COMPONENTS, kingMeterComponent, ...modelComponents]);
           setComponents(prev => {
             const filteredComponents = prev.filter(comp => !comp.id.startsWith('supabase-') && !comp.id.startsWith('uploaded-') && comp.id !== 'king-meter-k5347');
             return [...filteredComponents, kingMeterComponent, ...modelComponents];
@@ -325,13 +327,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <TabsTrigger value="uploads">My Uploads</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="marketplace">
+            <TabsContent value="marketplace" className="max-h-[calc(100vh-180px)]">
               <div className="relative my-4">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                 <Input type="search" placeholder="Search components" className="pl-9 bg-gray-50 border-gray-200 rounded-full text-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
               </div>
               
-              <div className="flex-1 overflow-auto">
+              <ScrollArea className="h-[calc(100vh-240px)]">
                 {isLoading ? (
                   <div className="grid grid-cols-2 gap-3">
                     {[1, 2, 3, 4].map((_, index) => (
@@ -340,8 +342,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </div>
                 ) : (
                   !searchQuery && (
-                    <div className="grid grid-cols-2 gap-3">
-                      {SHIMANO_COMPONENTS.slice(0, 10).map(component => (
+                    <div className="grid grid-cols-2 gap-3 pr-2">
+                      {SHIMANO_COMPONENTS.map(component => (
                         <div 
                           key={component.id} 
                           onClick={() => handleComponentSelect(component)} 
@@ -357,16 +359,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     </div>
                   )
                 )}
-              </div>
+              </ScrollArea>
             </TabsContent>
             
-            <TabsContent value="uploads">
+            <TabsContent value="uploads" className="max-h-[calc(100vh-180px)]">
               <div className="relative my-4">
                 <Search className="absolute left-3 top-2.5 h-4 w-4 text-gray-400" />
                 <Input type="search" placeholder="Search components" className="pl-9 bg-gray-50 border-gray-200 rounded-full text-sm" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
               </div>
               
-              <div className="flex-1 overflow-auto">
+              <ScrollArea className="h-[calc(100vh-240px)]">
                 {isLoading ? (
                   <div className="grid grid-cols-2 gap-3">
                     {[1, 2, 3, 4].map((_, index) => (
@@ -374,27 +376,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     ))}
                   </div>
                 ) : (
-                  filteredUploadedModels.length > 0 && (
-                    <div className="mb-6">
-                      <div className="grid grid-cols-2 gap-3">
-                        {filteredUploadedModels.map(component => (
-                          <div 
-                            key={component.id} 
-                            onClick={() => handleComponentSelect(component)} 
-                            className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
-                          >
-                            <div className="w-full h-24 mb-2">
-                              <img src={component.thumbnail} alt={component.name} className="w-full h-full object-cover rounded-md" />
-                            </div>
-                            <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
-                            <span className="text-xs text-center text-gray-500">{component.type}</span>
-                          </div>
-                        ))}
+                  <div className="grid grid-cols-2 gap-3 pr-2">
+                    {filteredUploadedModels.map(component => (
+                      <div 
+                        key={component.id} 
+                        onClick={() => handleComponentSelect(component)} 
+                        className="bg-gray-50 rounded-lg p-2 cursor-pointer hover:bg-gray-100 transition-colors flex flex-col items-center"
+                      >
+                        <div className="w-full h-24 mb-2">
+                          <img src={component.thumbnail} alt={component.name} className="w-full h-full object-cover rounded-md" />
+                        </div>
+                        <span className="text-sm text-center font-medium text-gray-800">{component.name}</span>
+                        <span className="text-xs text-center text-gray-500">{component.type}</span>
                       </div>
-                    </div>
-                  )
+                    ))}
+                  </div>
                 )}
-              </div>
+              </ScrollArea>
             </TabsContent>
           </Tabs>
         </div>
