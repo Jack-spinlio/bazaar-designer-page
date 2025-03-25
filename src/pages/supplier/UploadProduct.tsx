@@ -538,7 +538,7 @@ export const UploadProduct: React.FC = () => {
         setDescriptionFormat(prev => ({ ...prev, bold: !prev.bold }));
         break;
       case 'italic':
-        newText = `${beforeText}_${selectedText}_${afterText}`;
+        newText = `${beforeText}_${selectedText}__${afterText}`;
         newCursorPos = end + 2;
         setDescriptionFormat(prev => ({ ...prev, italic: !prev.italic }));
         break;
@@ -875,4 +875,4 @@ export const UploadProduct: React.FC = () => {
         .single();
       
       if (productError) {
-        throw productError;
+        throw productError
