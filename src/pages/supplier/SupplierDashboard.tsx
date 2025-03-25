@@ -3,9 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronRight, Package, Upload, Users } from 'lucide-react';
+import { ChevronRight, Package, Upload, Users, ChartLine } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { StatsCard } from '@/components/supplier/StatsCard';
+import { ProductsPopularityChart } from '@/components/supplier/ProductsPopularityChart';
+import { CustomerInsightsChart } from '@/components/supplier/CustomerInsightsChart';
+import { SalesByCountryMap } from '@/components/supplier/SalesByCountryMap';
 
 interface DashboardStats {
   totalProducts: number;
@@ -24,6 +28,72 @@ export const SupplierDashboard: React.FC = () => {
     recentUploads: []
   });
   const [loading, setLoading] = useState(true);
+
+  // Mock data for the stats cards
+  const statsCardData = [
+    {
+      title: 'Revenue',
+      value: '$150,000',
+      change: 14.8,
+      data: Array.from({ length: 20 }, (_, i) => ({ 
+        value: 100 + Math.sin(i / 2) * 30 + Math.random() * 10 
+      })),
+      gradient: { from: '#10B981', to: '#0EA5E9' }
+    },
+    {
+      title: 'Orders',
+      value: '75',
+      change: -2.5,
+      data: Array.from({ length: 20 }, (_, i) => ({ 
+        value: 80 + Math.cos(i / 3) * 20 + Math.random() * 10 
+      })),
+      gradient: { from: '#10B981', to: '#0EA5E9' }
+    },
+    {
+      title: 'Draft Designs',
+      value: '17,058',
+      change: 93.3,
+      data: Array.from({ length: 20 }, (_, i) => ({ 
+        value: 90 + Math.sin(i / 2) * 25 + Math.random() * 15 
+      })),
+      gradient: { from: '#10B981', to: '#0EA5E9' }
+    }
+  ];
+
+  // Mock data for products popularity
+  const productsData = [
+    { id: '1', name: 'eGravel Bike', popularity: 90, sales: 46, color: 'amber' },
+    { id: '2', name: 'Electric Step-Thru', popularity: 75, sales: 17, color: 'teal' },
+    { id: '3', name: 'Urban eBike', popularity: 60, sales: 19, color: 'blue' },
+    { id: '4', name: 'Electric Road Bike', popularity: 45, sales: 5, color: 'purple' },
+    { id: '5', name: 'Step-Thru Frame', popularity: 30, sales: 8, color: 'green' }
+  ];
+
+  // Mock data for customer insights
+  const customerInsightsData = [
+    { name: 'Jan', loyal: 300, new: 220, unique: 320 },
+    { name: 'Feb', loyal: 280, new: 180, unique: 350 },
+    { name: 'Mar', loyal: 240, new: 120, unique: 330 },
+    { name: 'Apr', loyal: 200, new: 80, unique: 290 },
+    { name: 'May', loyal: 180, new: 140, unique: 250 },
+    { name: 'Jun', loyal: 220, new: 200, unique: 230 },
+    { name: 'Jul', loyal: 270, new: 350, unique: 270 },
+    { name: 'Aug', loyal: 300, new: 330, unique: 310 },
+    { name: 'Sep', loyal: 260, new: 280, unique: 270 },
+    { name: 'Oct', loyal: 220, new: 220, unique: 220 },
+    { name: 'Nov', loyal: 180, new: 130, unique: 180 },
+    { name: 'Dec', loyal: 140, new: 80, unique: 160 }
+  ];
+
+  // Mock data for sales by country
+  const countriesData = [
+    { id: '1', name: 'USA', value: 42, color: 'bg-amber-300' },
+    { id: '2', name: 'China', value: 28, color: 'bg-purple-400' },
+    { id: '3', name: 'Brazil', value: 15, color: 'bg-red-300' },
+    { id: '4', name: 'India', value: 10, color: 'bg-blue-300' },
+    { id: '5', name: 'Saudi Arabia', value: 13, color: 'bg-green-400' },
+    { id: '6', name: 'Indonesia', value: 12, color: 'bg-teal-400' }
+  ];
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -65,46 +135,30 @@ export const SupplierDashboard: React.FC = () => {
         </Button>
       </div>
       
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Your Products
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <Package className="h-8 w-8 text-gray-500 mr-3" />
-                <div className="text-2xl font-bold">
-                  {loading ? '...' : stats.totalProducts}
-                </div>
-              </div>
-              <Button variant="ghost" size="sm" asChild>
-                <Link to="/supplier/products">
-                  View All <ChevronRight className="ml-1 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
-              Available Categories
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center">
-              <Users className="h-8 w-8 text-gray-500 mr-3" />
-              <div className="text-2xl font-bold">
-                {loading ? '...' : stats.categories}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
+        {statsCardData.map((stat, index) => (
+          <StatsCard 
+            key={index}
+            title={stat.title} 
+            value={stat.value} 
+            change={stat.change} 
+            data={stat.data}
+            gradient={stat.gradient}
+          />
+        ))}
+      </div>
+      
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <ProductsPopularityChart products={productsData} />
+        <SalesByCountryMap countries={countriesData} />
+      </div>
+      
+      <CustomerInsightsChart data={customerInsightsData} />
+      
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -126,44 +180,44 @@ export const SupplierDashboard: React.FC = () => {
             </Button>
           </CardContent>
         </Card>
-      </div>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Uploads</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <p>Loading recent uploads...</p>
-          ) : stats.recentUploads.length > 0 ? (
-            <div className="space-y-2">
-              {stats.recentUploads.map((product) => (
-                <div key={product.id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
-                  <span className="font-medium">{product.name}</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500">
-                      {new Date(product.created_at).toLocaleDateString()}
-                    </span>
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link to={`/supplier/edit/${product.id}`}>
-                        Edit
-                      </Link>
-                    </Button>
+        
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Recent Uploads</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <p>Loading recent uploads...</p>
+            ) : stats.recentUploads.length > 0 ? (
+              <div className="space-y-2">
+                {stats.recentUploads.map((product) => (
+                  <div key={product.id} className="flex items-center justify-between p-3 bg-gray-50 rounded">
+                    <span className="font-medium">{product.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-500">
+                        {new Date(product.created_at).toLocaleDateString()}
+                      </span>
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link to={`/supplier/edit/${product.id}`}>
+                          Edit
+                        </Link>
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 py-6">
-              You haven't uploaded any products yet.
-              <br />
-              <Link to="/supplier/upload" className="text-blue-500 hover:underline">
-                Upload your first product
-              </Link>
-            </p>
-          )}
-        </CardContent>
-      </Card>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-500 py-6">
+                You haven't uploaded any products yet.
+                <br />
+                <Link to="/supplier/upload" className="text-blue-500 hover:underline">
+                  Upload your first product
+                </Link>
+              </p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
