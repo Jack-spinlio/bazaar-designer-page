@@ -120,7 +120,7 @@ const OrdersPage: React.FC = () => {
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Statuses</SelectItem>
+                <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="PO Received">PO Received</SelectItem>
                 <SelectItem value="Inproduction">In Production</SelectItem>
                 <SelectItem value="Shipped">Shipped</SelectItem>
