@@ -151,10 +151,10 @@ const ProducerProfile = () => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="h-screen w-full overflow-y-auto">
       <Header />
       
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 pb-20">
         {/* Top Section: Producer Info */}
         <div className="flex flex-col md:flex-row gap-8 mb-8">
           {/* Left side - Company info */}
@@ -316,3 +316,4 @@ const ProducerProfile = () => {
 };
 
 export default ProducerProfile;
+
