@@ -3,12 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Package, Upload, PenLine, ChevronRight, ChevronLeft, Grid } from 'lucide-react';
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
-
 const navItems = [
   { 
     path: '/supplier', 

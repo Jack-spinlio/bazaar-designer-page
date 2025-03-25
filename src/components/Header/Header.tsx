@@ -24,7 +24,9 @@ export const Header: React.FC = () => {
   const navigate = useNavigate();
   const isSupplierPage = location.pathname.includes('/supplier');
   const isDesignPage = location.pathname === '/design';
-  const [userRole, setUserRole] = React.useState('designer');
+  const [userRole, setUserRole] = React.useState(
+    isSupplierPage ? 'supplier' : 'designer'
+  );
   
   const handleRoleChange = (value: string) => {
     setUserRole(value);
