@@ -14,8 +14,12 @@ const SupplierPage: React.FC = () => {
       <div className="sticky top-0 z-50">
         <Header />
       </div>
-      <div className="flex flex-1 overflow-hidden">
-        <SupplierSidebar />
+      {/* Content area below fixed header */}
+      <div className="flex flex-1 overflow-hidden pt-1">
+        {/* Fixed sidebar on the left */}
+        <div className="sticky top-[68px] self-start h-[calc(100vh-68px)]">
+          <SupplierSidebar />
+        </div>
         <div className="flex-1 p-6 max-w-7xl mx-auto w-full overflow-y-auto">
           <Routes>
             <Route path="/" element={<SupplierDashboard />} />
