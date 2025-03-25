@@ -50,7 +50,6 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
   ];
 
   const handleComponentUploaded = (component: ComponentItem) => {
-    // Here you could update a global state or context with the new component
     console.log('Component uploaded:', component);
     setUploadDialogOpen(false);
   };
