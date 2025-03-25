@@ -18,7 +18,7 @@ const Edit = () => {
     folder: 'Default Models',
     modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
     modelType: 'STL',
-    shape: 'box' // Added the required shape property
+    shape: 'box'
   };
 
   const location = useLocation();
@@ -27,10 +27,23 @@ const Edit = () => {
   // Check if there's a prefab passed from the Prefabs page
   useEffect(() => {
     if (location.state && location.state.selectedPrefab) {
-      const prefab = location.state.selectedPrefab as PrefabItem;
-      console.log('Received prefab from navigation:', prefab);
-      setSelectedComponent(prefab);
-      toast.success(`Loaded prefab: ${prefab.name}`);
+      try {
+        const prefab = location.state.selectedPrefab as PrefabItem;
+        console.log('Received prefab from navigation:', prefab);
+        
+        // Ensure we have modelType if it's not already specified
+        if (prefab.modelUrl && !prefab.modelType) {
+          const extension = prefab.modelUrl.split('.').pop()?.toUpperCase();
+          prefab.modelType = extension;
+          console.log(`Inferred model type from URL: ${extension}`);
+        }
+        
+        setSelectedComponent(prefab);
+        toast.success(`Loaded prefab: ${prefab.name}`);
+      } catch (error) {
+        console.error('Error processing prefab:', error);
+        toast.error('Failed to load the prefab model');
+      }
     }
   }, [location.state]);
 

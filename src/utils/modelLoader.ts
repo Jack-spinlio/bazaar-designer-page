@@ -1,3 +1,4 @@
+
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
@@ -22,6 +23,12 @@ export const loadModel = async (url: string, type: ModelType): Promise<THREE.Obj
     throw new Error('Invalid URL format');
   }
   
+  // Handle special case for CompleteBike.gltf which needs special treatment
+  if (url.includes('CompleteBike.gltf')) {
+    console.log('Loading special bike model: CompleteBike.gltf');
+    return loadGLTFModel(url);
+  }
+  
   switch (type.toUpperCase() as ModelType) {
     case 'STL':
       console.log(`Using STL loader for ${url}`);
@@ -39,6 +46,19 @@ export const loadModel = async (url: string, type: ModelType): Promise<THREE.Obj
       console.log(`Creating placeholder for STEP file: ${url}`);
       return createPlaceholderForSTEPModel(url);
     default:
+      // Try to infer the type from the URL
+      const extension = url.split('.').pop()?.toUpperCase();
+      if (extension === 'GLTF' || extension === 'GLB') {
+        console.log(`Inferred GLB/GLTF type from URL: ${url}`);
+        return loadGLTFModel(url);
+      } else if (extension === 'OBJ') {
+        console.log(`Inferred OBJ type from URL: ${url}`);
+        return loadOBJModel(url);
+      } else if (extension === 'STL') {
+        console.log(`Inferred STL type from URL: ${url}`);
+        return loadSTLModel(url);
+      }
+      
       console.log(`Unknown model type: ${type}, defaulting to OBJ loader for ${url}`);
       return loadOBJModel(url);
   }
@@ -247,6 +267,13 @@ const loadGLTFModel = (url: string): Promise<THREE.Object3D> => {
       loader.setDRACOLoader(dracoLoader);
       
       console.log('GLTF loader configured with DRACO support');
+      
+      // Add a loading manager to track progress
+      const manager = new THREE.LoadingManager();
+      manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+        console.log(`GLTF Loading progress: ${itemsLoaded} / ${itemsTotal}`);
+      };
+      loader.manager = manager;
       
       loader.load(
         url,
