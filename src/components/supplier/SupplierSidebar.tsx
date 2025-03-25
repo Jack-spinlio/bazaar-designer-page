@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Package, Upload, PenLine, ChevronRight, ChevronLeft, Grid, ShoppingBag, MessageCircle } from 'lucide-react';
+import { Grid, ShoppingBag, MessageCircle, Upload, Package } from 'lucide-react';
 
 import {
   Sidebar,
@@ -34,11 +33,6 @@ const navItems = [
     path: '/supplier/upload', 
     name: 'Upload Product', 
     icon: <Upload className="w-5 h-5" /> 
-  },
-  { 
-    path: '/supplier/edit-profile', 
-    name: 'Edit Profile', 
-    icon: <PenLine className="w-5 h-5" /> 
   },
 ];
 

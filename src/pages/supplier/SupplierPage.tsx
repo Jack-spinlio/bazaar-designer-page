@@ -6,6 +6,8 @@ import { Header } from '@/components/Header/Header';
 import { SupplierDashboard } from './SupplierDashboard';
 import OrdersPage from './OrdersPage';
 import MessagingPage from './MessagingPage';
+import ProductsList from './ProductsList';
+import UploadProduct from './UploadProduct';
 
 const SupplierPage: React.FC = () => {
   return (
@@ -24,8 +26,10 @@ const SupplierPage: React.FC = () => {
         <div className="ml-20 flex-1 p-6 w-full">
           <Routes>
             <Route path="/" element={<SupplierDashboard />} />
+            <Route path="/products" element={<ProductsList />} />
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/messaging" element={<MessagingPage />} />
+            <Route path="/upload" element={<UploadProduct />} />
             <Route path="*" element={<Navigate to="/supplier" replace />} />
           </Routes>
         </div>
