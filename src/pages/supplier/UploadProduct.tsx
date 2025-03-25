@@ -93,6 +93,12 @@ export const UploadProduct: React.FC = () => {
   const [isUploading, setIsUploading] = useState(false);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [modelFile, setModelFile] = useState<File | null>(null);
+  const [modelFileUrl, setModelFileUrl] = useState<string>('');
+  
+  const [showNewGroupDialog, setShowNewGroupDialog] = useState(false);
+  const [showNewCategoryDialog, setShowNewCategoryDialog] = useState(false);
+  const [showNewSubcategoryDialog, setShowNewSubcategoryDialog] = useState(false);
+  
   const [productData, setProductData] = useState({
     name: '',
     price: '',
@@ -133,11 +139,6 @@ export const UploadProduct: React.FC = () => {
   const [componentSearchItems, setComponentSearchItems] = useState<ComponentSearchItem[]>([]);
   const [componentSearchTerm, setComponentSearchTerm] = useState('');
   const [selectedComponent, setSelectedComponent] = useState<ComponentSearchItem | null>(null);
-  
-  const [showNewGroupDialog, setShowNewCategoryDialog] = useState(false);
-  const [showNewSubcategoryDialog, setShowNewSubcategoryDialog] = useState(false);
-  const [newItemName, setNewItemName] = useState('');
-  const [newItemDescription, setNewItemDescription] = useState('');
   
   const [selectedVariants, setSelectedVariants] = useState<string[]>([]);
   const [availableVariants, setAvailableVariants] = useState<string[]>([]);
@@ -583,28 +584,17 @@ export const UploadProduct: React.FC = () => {
     }
   };
   
-  const handleModelFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleModelFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${Date.now()}_${productData.name.replace(/\s+/g, '_')}.${fileExt}`;
-      
-      const { data: modelData, error: modelError } = await supabase.storage
-        .from('product-models')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: true
-        });
-      
-      if (modelError) {
-        throw modelError;
+      const fileExt = file.name.split('.').pop()?.toLowerCase();
+      if (!['stl', 'obj', 'glb', 'gltf'].includes(fileExt || '')) {
+        toast.error('Unsupported file format. Please upload STL, OBJ, GLB, or GLTF files.');
+        return;
       }
       
-      const { data: modelUrlData } = supabase.storage
-        .from('product-models')
-        .getPublicUrl(filePath);
-      
-      setModelFile(modelUrlData.publicUrl);
+      setModelFile(file);
+      toast.success(`3D model "${file.name}" selected`);
     }
   };
   
@@ -1567,3 +1557,4 @@ export const UploadProduct: React.FC = () => {
     </div>
   );
 };
+
