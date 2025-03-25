@@ -42,6 +42,40 @@ const DEFAULT_COMPONENT_GROUPS: ComponentGroup[] = [
   { id: 7, name: 'eBike', description: 'Electric bike specific components' }
 ];
 
+// Default component categories to use if none are found in database
+const DEFAULT_COMPONENT_CATEGORIES: ComponentCategory[] = [
+  { id: 1, component_group: 1, name: 'Complete Frame', description: 'Full bike frames' },
+  { id: 2, component_group: 1, name: 'Frame Parts', description: 'Individual frame components' },
+  { id: 3, component_group: 2, name: 'Derailleurs', description: 'Gear changing mechanisms' },
+  { id: 4, component_group: 2, name: 'Cassettes', description: 'Rear gear clusters' },
+  { id: 5, component_group: 2, name: 'Chains', description: 'Drive chains' },
+  { id: 6, component_group: 3, name: 'Complete Wheels', description: 'Full wheel assemblies' },
+  { id: 7, component_group: 3, name: 'Rims', description: 'Wheel rims' },
+  { id: 8, component_group: 3, name: 'Hubs', description: 'Wheel hubs' },
+  { id: 9, component_group: 4, name: 'Handlebars', description: 'Steering components' },
+  { id: 10, component_group: 4, name: 'Shifters', description: 'Gear shifters' },
+  { id: 11, component_group: 5, name: 'Brake Calipers', description: 'Brake mechanisms' },
+  { id: 12, component_group: 5, name: 'Brake Levers', description: 'Brake control levers' },
+  { id: 13, component_group: 6, name: 'Forks', description: 'Front suspension' },
+  { id: 14, component_group: 6, name: 'Rear Shocks', description: 'Rear suspension components' },
+  { id: 15, component_group: 7, name: 'Motors', description: 'Electric drive motors' },
+  { id: 16, component_group: 7, name: 'Batteries', description: 'Power storage' },
+  { id: 17, component_group: 7, name: 'Controllers', description: 'Electronic control units' }
+];
+
+// Default component subcategories
+const DEFAULT_COMPONENT_SUBCATEGORIES: ComponentSubcategory[] = [
+  { id: 1, component_category: 1, name: 'Road Frame', description: 'Road bike frames' },
+  { id: 2, component_category: 1, name: 'Mountain Frame', description: 'Mountain bike frames' },
+  { id: 3, component_category: 1, name: 'Gravel Frame', description: 'Gravel bike frames' },
+  { id: 4, component_category: 3, name: 'Front Derailleur', description: 'Front gear changer' },
+  { id: 5, component_category: 3, name: 'Rear Derailleur', description: 'Rear gear changer' },
+  { id: 6, component_category: 15, name: 'Hub Motor', description: 'Wheel hub motors' },
+  { id: 7, component_category: 15, name: 'Mid-drive Motor', description: 'Bottom bracket motors' },
+  { id: 8, component_category: 16, name: 'Integrated Battery', description: 'Frame-integrated batteries' },
+  { id: 9, component_category: 16, name: 'External Battery', description: 'External mounted batteries' }
+];
+
 export const UploadProduct: React.FC = () => {
   const navigate = useNavigate();
   const [isUploading, setIsUploading] = useState(false);
@@ -61,8 +95,10 @@ export const UploadProduct: React.FC = () => {
   const [componentGroups, setComponentGroups] = useState<ComponentGroup[]>([]);
   const [isLoadingGroups, setIsLoadingGroups] = useState(true);
   const [componentCategories, setComponentCategories] = useState<ComponentCategory[]>([]);
+  const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [filteredCategories, setFilteredCategories] = useState<ComponentCategory[]>([]);
   const [componentSubcategories, setComponentSubcategories] = useState<ComponentSubcategory[]>([]);
+  const [isLoadingSubcategories, setIsLoadingSubcategories] = useState(true);
   const [filteredSubcategories, setFilteredSubcategories] = useState<ComponentSubcategory[]>([]);
   
   const [selectedVariants, setSelectedVariants] = useState<string[]>([]);
@@ -128,20 +164,55 @@ export const UploadProduct: React.FC = () => {
   // Fetch all component categories from the database
   useEffect(() => {
     const fetchComponentCategories = async () => {
+      setIsLoadingCategories(true);
       try {
+        console.log('Fetching component categories...');
         const { data, error } = await supabase
           .from('Component Categories')
           .select('*')
           .order('name');
         
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching component categories:', error);
+          throw error;
+        }
         
-        if (data) {
+        if (data && data.length > 0) {
+          console.log('Component categories data:', data);
           setComponentCategories(data);
+        } else {
+          console.log('No component categories found in database, using default categories');
+          
+          // Use default categories AND try to insert them into the database
+          setComponentCategories(DEFAULT_COMPONENT_CATEGORIES);
+          
+          // Insert default categories into database
+          try {
+            for (const category of DEFAULT_COMPONENT_CATEGORIES) {
+              await supabase
+                .from('Component Categories')
+                .insert({
+                  id: category.id,
+                  component_group: category.component_group,
+                  name: category.name,
+                  description: category.description
+                })
+                .select()
+                .single();
+            }
+            console.log('Default component categories inserted into database');
+          } catch (insertError) {
+            console.error('Error inserting default component categories:', insertError);
+          }
         }
       } catch (error) {
         console.error('Error fetching component categories:', error);
         toast.error('Failed to load component categories');
+        
+        // Use default categories if fetch fails
+        setComponentCategories(DEFAULT_COMPONENT_CATEGORIES);
+      } finally {
+        setIsLoadingCategories(false);
       }
     };
     
@@ -151,20 +222,55 @@ export const UploadProduct: React.FC = () => {
   // Fetch all component subcategories from the database
   useEffect(() => {
     const fetchComponentSubcategories = async () => {
+      setIsLoadingSubcategories(true);
       try {
+        console.log('Fetching component subcategories...');
         const { data, error } = await supabase
           .from('Component subcategories')
           .select('*')
           .order('name');
         
-        if (error) throw error;
+        if (error) {
+          console.error('Error fetching component subcategories:', error);
+          throw error;
+        }
         
-        if (data) {
+        if (data && data.length > 0) {
+          console.log('Component subcategories data:', data);
           setComponentSubcategories(data);
+        } else {
+          console.log('No component subcategories found in database, using default subcategories');
+          
+          // Use default subcategories AND try to insert them into the database
+          setComponentSubcategories(DEFAULT_COMPONENT_SUBCATEGORIES);
+          
+          // Insert default subcategories into database
+          try {
+            for (const subcategory of DEFAULT_COMPONENT_SUBCATEGORIES) {
+              await supabase
+                .from('Component subcategories')
+                .insert({
+                  id: subcategory.id,
+                  component_category: subcategory.component_category,
+                  name: subcategory.name,
+                  description: subcategory.description
+                })
+                .select()
+                .single();
+            }
+            console.log('Default component subcategories inserted into database');
+          } catch (insertError) {
+            console.error('Error inserting default component subcategories:', insertError);
+          }
         }
       } catch (error) {
         console.error('Error fetching component subcategories:', error);
         toast.error('Failed to load component subcategories');
+        
+        // Use default subcategories if fetch fails
+        setComponentSubcategories(DEFAULT_COMPONENT_SUBCATEGORIES);
+      } finally {
+        setIsLoadingSubcategories(false);
       }
     };
     
@@ -175,9 +281,11 @@ export const UploadProduct: React.FC = () => {
   useEffect(() => {
     if (productData.componentGroup) {
       const groupId = parseInt(productData.componentGroup);
+      console.log('Filtering categories for group ID:', groupId);
       const filtered = componentCategories.filter(
         category => category.component_group === groupId
       );
+      console.log('Filtered categories:', filtered);
       setFilteredCategories(filtered);
       
       // Reset the component category and subcategory when group changes
@@ -197,9 +305,11 @@ export const UploadProduct: React.FC = () => {
   useEffect(() => {
     if (productData.componentCategory) {
       const categoryId = parseInt(productData.componentCategory);
+      console.log('Filtering subcategories for category ID:', categoryId);
       const filtered = componentSubcategories.filter(
         subcategory => subcategory.component_category === categoryId
       );
+      console.log('Filtered subcategories:', filtered);
       setFilteredSubcategories(filtered);
       
       // Reset the component subcategory when category changes
@@ -261,6 +371,7 @@ export const UploadProduct: React.FC = () => {
   };
   
   const handleComponentCategoryChange = (value: string) => {
+    console.log("Selected component category:", value);
     setProductData(prev => ({
       ...prev,
       componentCategory: value
@@ -268,6 +379,7 @@ export const UploadProduct: React.FC = () => {
   };
   
   const handleComponentSubcategoryChange = (value: string) => {
+    console.log("Selected component subcategory:", value);
     setProductData(prev => ({
       ...prev,
       componentSubcategory: value
@@ -564,10 +676,10 @@ export const UploadProduct: React.FC = () => {
                       value={productData.componentGroup} 
                       onValueChange={handleComponentGroupChange}
                     >
-                      <SelectTrigger className="text-left">
+                      <SelectTrigger className="text-left bg-white">
                         <SelectValue placeholder="Select a component group" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-white">
                         {componentGroups.length > 0 ? (
                           componentGroups.map(group => (
                             <SelectItem key={group.id} value={group.id.toString()}>
@@ -585,45 +697,105 @@ export const UploadProduct: React.FC = () => {
                   )}
                 </div>
                 
-                {filteredCategories.length > 0 && (
+                {productData.componentGroup && (
                   <div>
                     <Label htmlFor="componentCategory">Component Category</Label>
-                    <Select 
-                      value={productData.componentCategory} 
-                      onValueChange={handleComponentCategoryChange}
-                    >
-                      <SelectTrigger className="text-left">
-                        <SelectValue placeholder="Select a component category" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {filteredCategories.map(category => (
-                          <SelectItem key={category.id} value={category.id.toString()}>
-                            {category.name || `Category ${category.id}`}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    {isLoadingCategories ? (
+                      <div className="flex items-center text-gray-500 text-sm mt-1">
+                        <div className="animate-spin mr-2">
+                          <svg className="h-4 w-4" viewBox="0 0 24 24">
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                        </div>
+                        Loading component categories...
+                      </div>
+                    ) : (
+                      <Select 
+                        value={productData.componentCategory} 
+                        onValueChange={handleComponentCategoryChange}
+                      >
+                        <SelectTrigger className="text-left bg-white">
+                          <SelectValue placeholder="Select a component category" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white">
+                          {filteredCategories.length > 0 ? (
+                            filteredCategories.map(category => (
+                              <SelectItem key={category.id} value={category.id.toString()}>
+                                {category.name || `Category ${category.id}`}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="p-2 text-center text-sm text-gray-500 flex items-center justify-center">
+                              <AlertCircle className="h-4 w-4 mr-2" />
+                              No categories available for this group
+                            </div>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    )}
                   </div>
                 )}
                 
-                {filteredSubcategories.length > 0 && (
+                {productData.componentCategory && (
                   <div>
                     <Label htmlFor="componentSubcategory">Component Subcategory</Label>
-                    <Select 
-                      value={productData.componentSubcategory} 
-                      onValueChange={handleComponentSubcategoryChange}
-                    >
-                      <SelectTrigger className="text-left">
-                        <SelectValue placeholder="Select a component subcategory" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {filteredSubcategories.map(subcategory => (
-                          <SelectItem key={subcategory.id} value={subcategory.id.toString()}>
-                            {subcategory.name || `Subcategory ${subcategory.id}`}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    {isLoadingSubcategories ? (
+                      <div className="flex items-center text-gray-500 text-sm mt-1">
+                        <div className="animate-spin mr-2">
+                          <svg className="h-4 w-4" viewBox="0 0 24 24">
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              strokeWidth="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                        </div>
+                        Loading component subcategories...
+                      </div>
+                    ) : (
+                      <Select 
+                        value={productData.componentSubcategory} 
+                        onValueChange={handleComponentSubcategoryChange}
+                      >
+                        <SelectTrigger className="text-left bg-white">
+                          <SelectValue placeholder="Select a component subcategory" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white">
+                          {filteredSubcategories.length > 0 ? (
+                            filteredSubcategories.map(subcategory => (
+                              <SelectItem key={subcategory.id} value={subcategory.id.toString()}>
+                                {subcategory.name || `Subcategory ${subcategory.id}`}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <div className="p-2 text-center text-sm text-gray-500 flex items-center justify-center">
+                              <AlertCircle className="h-4 w-4 mr-2" />
+                              No subcategories available for this category
+                            </div>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    )}
                   </div>
                 )}
                 
