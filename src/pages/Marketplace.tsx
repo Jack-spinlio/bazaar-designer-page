@@ -212,10 +212,10 @@ const Marketplace = () => {
   const [searchQuery, setSearchQuery] = useState('');
   
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen w-full">
       <MarketplaceHeader />
       
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div className="w-full mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <MarketplaceSearch 
           searchQuery={searchQuery} 
           setSearchQuery={setSearchQuery} 

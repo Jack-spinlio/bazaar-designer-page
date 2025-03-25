@@ -25,7 +25,7 @@ function App() {
   }
   
   return (
-    <>
+    <div className="w-screen h-screen overflow-hidden">
       <Routes>
         <Route path="/" element={<Navigate to="/marketplace" replace />} />
         <Route path="/design" element={<DesignStudio />} />
@@ -36,7 +36,7 @@ function App() {
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster position="top-right" richColors />
-    </>
+    </div>
   );
 }
 

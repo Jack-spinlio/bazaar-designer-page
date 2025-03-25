@@ -41,10 +41,10 @@ export const Layout: React.FC<LayoutProps> = ({ children, sidebar }) => {
   };
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-[#F5F5F5] p-2.5">
+    <div className="flex flex-col h-screen w-screen overflow-hidden bg-[#F5F5F5] p-2.5">
       <Header />
       
-      <div className="flex flex-1 overflow-hidden mt-2.5">
+      <div className="flex flex-1 w-full overflow-hidden mt-2.5">
         {sidebar ? (
           <div className="h-full">{sidebar}</div>
         ) : (
