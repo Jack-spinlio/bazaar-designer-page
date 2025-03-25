@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   MessageCircle, 
   MoreVertical, 
@@ -23,6 +23,9 @@ interface Message {
   senderId: string;
   timestamp: Date;
   isCurrentUser: boolean;
+  avatar?: string;
+  initials: string;
+  avatarBg: string;
 }
 
 interface ConversationPreview {
@@ -123,28 +126,36 @@ const mockMessages: Message[] = [
     content: "Hey, I've updated the design with your feedback.",
     senderId: 'designer',
     timestamp: new Date(),
-    isCurrentUser: false
+    isCurrentUser: false,
+    initials: 'ZD',
+    avatarBg: 'bg-blue-300'
   },
   {
     id: '2',
     content: "Can you check it?",
     senderId: 'designer',
     timestamp: new Date(),
-    isCurrentUser: false
+    isCurrentUser: false,
+    initials: 'ZD',
+    avatarBg: 'bg-blue-300'
   },
   {
     id: '3',
     content: "Looking good ❤️",
     senderId: 'supplier',
     timestamp: new Date(),
-    isCurrentUser: true
+    isCurrentUser: true,
+    initials: 'ME',
+    avatarBg: 'bg-green-400'
   },
   {
     id: '4',
     content: "Let me discuss it in detail with our engineers.",
     senderId: 'supplier',
     timestamp: new Date(),
-    isCurrentUser: true
+    isCurrentUser: true,
+    initials: 'ME',
+    avatarBg: 'bg-green-400'
   }
 ];
 
@@ -152,6 +163,18 @@ const MessagingPage = () => {
   const [selectedConversation, setSelectedConversation] = useState<ConversationPreview | null>(mockConversations[0]);
   const [messages, setMessages] = useState<Message[]>(mockMessages);
   const [newMessage, setNewMessage] = useState('');
+  
+  // Reference to the messages container to scroll to bottom
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to bottom when messages change
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   // Format conversation timestamp - e.g. "Thursday, March 24 • 6:21 PM"
   const formattedTimestamp = () => {
@@ -173,7 +196,9 @@ const MessagingPage = () => {
         content: newMessage,
         senderId: 'supplier',
         timestamp: new Date(),
-        isCurrentUser: true
+        isCurrentUser: true,
+        initials: 'ME',
+        avatarBg: 'bg-green-400'
       };
       setMessages([...messages, newMsg]);
       setNewMessage('');
@@ -238,7 +263,7 @@ const MessagingPage = () => {
                 </div>
               </div>
 
-              {/* Chat messages */}
+              {/* Chat messages - Using ScrollArea for proper scrolling */}
               <ScrollArea className="flex-1 p-4">
                 <div className="space-y-4">
                   {/* Product card */}
@@ -287,8 +312,8 @@ const MessagingPage = () => {
                           className={`flex ${message.isCurrentUser ? 'justify-end' : 'justify-start'}`}
                         >
                           {!message.isCurrentUser && (
-                            <Avatar className="h-8 w-8 mr-2 bg-blue-300">
-                              <AvatarFallback>ZD</AvatarFallback>
+                            <Avatar className={`h-8 w-8 mr-2 ${message.avatarBg}`}>
+                              <AvatarFallback>{message.initials}</AvatarFallback>
                             </Avatar>
                           )}
                           <div 
@@ -301,14 +326,16 @@ const MessagingPage = () => {
                             {message.content}
                           </div>
                           {message.isCurrentUser && (
-                            <Avatar className="h-8 w-8 ml-2 bg-green-400">
-                              <AvatarFallback>ME</AvatarFallback>
+                            <Avatar className={`h-8 w-8 ml-2 ${message.avatarBg}`}>
+                              <AvatarFallback>{message.initials}</AvatarFallback>
                             </Avatar>
                           )}
                         </div>
                       </React.Fragment>
                     );
                   })}
+                  {/* Empty div to scroll to */}
+                  <div ref={messagesEndRef} />
                 </div>
               </ScrollArea>
 
