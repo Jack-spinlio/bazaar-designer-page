@@ -178,13 +178,21 @@ const MessagingPage = () => {
   // Reference to the messages container to scroll to bottom
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to bottom when messages change
+  // Scroll to bottom when messages change, but not on initial load
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // We'll use a ref to track if this is the initial render
+  const initialRender = useRef(true);
+
   useEffect(() => {
-    scrollToBottom();
+    // Only scroll to bottom if it's not the initial render
+    if (!initialRender.current) {
+      scrollToBottom();
+    } else {
+      initialRender.current = false;
+    }
   }, [messages]);
 
   // Format conversation timestamp - e.g. "Thursday, March 24 • 6:21 PM"
