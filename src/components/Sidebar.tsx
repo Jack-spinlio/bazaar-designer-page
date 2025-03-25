@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -228,10 +229,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
               modelUrl: publicUrlData.publicUrl
             };
           });
-          setUploadedModels(modelComponents);
+
+          // Add the King Meter K5347 component
+          const kingMeterComponent: ComponentItem = {
+            id: 'king-meter-k5347',
+            name: 'King Meter K5347',
+            type: 'STEP',
+            thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//King-Meter%20K5347.png',
+            folder: 'Uploads',
+            shape: 'box' as const,
+            modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//K5347%20Integrated%203D%20Drawings%2020240220(1)%20(1).STEP'
+          };
+          
+          setUploadedModels([kingMeterComponent, ...modelComponents]);
           setComponents(prev => {
-            const filteredComponents = prev.filter(comp => !comp.id.startsWith('supabase-') && !comp.id.startsWith('uploaded-'));
-            return [...filteredComponents, ...modelComponents];
+            const filteredComponents = prev.filter(comp => !comp.id.startsWith('supabase-') && !comp.id.startsWith('uploaded-') && comp.id !== 'king-meter-k5347');
+            return [...filteredComponents, kingMeterComponent, ...modelComponents];
           });
         }
       } catch (error) {
