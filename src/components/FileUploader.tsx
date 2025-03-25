@@ -21,6 +21,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   const [file, setFile] = useState<File | null>(null);
   const [componentName, setComponentName] = useState('');
   const [uploading, setUploading] = useState(false);
+  const fileInputRef = useState<HTMLInputElement | null>(null)[1];
 
   const allowedTypes = ['.stl', '.obj', '.step', '.stp'];
   
@@ -177,9 +178,15 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
                 onChange={handleFileChange}
                 className="hidden"
                 id="file-upload"
+                ref={(el) => fileInputRef(el)}
               />
               <Label htmlFor="file-upload" className="mt-4">
-                <Button type="button" variant="outline" size="sm">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => fileInputRef?.click()}
+                >
                   Browse Files
                 </Button>
               </Label>
