@@ -37,7 +37,6 @@ interface ComponentSubcategory {
   description: string | null;
 }
 
-// Default component groups to use if none are found in database
 const DEFAULT_COMPONENT_GROUPS: ComponentGroup[] = [
   { id: 1, name: 'Frame', description: 'Bike frames and related components' },
   { id: 2, name: 'Drivetrain', description: 'Components related to power transfer' },
@@ -48,7 +47,6 @@ const DEFAULT_COMPONENT_GROUPS: ComponentGroup[] = [
   { id: 7, name: 'eBike', description: 'Electric bike specific components' }
 ];
 
-// Default component categories to use if none are found in database
 const DEFAULT_COMPONENT_CATEGORIES: ComponentCategory[] = [
   { id: 1, component_group: 1, name: 'Complete Frame', description: 'Full bike frames' },
   { id: 2, component_group: 1, name: 'Frame Parts', description: 'Individual frame components' },
@@ -69,7 +67,6 @@ const DEFAULT_COMPONENT_CATEGORIES: ComponentCategory[] = [
   { id: 17, component_group: 7, name: 'Controllers', description: 'Electronic control units' }
 ];
 
-// Default component subcategories
 const DEFAULT_COMPONENT_SUBCATEGORIES: ComponentSubcategory[] = [
   { id: 1, component_category: 1, name: 'Road Frame', description: 'Road bike frames' },
   { id: 2, component_category: 1, name: 'Mountain Frame', description: 'Mountain bike frames' },
@@ -82,7 +79,6 @@ const DEFAULT_COMPONENT_SUBCATEGORIES: ComponentSubcategory[] = [
   { id: 9, component_category: 16, name: 'External Battery', description: 'External mounted batteries' }
 ];
 
-// Interface for the unified component search item
 interface ComponentSearchItem {
   id: string;
   name: string;
@@ -107,7 +103,6 @@ export const UploadProduct: React.FC = () => {
     description: ''
   });
   
-  // States for the hierarchical data
   const [componentGroups, setComponentGroups] = useState<ComponentGroup[]>([]);
   const [isLoadingGroups, setIsLoadingGroups] = useState(true);
   const [componentCategories, setComponentCategories] = useState<ComponentCategory[]>([]);
@@ -117,27 +112,22 @@ export const UploadProduct: React.FC = () => {
   const [isLoadingSubcategories, setIsLoadingSubcategories] = useState(true);
   const [filteredSubcategories, setFilteredSubcategories] = useState<ComponentSubcategory[]>([]);
   
-  // New state for unified component search
   const [componentSearchItems, setComponentSearchItems] = useState<ComponentSearchItem[]>([]);
   const [componentSearchTerm, setComponentSearchTerm] = useState('');
   const [selectedComponent, setSelectedComponent] = useState<ComponentSearchItem | null>(null);
   
-  // New state for dialogs
   const [showNewGroupDialog, setShowNewGroupDialog] = useState(false);
   const [showNewCategoryDialog, setShowNewCategoryDialog] = useState(false);
   const [showNewSubcategoryDialog, setShowNewSubcategoryDialog] = useState(false);
   const [newItemName, setNewItemName] = useState('');
   const [newItemDescription, setNewItemDescription] = useState('');
   
-  // State for variants
   const [selectedVariants, setSelectedVariants] = useState<string[]>([]);
   const [availableVariants, setAvailableVariants] = useState<string[]>([]);
   
-  // Autosuggest product names
   const [productNameSuggestions, setProductNameSuggestions] = useState<string[]>([]);
   const [manufacturerSuggestions, setManufacturerSuggestions] = useState<string[]>([]);
 
-  // Fetch component groups from the database
   useEffect(() => {
     const fetchComponentGroups = async () => {
       setIsLoadingGroups(true);
@@ -157,16 +147,13 @@ export const UploadProduct: React.FC = () => {
           console.log('Component groups data:', data);
           setComponentGroups(data);
           
-          // Extract unique product names and manufacturers for autosuggest
           const productNames = data.map(group => group.name).filter(Boolean);
           setProductNameSuggestions(prev => [...new Set([...prev, ...productNames])]);
         } else {
           console.log('No component groups found in database, using default groups');
           
-          // Use default groups AND try to insert them into the database
           setComponentGroups(DEFAULT_COMPONENT_GROUPS);
           
-          // Insert default groups into database
           try {
             for (const group of DEFAULT_COMPONENT_GROUPS) {
               await supabase
@@ -188,7 +175,6 @@ export const UploadProduct: React.FC = () => {
         console.error('Error fetching component groups:', error);
         toast.error('Failed to load component groups');
         
-        // Use default groups if fetch fails
         setComponentGroups(DEFAULT_COMPONENT_GROUPS);
       } finally {
         setIsLoadingGroups(false);
@@ -198,7 +184,6 @@ export const UploadProduct: React.FC = () => {
     fetchComponentGroups();
   }, []);
 
-  // Fetch all component categories from the database
   useEffect(() => {
     const fetchComponentCategories = async () => {
       setIsLoadingCategories(true);
@@ -220,10 +205,8 @@ export const UploadProduct: React.FC = () => {
         } else {
           console.log('No component categories found in database, using default categories');
           
-          // Use default categories AND try to insert them into the database
           setComponentCategories(DEFAULT_COMPONENT_CATEGORIES);
           
-          // Insert default categories into database
           try {
             for (const category of DEFAULT_COMPONENT_CATEGORIES) {
               await supabase
@@ -246,7 +229,6 @@ export const UploadProduct: React.FC = () => {
         console.error('Error fetching component categories:', error);
         toast.error('Failed to load component categories');
         
-        // Use default categories if fetch fails
         setComponentCategories(DEFAULT_COMPONENT_CATEGORIES);
       } finally {
         setIsLoadingCategories(false);
@@ -256,7 +238,6 @@ export const UploadProduct: React.FC = () => {
     fetchComponentCategories();
   }, []);
 
-  // Fetch all component subcategories from the database
   useEffect(() => {
     const fetchComponentSubcategories = async () => {
       setIsLoadingSubcategories(true);
@@ -278,10 +259,8 @@ export const UploadProduct: React.FC = () => {
         } else {
           console.log('No component subcategories found in database, using default subcategories');
           
-          // Use default subcategories AND try to insert them into the database
           setComponentSubcategories(DEFAULT_COMPONENT_SUBCATEGORIES);
           
-          // Insert default subcategories into database
           try {
             for (const subcategory of DEFAULT_COMPONENT_SUBCATEGORIES) {
               await supabase
@@ -304,7 +283,6 @@ export const UploadProduct: React.FC = () => {
         console.error('Error fetching component subcategories:', error);
         toast.error('Failed to load component subcategories');
         
-        // Use default subcategories if fetch fails
         setComponentSubcategories(DEFAULT_COMPONENT_SUBCATEGORIES);
       } finally {
         setIsLoadingSubcategories(false);
@@ -314,12 +292,10 @@ export const UploadProduct: React.FC = () => {
     fetchComponentSubcategories();
   }, []);
 
-  // Create unified searchable items from all component data
   useEffect(() => {
     if (!isLoadingGroups && !isLoadingCategories && !isLoadingSubcategories) {
       const searchItems: ComponentSearchItem[] = [];
       
-      // Add groups
       componentGroups.forEach(group => {
         searchItems.push({
           id: `group-${group.id}`,
@@ -330,7 +306,6 @@ export const UploadProduct: React.FC = () => {
         });
       });
       
-      // Add categories
       componentCategories.forEach(category => {
         searchItems.push({
           id: `category-${category.id}`,
@@ -342,7 +317,6 @@ export const UploadProduct: React.FC = () => {
         });
       });
       
-      // Add subcategories
       componentSubcategories.forEach(subcategory => {
         searchItems.push({
           id: `subcategory-${subcategory.id}`,
@@ -358,7 +332,6 @@ export const UploadProduct: React.FC = () => {
     }
   }, [componentGroups, componentCategories, componentSubcategories, isLoadingGroups, isLoadingCategories, isLoadingSubcategories]);
 
-  // Filter component search items based on search term
   const filteredComponentItems = componentSearchTerm.trim() === '' 
     ? componentSearchItems 
     : componentSearchItems.filter(item => 
@@ -366,11 +339,9 @@ export const UploadProduct: React.FC = () => {
         item.description?.toLowerCase().includes(componentSearchTerm.toLowerCase())
       );
 
-  // Handle component selection
   const handleComponentSelection = (component: ComponentSearchItem) => {
     setSelectedComponent(component);
     
-    // Set appropriate values in productData
     if (component.type === 'group') {
       setProductData(prev => ({
         ...prev,
@@ -379,7 +350,6 @@ export const UploadProduct: React.FC = () => {
         componentSubcategory: ''
       }));
       
-      // Filter categories for this group
       const filtered = componentCategories.filter(
         category => category.component_group === component.originalId
       );
@@ -387,7 +357,6 @@ export const UploadProduct: React.FC = () => {
       setFilteredSubcategories([]);
       
     } else if (component.type === 'category') {
-      // Find parent group
       const parentGroup = componentCategories.find(cat => cat.id === component.originalId)?.component_group;
       
       setProductData(prev => ({
@@ -397,7 +366,6 @@ export const UploadProduct: React.FC = () => {
         componentSubcategory: ''
       }));
       
-      // Filter categories for the parent group (if found)
       if (parentGroup) {
         const filteredCats = componentCategories.filter(
           category => category.component_group === parentGroup
@@ -405,17 +373,14 @@ export const UploadProduct: React.FC = () => {
         setFilteredCategories(filteredCats);
       }
       
-      // Filter subcategories for this category
       const filteredSubs = componentSubcategories.filter(
         subcategory => subcategory.component_category === component.originalId
       );
       setFilteredSubcategories(filteredSubs);
       
     } else if (component.type === 'subcategory') {
-      // Find parent category
       const parentCategory = componentSubcategories.find(sub => sub.id === component.originalId)?.component_category;
       
-      // Find parent group if we have a parent category
       let parentGroup = undefined;
       if (parentCategory) {
         parentGroup = componentCategories.find(cat => cat.id === parentCategory)?.component_group;
@@ -428,7 +393,6 @@ export const UploadProduct: React.FC = () => {
         componentSubcategory: component.originalId.toString()
       }));
       
-      // Update filtered categories and subcategories
       if (parentGroup) {
         const filteredCats = componentCategories.filter(
           category => category.component_group === parentGroup
@@ -447,7 +411,6 @@ export const UploadProduct: React.FC = () => {
     setComponentSearchTerm('');
   };
 
-  // Fetch unique product names and manufacturers for autosuggest
   useEffect(() => {
     const fetchProductSuggestions = async () => {
       try {
@@ -476,9 +439,7 @@ export const UploadProduct: React.FC = () => {
     fetchProductSuggestions();
   }, []);
 
-  // This is a simplified mapping for demo purposes based on the list provided
   useEffect(() => {
-    // Sample variant data based on the list provided
     const variantMapping: Record<string, string[]> = {
       'Frame': ['Step Thru', 'Gravel', 'Road', 'Mountain', 'Enduro', 'Cross Country', 'Hybrid'],
       'Fork': ['Rigid', 'Suspension'],
@@ -493,7 +454,6 @@ export const UploadProduct: React.FC = () => {
       'Seat Post': ['Standard', 'Layback', 'Integrated Light', 'Dropper', 'Suspension']
     };
     
-    // Find the variant options based on selected category or subcategory
     let variantKey = '';
     
     if (selectedComponent) {
@@ -521,22 +481,19 @@ export const UploadProduct: React.FC = () => {
     if (variantKey && variantMapping[variantKey]) {
       setAvailableVariants(variantMapping[variantKey]);
     } else {
-      // Check if we can match any partial keys
       const matchingKeys = Object.keys(variantMapping).filter(key => 
         variantKey.includes(key) || key.includes(variantKey)
       );
       
       if (matchingKeys.length > 0) {
-        // Combine variants from all matching keys
         const combinedVariants = matchingKeys.flatMap(key => variantMapping[key]);
         setAvailableVariants([...new Set(combinedVariants)]);
       } else {
         setAvailableVariants([]);
       }
     }
-    
   }, [selectedComponent, productData.componentGroup, productData.componentCategory, productData.componentSubcategory, componentGroups, componentCategories, componentSubcategories]);
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { id, value } = e.target;
     setProductData(prev => ({
@@ -585,7 +542,6 @@ export const UploadProduct: React.FC = () => {
     }
     
     try {
-      // Find the highest ID to generate a new one
       const maxId = Math.max(...componentGroups.map(g => g.id), 0);
       const newId = maxId + 1;
       
@@ -605,17 +561,14 @@ export const UploadProduct: React.FC = () => {
         throw error;
       }
       
-      // Update state
       setComponentGroups(prev => [...prev, data]);
       toast.success(`Added new component group: ${newItemName}`);
       
-      // Select the new group
       setProductData(prev => ({
         ...prev,
         componentGroup: newId.toString()
       }));
       
-      // Reset form
       setNewItemName('');
       setNewItemDescription('');
       setShowNewGroupDialog(false);
@@ -632,7 +585,6 @@ export const UploadProduct: React.FC = () => {
     }
     
     try {
-      // Find the highest ID to generate a new one
       const maxId = Math.max(...componentCategories.map(c => c.id), 0);
       const newId = maxId + 1;
       
@@ -653,18 +605,15 @@ export const UploadProduct: React.FC = () => {
         throw error;
       }
       
-      // Update state
       setComponentCategories(prev => [...prev, data]);
       setFilteredCategories(prev => [...prev, data]);
       toast.success(`Added new component category: ${newItemName}`);
       
-      // Select the new category
       setProductData(prev => ({
         ...prev,
         componentCategory: newId.toString()
       }));
       
-      // Reset form
       setNewItemName('');
       setNewItemDescription('');
       setShowNewCategoryDialog(false);
@@ -681,7 +630,6 @@ export const UploadProduct: React.FC = () => {
     }
     
     try {
-      // Find the highest ID to generate a new one
       const maxId = Math.max(...componentSubcategories.map(s => s.id), 0);
       const newId = maxId + 1;
       
@@ -702,18 +650,15 @@ export const UploadProduct: React.FC = () => {
         throw error;
       }
       
-      // Update state
       setComponentSubcategories(prev => [...prev, data]);
       setFilteredSubcategories(prev => [...prev, data]);
       toast.success(`Added new component subcategory: ${newItemName}`);
       
-      // Select the new subcategory
       setProductData(prev => ({
         ...prev,
         componentSubcategory: newId.toString()
       }));
       
-      // Reset form
       setNewItemName('');
       setNewItemDescription('');
       setShowNewSubcategoryDialog(false);
@@ -734,7 +679,6 @@ export const UploadProduct: React.FC = () => {
     setIsUploading(true);
     
     try {
-      // Get the current user
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
@@ -746,9 +690,7 @@ export const UploadProduct: React.FC = () => {
       let modelUrl = '';
       let thumbnailUrl = '';
       
-      // Upload the image if provided
       if (imagePreview) {
-        // Convert data URL to blob
         const imageBlob = await fetch(imagePreview).then(r => r.blob());
         const imageFile = new File([imageBlob], `product_${Date.now()}.jpg`, { type: 'image/jpeg' });
         
@@ -763,7 +705,6 @@ export const UploadProduct: React.FC = () => {
           throw imageError;
         }
         
-        // Get the public URL for the uploaded image
         const { data: imageUrlData } = supabase.storage
           .from('product-images')
           .getPublicUrl(imageData?.path || '');
@@ -771,7 +712,6 @@ export const UploadProduct: React.FC = () => {
         thumbnailUrl = imageUrlData.publicUrl;
       }
       
-      // Upload model file if provided
       if (modelFile) {
         const fileExt = modelFile.name.split('.').pop();
         const filePath = `${user.id}/${Date.now()}_${productData.name.replace(/\s+/g, '_')}.${fileExt}`;
@@ -787,7 +727,6 @@ export const UploadProduct: React.FC = () => {
           throw modelError;
         }
         
-        // Get the public URL for the uploaded model
         const { data: modelUrlData } = supabase.storage
           .from('product-models')
           .getPublicUrl(filePath);
@@ -795,11 +734,9 @@ export const UploadProduct: React.FC = () => {
         modelUrl = modelUrlData.publicUrl;
       }
       
-      // Find the selected component group and category for reference
       const selectedGroup = componentGroups.find(group => group.id.toString() === productData.componentGroup);
       const selectedCategory = componentCategories.find(category => category.id.toString() === productData.componentCategory);
       
-      // Insert product into database
       const { data: insertedProduct, error: productError } = await supabase
         .from('products')
         .insert([{
@@ -807,7 +744,7 @@ export const UploadProduct: React.FC = () => {
           price: parseFloat(productData.price),
           manufacturer: productData.manufacturer,
           description: productData.description,
-          category_id: null, // We'll store detailed category info in parameters
+          category_id: null,
           model_url: modelUrl || null,
           thumbnail_url: thumbnailUrl || null,
           user_id: user.id
@@ -819,9 +756,7 @@ export const UploadProduct: React.FC = () => {
         throw productError;
       }
       
-      // Store parameters (component group, category, subcategory)
       if (insertedProduct) {
-        // Store component group
         if (selectedGroup) {
           await supabase
             .from('product_parameters')
@@ -832,7 +767,6 @@ export const UploadProduct: React.FC = () => {
             });
         }
         
-        // Store component category
         if (selectedCategory) {
           await supabase
             .from('product_parameters')
@@ -843,7 +777,6 @@ export const UploadProduct: React.FC = () => {
             });
         }
         
-        // Store component subcategory
         if (productData.componentSubcategory) {
           const subcategoryId = parseInt(productData.componentSubcategory);
           const selectedSubcategory = componentSubcategories.find(subcat => subcat.id === subcategoryId);
@@ -859,7 +792,6 @@ export const UploadProduct: React.FC = () => {
           }
         }
         
-        // Store selected variants as parameters
         for (const variant of selectedVariants) {
           await supabase
             .from('product_parameters')
@@ -874,9 +806,7 @@ export const UploadProduct: React.FC = () => {
       setIsUploading(false);
       toast.success('Product uploaded successfully');
       
-      // If model file exists, go to parameters page, otherwise go back to products list
       if (modelFile && insertedProduct) {
-        // Create component object for the viewport
         const component: ComponentItem = {
           id: `product-${Date.now()}`,
           name: insertedProduct.name,
@@ -887,7 +817,6 @@ export const UploadProduct: React.FC = () => {
           modelUrl: modelUrl
         };
         
-        // Store component in local storage for parameters page
         localStorage.setItem('currentUploadedProduct', JSON.stringify({
           ...component,
           price: insertedProduct.price,
@@ -899,4 +828,29 @@ export const UploadProduct: React.FC = () => {
       } else {
         navigate('/supplier/products');
       }
+    } catch (error) {
+      console.error('Error uploading product:', error);
+      setIsUploading(false);
+      toast.error('Failed to upload product');
     }
+  };
+
+  return (
+    <div className="container mx-auto py-8">
+      <div className="flex items-center mb-6">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="mr-2"
+          onClick={() => navigate('/supplier')}
+        >
+          <ArrowLeft className="h-4 w-4 mr-1" />
+          Back
+        </Button>
+        <h1 className="text-2xl font-bold">Upload New Product</h1>
+      </div>
+      
+      <div className="bg-white p-6 rounded-lg shadow-sm">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <Label
