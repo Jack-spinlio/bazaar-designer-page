@@ -1,4 +1,3 @@
-
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
@@ -25,12 +24,6 @@ export const loadModel = async (url: string, type: ModelType): Promise<THREE.Obj
   
   // Force uppercase for the type to ensure consistency
   const normalizedType = type.toUpperCase() as ModelType;
-  
-  // Special handling for the CompleteBike.gltf model which needs special treatment
-  if (url.includes('CompleteBike.gltf')) {
-    console.log('Loading special bike model: CompleteBike.gltf with GLTF loader');
-    return loadGLTFModel(url);
-  }
   
   // Determine file type from extension if not matched with the provided type
   const extension = url.split('.').pop()?.toUpperCase();
@@ -167,16 +160,22 @@ const loadSTLModel = (url: string): Promise<THREE.Object3D> => {
       };
       loader.manager = manager;
       
+      // Set a timeout for large STL files
+      const timeoutId = setTimeout(() => {
+        console.warn('STL loading timeout reached, but continuing to wait...');
+      }, 20000); // 20 seconds timeout warning
+      
       loader.load(
         url,
         (geometry) => {
+          clearTimeout(timeoutId);
           console.log(`STL geometry loaded successfully from ${url}`);
           
           // Create a material and mesh from the geometry
           const material = new THREE.MeshStandardMaterial({
             color: 0x888888,
-            metalness: 0.2,
-            roughness: 0.8,
+            metalness: 0.3,
+            roughness: 0.7,
           });
           
           const mesh = new THREE.Mesh(geometry, material);
@@ -185,14 +184,25 @@ const loadSTLModel = (url: string): Promise<THREE.Object3D> => {
           const group = new THREE.Group();
           group.add(mesh);
           
+          // Center the STL model
+          const box = new THREE.Box3().setFromObject(group);
+          const center = new THREE.Vector3();
+          box.getCenter(center);
+          group.position.sub(center);
+          
+          // Enable shadows
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
+          
           console.log('STL model loaded and processed successfully');
           resolve(group);
         },
         (xhr) => {
           // Progress callback
-          // console.log(`${(xhr.loaded / xhr.total * 100).toFixed(2)}% loaded`);
+          console.log(`${(xhr.loaded / xhr.total * 100).toFixed(2)}% loaded`);
         },
         (error) => {
+          clearTimeout(timeoutId);
           console.error('Error loading STL model:', error);
           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
           reject(new Error(`Failed to load STL model: ${errorMessage}`));

@@ -29,15 +29,15 @@ export const MainContent: React.FC<MainContentProps> = ({
     location.pathname !== '/settings' &&
     location.pathname !== '/uploads';
 
-  // Define the default component for the design page
+  // Define the default Shimano motor model for the design page
   const defaultShimanoModel: ComponentItem | null = location.pathname === '/design' ? {
-    id: 'bike-15',
-    name: "Men's Urban eBike",
-    type: 'GLTF',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails/complete_bike.jpg',
-    folder: 'Bikes',
-    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/CompleteBike.gltf',
-    modelType: 'GLTF',
+    id: 'shimano-ep800',
+    name: 'Shimano EP800',
+    type: 'STL',
+    thumbnail: '/placeholder.svg',
+    folder: 'Default Models',
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
+    modelType: 'STL',
     shape: 'box'
   } : null;
 

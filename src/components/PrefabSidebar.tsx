@@ -10,16 +10,6 @@ import { FileUploader } from './FileUploader';
 // Bike models for the prefabs library
 const BIKE_PREFABS = [
   {
-    id: 'bike-15',
-    name: "Men's Urban eBike",
-    type: 'BIKE',
-    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/Modmo.jpg.pdf',
-    folder: 'Bikes',
-    shape: 'box' as const,
-    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/CompleteBike.gltf',
-    modelType: 'GLTF'
-  },
-  {
     id: 'bike-1',
     name: 'Road bike',
     type: 'BIKE',

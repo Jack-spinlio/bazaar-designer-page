@@ -47,12 +47,6 @@ const Edit = () => {
           shape: prefab.shape
         };
         
-        // For CompleteBike.gltf, ensure we're explicitly setting GLTF type
-        if (componentFromPrefab.modelUrl && componentFromPrefab.modelUrl.includes('CompleteBike.gltf')) {
-          componentFromPrefab.modelType = 'GLTF';
-          console.log('Setting explicit GLTF type for CompleteBike model');
-        }
-        
         console.log('Setting component with processed prefab:', componentFromPrefab);
         setSelectedComponent(componentFromPrefab);
         toast.success(`Loaded prefab: ${componentFromPrefab.name}`);
