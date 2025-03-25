@@ -4,8 +4,6 @@ import { IconSidebar } from '@/components/IconSidebar';
 import { Sidebar, ComponentItem } from '@/components/Sidebar';
 import { PrefabSidebar, PrefabItem } from '@/components/PrefabSidebar';
 import { SavedSidebar, SavedDesign } from '@/components/SavedSidebar';
-import { FileUploader } from '@/components/FileUploader';
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Header } from '@/components/Header/Header';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pencil, Puzzle, FileSpreadsheet, Bookmark, FrameIcon, Battery, Disc, Grip, Lightbulb, Shield, Link, Footprints, Cog, Gamepad, Utensils } from "lucide-react";
@@ -20,7 +18,6 @@ const DesignStudio = () => {
   const [selectedComponent, setSelectedComponent] = useState<ComponentItem | null>(null);
   const [selectedPrefab, setSelectedPrefab] = useState<PrefabItem | null>(null);
   const [selectedDesign, setSelectedDesign] = useState<SavedDesign | null>(null);
-  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
 
   // Handlers for component selection
   const handleComponentSelected = (component: ComponentItem) => {
@@ -142,19 +139,6 @@ const DesignStudio = () => {
           <Viewport selectedComponent={selectedComponent} onComponentPlaced={handleComponentPlaced} />
         </div>
       </div>
-
-      {/* Upload dialog */}
-      <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <h3 className="text-lg font-medium mb-4">Upload 3D Component</h3>
-          <FileUploader 
-            onClose={() => setUploadDialogOpen(false)} 
-            onFileUploaded={() => {
-              setUploadDialogOpen(false);
-            }} 
-          />
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

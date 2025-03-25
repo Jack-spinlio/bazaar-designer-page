@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { 
   Pencil, 
@@ -13,6 +14,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { FileUploader } from "@/components/FileUploader";
+import { ComponentItem } from "./Sidebar";
 
 interface IconSidebarProps {
   activeTab?: string | null;
@@ -47,9 +49,10 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
     { id: "timeline", icon: Clock, label: "Timeline" },
   ];
 
-  const handleUploadClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    navigate('/supplier/uploads');
+  const handleComponentUploaded = (component: ComponentItem) => {
+    // Here you could update a global state or context with the new component
+    console.log('Component uploaded:', component);
+    setUploadDialogOpen(false);
   };
 
   return (
@@ -82,25 +85,32 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
-                  variant={location.pathname.startsWith("/supplier") ? "default" : "ghost"} 
+                  variant="ghost" 
                   size="icon" 
-                  className={
-                    location.pathname.startsWith("/supplier")
-                      ? "bg-black text-white hover:bg-black hover:text-white" 
-                      : "text-gray-400 hover:text-gray-600"
-                  }
-                  onClick={handleUploadClick}
+                  className="text-gray-400 hover:text-gray-600"
+                  onClick={() => setUploadDialogOpen(true)}
                 >
                   <Upload size={20} />
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">
-                <p>Upload</p>
+                <p>Upload Component</p>
               </TooltipContent>
             </Tooltip>
           </div>
         </TooltipProvider>
       </div>
+
+      {/* Upload dialog for designers */}
+      <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <h3 className="text-lg font-medium mb-4">Upload 3D Component</h3>
+          <FileUploader 
+            onClose={() => setUploadDialogOpen(false)} 
+            onFileUploaded={handleComponentUploaded}
+          />
+        </DialogContent>
+      </Dialog>
     </>
   );
 };
