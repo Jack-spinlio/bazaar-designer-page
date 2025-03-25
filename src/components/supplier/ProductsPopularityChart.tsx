@@ -38,11 +38,11 @@ export const ProductsPopularityChart: React.FC<ProductsPopularityChartProps> = (
                 <Progress 
                   value={product.popularity} 
                   className="mr-2" 
-                  indicatorClassName={`bg-gradient-to-r from-${product.color}-400 to-${product.color}-300`}
+                  indicatorClassName={`bg-${product.color}-500`}
                 />
               </div>
               <div className="text-sm">
-                <span className={`inline-flex items-center justify-center rounded-md px-2 py-1 text-xs font-medium bg-${product.color}-100 text-${product.color}-700`}>
+                <span className={`inline-flex items-center justify-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset bg-${product.color}-100 text-${product.color}-700 ring-${product.color}-700/10`}>
                   {product.sales}%
                 </span>
               </div>
