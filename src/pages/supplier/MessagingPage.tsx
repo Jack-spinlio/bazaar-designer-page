@@ -35,6 +35,7 @@ interface ConversationPreview {
   timestamp: string;
   initials: string;
   avatarBg: string;
+  avatar?: string;
 }
 
 interface ProductCard {
@@ -52,8 +53,9 @@ const mockConversations: ConversationPreview[] = [
     name: 'Vanpoof', 
     lastMessage: 'You: Hey whats up', 
     timestamp: '15 Min', 
-    initials: '', 
-    avatarBg: 'bg-orange-200' 
+    initials: 'VP', 
+    avatarBg: 'bg-orange-200',
+    avatar: 'https://randomuser.me/api/portraits/men/1.jpg'
   },
   { 
     id: '2', 
@@ -61,7 +63,8 @@ const mockConversations: ConversationPreview[] = [
     lastMessage: "Hi, I'm sending you...", 
     timestamp: '12:36 PM', 
     initials: 'Z', 
-    avatarBg: 'bg-yellow-300' 
+    avatarBg: 'bg-yellow-300',
+    avatar: 'https://randomuser.me/api/portraits/women/2.jpg'
   },
   { 
     id: '3', 
@@ -69,7 +72,8 @@ const mockConversations: ConversationPreview[] = [
     lastMessage: 'Can you update th...', 
     timestamp: '12:36 PM', 
     initials: 'C', 
-    avatarBg: 'bg-pink-200' 
+    avatarBg: 'bg-pink-200',
+    avatar: 'https://randomuser.me/api/portraits/women/3.jpg' 
   },
   { 
     id: '4', 
@@ -77,7 +81,8 @@ const mockConversations: ConversationPreview[] = [
     lastMessage: '$4.4 is too much f...', 
     timestamp: '12:36 PM', 
     initials: 'GK', 
-    avatarBg: 'bg-blue-300' 
+    avatarBg: 'bg-blue-300',
+    avatar: 'https://randomuser.me/api/portraits/men/4.jpg'
   },
   { 
     id: '5', 
@@ -85,7 +90,8 @@ const mockConversations: ConversationPreview[] = [
     lastMessage: 'Thanks for the sa...', 
     timestamp: '12:36 PM', 
     initials: 'MK', 
-    avatarBg: 'bg-green-400' 
+    avatarBg: 'bg-green-400',
+    avatar: 'https://randomuser.me/api/portraits/men/5.jpg'
   },
   { 
     id: '6', 
@@ -93,7 +99,8 @@ const mockConversations: ConversationPreview[] = [
     lastMessage: 'Payment of GHS 3...', 
     timestamp: '12:36 PM', 
     initials: 'VC', 
-    avatarBg: 'bg-purple-200' 
+    avatarBg: 'bg-purple-200',
+    avatar: 'https://randomuser.me/api/portraits/women/6.jpg'
   },
   { 
     id: '7', 
@@ -101,7 +108,8 @@ const mockConversations: ConversationPreview[] = [
     lastMessage: 'Amber where are...', 
     timestamp: '12:36 PM', 
     initials: 'B', 
-    avatarBg: 'bg-indigo-300' 
+    avatarBg: 'bg-indigo-300',
+    avatar: 'https://randomuser.me/api/portraits/men/7.jpg'
   },
 ];
 
@@ -128,7 +136,8 @@ const mockMessages: Message[] = [
     timestamp: new Date(),
     isCurrentUser: false,
     initials: 'ZD',
-    avatarBg: 'bg-blue-300'
+    avatarBg: 'bg-blue-300',
+    avatar: 'https://randomuser.me/api/portraits/women/2.jpg'
   },
   {
     id: '2',
@@ -137,7 +146,8 @@ const mockMessages: Message[] = [
     timestamp: new Date(),
     isCurrentUser: false,
     initials: 'ZD',
-    avatarBg: 'bg-blue-300'
+    avatarBg: 'bg-blue-300',
+    avatar: 'https://randomuser.me/api/portraits/women/2.jpg'
   },
   {
     id: '3',
@@ -146,7 +156,8 @@ const mockMessages: Message[] = [
     timestamp: new Date(),
     isCurrentUser: true,
     initials: 'ME',
-    avatarBg: 'bg-green-400'
+    avatarBg: 'bg-green-400',
+    avatar: 'https://randomuser.me/api/portraits/men/8.jpg'
   },
   {
     id: '4',
@@ -155,7 +166,8 @@ const mockMessages: Message[] = [
     timestamp: new Date(),
     isCurrentUser: true,
     initials: 'ME',
-    avatarBg: 'bg-green-400'
+    avatarBg: 'bg-green-400',
+    avatar: 'https://randomuser.me/api/portraits/men/8.jpg'
   }
 ];
 
@@ -198,7 +210,8 @@ const MessagingPage = () => {
         timestamp: new Date(),
         isCurrentUser: true,
         initials: 'ME',
-        avatarBg: 'bg-green-400'
+        avatarBg: 'bg-green-400',
+        avatar: 'https://randomuser.me/api/portraits/men/8.jpg'
       };
       setMessages([...messages, newMsg]);
       setNewMessage('');
@@ -213,17 +226,18 @@ const MessagingPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white">
-      <div className="flex h-[calc(100vh-130px)]">
+    <div className="flex flex-col h-[calc(100vh-130px)] bg-white">
+      <h1 className="text-2xl font-bold mb-4 p-4 border-b">Messages</h1>
+      <div className="flex flex-1 overflow-hidden">
         {/* Left sidebar - Conversations list */}
-        <div className="w-1/3 border-r border-gray-200">
+        <div className="w-1/3 border-r border-gray-200 flex flex-col overflow-hidden">
           <div className="p-4 border-b border-gray-200">
             <Button className="bg-black hover:bg-black/90 rounded-full w-full text-white flex items-center">
               <MessageCircle className="mr-2 h-5 w-5" />
               New Chat
             </Button>
           </div>
-          <ScrollArea className="h-[calc(100vh-186px)]">
+          <ScrollArea className="flex-1">
             {mockConversations.map((convo) => (
               <div 
                 key={convo.id}
@@ -231,7 +245,11 @@ const MessagingPage = () => {
                 onClick={() => setSelectedConversation(convo)}
               >
                 <Avatar className={`h-12 w-12 ${convo.avatarBg}`}>
-                  <AvatarFallback>{convo.initials}</AvatarFallback>
+                  {convo.avatar ? (
+                    <AvatarImage src={convo.avatar} alt={convo.name} />
+                  ) : (
+                    <AvatarFallback>{convo.initials}</AvatarFallback>
+                  )}
                 </Avatar>
                 <div className="ml-4 flex-1 min-w-0">
                   <div className="flex justify-between">
@@ -246,14 +264,18 @@ const MessagingPage = () => {
         </div>
 
         {/* Right side - Chat window */}
-        <div className="flex-1 flex flex-col bg-gray-50">
+        <div className="flex-1 flex flex-col bg-gray-50 overflow-hidden">
           {selectedConversation ? (
             <>
               {/* Chat header */}
               <div className="p-4 border-b border-gray-200 bg-white flex justify-between items-center">
                 <div className="flex items-center">
                   <Avatar className={`h-8 w-8 mr-3 ${selectedConversation.avatarBg}`}>
-                    <AvatarFallback>{selectedConversation.initials}</AvatarFallback>
+                    {selectedConversation.avatar ? (
+                      <AvatarImage src={selectedConversation.avatar} alt={selectedConversation.name} />
+                    ) : (
+                      <AvatarFallback>{selectedConversation.initials}</AvatarFallback>
+                    )}
                   </Avatar>
                   <h2 className="text-xl font-semibold">{selectedConversation.name}</h2>
                 </div>
@@ -313,7 +335,11 @@ const MessagingPage = () => {
                         >
                           {!message.isCurrentUser && (
                             <Avatar className={`h-8 w-8 mr-2 ${message.avatarBg}`}>
-                              <AvatarFallback>{message.initials}</AvatarFallback>
+                              {message.avatar ? (
+                                <AvatarImage src={message.avatar} alt={message.initials} />
+                              ) : (
+                                <AvatarFallback>{message.initials}</AvatarFallback>
+                              )}
                             </Avatar>
                           )}
                           <div 
@@ -327,7 +353,11 @@ const MessagingPage = () => {
                           </div>
                           {message.isCurrentUser && (
                             <Avatar className={`h-8 w-8 ml-2 ${message.avatarBg}`}>
-                              <AvatarFallback>{message.initials}</AvatarFallback>
+                              {message.avatar ? (
+                                <AvatarImage src={message.avatar} alt={message.initials} />
+                              ) : (
+                                <AvatarFallback>{message.initials}</AvatarFallback>
+                              )}
                             </Avatar>
                           )}
                         </div>
