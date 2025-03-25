@@ -247,12 +247,8 @@ export const EditToolbar: React.FC<EditToolbarProps> = ({
                   {shapeOptions.map(option => <div key={option.name} className={`p-3 border rounded-lg flex flex-col items-center justify-center cursor-pointer ${selectedShape === option.shape.toLowerCase() ? 'border-blue-300 bg-blue-50' : 'border-gray-200'}`} onClick={() => setSelectedShape(option.shape.toLowerCase())}>
                       <div className="w-full h-8 flex items-center justify-center mb-2">
                         {option.shape === 'ovalized' && <div className="w-16 h-8 border-2 border-black rounded-full"></div>}
-                        {option.shape === 'multi-ribbed' && <div className="w-16 h-8 border-2 border-black" style={{
-                      clipPath: 'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)'
-                    }}></div>}
-                        {option.shape === 'soft-triangle' && <div className="w-16 h-8 border-2 border-black" style={{
-                      clipPath: 'polygon(50% 0%, 100% 100%, 0% 100%)'
-                    }}></div>}
+                        {option.shape === 'multi-ribbed' && <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//Polygon.svg" alt="Multi-Ribbed" className="w-16 h-8 object-contain" />}
+                        {option.shape === 'soft-triangle' && <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//Vector.svg" alt="Soft-Triangle" className="w-16 h-8 object-contain" />}
                         {option.shape === 'rectangular' && <div className="w-16 h-8 border-2 border-black rounded-lg"></div>}
                         {option.shape === 'round' && <div className="w-10 h-10 border-2 border-black rounded-full"></div>}
                         {option.shape === 'square' && <div className="w-10 h-10 border-2 border-black rounded-md"></div>}
