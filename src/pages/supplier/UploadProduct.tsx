@@ -880,4 +880,3 @@ export const UploadProduct: React.FC = () => {
         componentSubcategory: '',
         description: ''
       });
-      setImagePreviews([]);
