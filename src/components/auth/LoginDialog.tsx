@@ -10,8 +10,7 @@ import {
   DialogFooter
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { LogIn, AlertCircle, User } from 'lucide-react';
-import { toast } from 'sonner';
+import { User } from 'lucide-react';
 
 interface LoginDialogProps {
   open: boolean;
@@ -25,21 +24,6 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
   const { login, isLoading, isAuthenticated } = useAuth();
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
-
-  // Check if any Auth0 environment variables are configured
-  const domain = import.meta.env.VITE_AUTH0_DOMAIN;
-  const fallbackDomain = import.meta.env.VITE_AUTH0_FALLBACK_DOMAIN;
-  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
-  
-  const isAuth0Configured = !!domain || !!fallbackDomain || 
-                          (!!clientId && clientId !== 'dummyClientId');
-
-  console.log('Auth0 configuration status:', { 
-    isConfigured: isAuth0Configured,
-    domain,
-    fallbackDomain,
-    clientId
-  });
 
   useEffect(() => {
     if (isAuthenticated && open) {
@@ -71,19 +55,15 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
         </DialogHeader>
         
         <div className="flex flex-col gap-4 py-4">
-          {!isAuth0Configured && (
-            <div className="bg-yellow-100 text-yellow-800 p-3 rounded-md flex items-start gap-2">
-              <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="font-medium">Using demo mode</p>
-                <p className="text-sm">Auth0 is not configured. You'll be logged in with a demo account.</p>
-              </div>
+          <div className="bg-yellow-100 text-yellow-800 p-3 rounded-md flex items-start gap-2">
+            <div>
+              <p className="font-medium">Using demo mode</p>
+              <p className="text-sm">You'll be logged in with a demo account.</p>
             </div>
-          )}
+          </div>
           
           {loginError && (
             <div className="bg-red-100 text-red-800 p-3 rounded-md flex items-start gap-2">
-              <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-medium">Authentication error</p>
                 <p className="text-sm">{loginError}</p>
@@ -98,18 +78,16 @@ export const LoginDialog: React.FC<LoginDialogProps> = ({
           >
             {isLoggingIn || isLoading ? (
               <div className="w-5 h-5 border-t-2 border-b-2 border-white rounded-full animate-spin" />
-            ) : isAuth0Configured ? (
-              <LogIn className="h-5 w-5" />
             ) : (
               <User className="h-5 w-5" />
             )}
-            {isLoggingIn || isLoading ? 'Signing in...' : isAuth0Configured ? 'Sign in with Auth0' : 'Sign in with Demo Account'}
+            {isLoggingIn || isLoading ? 'Signing in...' : 'Sign in with Demo Account'}
           </Button>
         </div>
         
         <DialogFooter className="flex flex-col sm:flex-row sm:justify-between">
           <p className="text-sm text-gray-500">
-            Don't have an account? You'll be able to create one during sign in.
+            This is a demo account for testing purposes.
           </p>
         </DialogFooter>
       </DialogContent>
