@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -174,6 +173,18 @@ const BASIC_SHAPES = [
   }
 ];
 
+const CUSTOM_COMPONENTS = [
+  {
+    id: 'custom-fork-1',
+    name: 'Front Fork',
+    type: 'OBJ',
+    thumbnail: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//fork.png',
+    folder: 'Custom Components',
+    shape: 'box' as const,
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//Fork.obj'
+  }
+];
+
 export interface ComponentItem {
   id: string;
   name: string;
@@ -181,7 +192,7 @@ export interface ComponentItem {
   thumbnail: string;
   folder?: string;
   shape: 'box' | 'sphere' | 'cylinder' | 'cone' | 'torus';
-  modelUrl?: string; // URL to the 3D model file
+  modelUrl?: string;
 }
 
 interface SidebarProps {
@@ -195,7 +206,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [components, setComponents] = useState<ComponentItem[]>([...SHIMANO_COMPONENTS, ...BASIC_SHAPES]);
+  const [components, setComponents] = useState<ComponentItem[]>([...SHIMANO_COMPONENTS, ...BASIC_SHAPES, ...CUSTOM_COMPONENTS]);
   const [uploadedModels, setUploadedModels] = useState<ComponentItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'marketplace' | 'uploads'>('marketplace');
