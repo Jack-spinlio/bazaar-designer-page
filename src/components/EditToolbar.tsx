@@ -248,7 +248,7 @@ export const EditToolbar: React.FC<EditToolbarProps> = ({
                       <div className="w-full h-8 flex items-center justify-center mb-2">
                         {option.shape === 'ovalized' && <div className="w-16 h-8 border-2 border-black rounded-full"></div>}
                         {option.shape === 'multi-ribbed' && <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//Polygon%20(1).svg" alt="Multi-Ribbed" className="w-16 h-8 object-contain" />}
-                        {option.shape === 'soft-triangle' && <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//Vector.svg" alt="Soft-Triangle" className="w-16 h-8 object-contain" />}
+                        {option.shape === 'soft-triangle' && <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//Vector%20(2).svg" alt="Soft-Triangle" className="w-16 h-8 object-contain" />}
                         {option.shape === 'rectangular' && <div className="w-16 h-8 border-2 border-black rounded-lg"></div>}
                         {option.shape === 'round' && <div className="w-10 h-10 border-2 border-black rounded-full"></div>}
                         {option.shape === 'square' && <div className="w-10 h-10 border-2 border-black rounded-md"></div>}

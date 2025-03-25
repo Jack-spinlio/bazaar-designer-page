@@ -20,6 +20,20 @@ interface IconSidebarProps {
   setActiveTab?: (tab: string | null) => void;
 }
 
+// Create a custom SVG component for the timeline icon to support color changes
+const TimelineIcon = ({ className }: { className?: string }) => (
+  <svg 
+    width="20" 
+    height="20" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg" 
+    className={className}
+  >
+    <path d="M13.8995 4.10002V9.35002C13.8995 9.91002 14.3495 10.35 14.8995 10.35H20.1495M13.8995 4.10002H7.89954C6.89954 4.10002 6.09954 4.90002 6.09954 5.90002V19.9C6.09954 20.9 6.89954 21.7 7.89954 21.7H18.8995C19.8995 21.7 20.6995 20.9 20.6995 19.9V10.35M13.8995 4.10002L20.1495 10.35M11.3495 16.36H16.4995M9.34954 12.1H16.4995" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
 export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -45,11 +59,7 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
     { id: "components", icon: Puzzle, label: "Components" },
     { id: "bom", icon: FileSpreadsheet, label: "BOM" },
     { id: "saved", icon: Bookmark, label: "Saved" },
-    { 
-      id: "timeline", 
-      icon: () => <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//Vector%20(1).svg" alt="Timeline" className="w-5 h-5" />, 
-      label: "Timeline" 
-    },
+    { id: "timeline", icon: TimelineIcon, label: "Timeline" },
   ];
 
   const handleComponentUploaded = (component: ComponentItem) => {
@@ -75,7 +85,7 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
                     }
                     onClick={() => handleTabClick(item.id)}
                   >
-                    <item.icon size={20} />
+                    <item.icon size={20} className={activeTab === item.id ? "text-white" : "text-gray-400"} />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent side="right">
