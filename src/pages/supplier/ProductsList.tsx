@@ -15,7 +15,7 @@ interface Product {
   price: number;
   manufacturer: string;
   category: string;
-  thumbnail_url: string;
+  thumbnail_url?: string; // Make thumbnail_url optional to match our usage
 }
 
 export const ProductsList: React.FC = () => {
@@ -58,9 +58,10 @@ export const ProductsList: React.FC = () => {
         id: item.id,
         name: item.name,
         image: item.thumbnail_url || 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//placeholder.svg',
-        price: parseFloat(item.price),
+        price: parseFloat(item.price.toString()), // Convert to number properly
         manufacturer: item.manufacturer,
-        category: item.categories?.name || 'Uncategorized'
+        category: item.categories?.name || 'Uncategorized',
+        thumbnail_url: item.thumbnail_url // Add this to match the interface
       }));
       
       setProducts(formattedProducts);
