@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { PenSquare, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -83,165 +84,171 @@ const OrdersPage: React.FC = () => {
   const currentOrders = filteredOrders.slice(indexOfFirstOrder, indexOfLastOrder);
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Order</h1>
-        <Button className="bg-black hover:bg-black/90 rounded-full">
-          <Plus className="mr-2 h-4 w-4" />
-          Create order
-        </Button>
-      </div>
+    <div className="flex flex-col h-full">
+      <ScrollArea className="h-[calc(100vh-130px)] pr-4">
+        <div className="space-y-6">
+          <div className="flex justify-between items-center">
+            <h1 className="text-3xl font-bold">Order</h1>
+            <Button className="bg-black hover:bg-black/90 rounded-full">
+              <Plus className="mr-2 h-4 w-4" />
+              Create order
+            </Button>
+          </div>
 
-      <div className="border-t border-gray-200 pt-6">
-        <div className="flex flex-col sm:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Select onValueChange={(value) => setSearchTerm(value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Order ID" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="id">Order ID</SelectItem>
-                <SelectItem value="customer">Customer Name</SelectItem>
-              </SelectContent>
-            </Select>
-            <div className="absolute inset-y-0 right-0 flex items-center">
-              <div className="h-6 w-[1px] bg-gray-300 mx-2"></div>
+          <div className="border-t border-gray-200 pt-6">
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <div className="relative flex-1">
+                <Select onValueChange={(value) => setSearchTerm(value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Order ID" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="id">Order ID</SelectItem>
+                    <SelectItem value="customer">Customer Name</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className="absolute inset-y-0 right-0 flex items-center">
+                  <div className="h-6 w-[1px] bg-gray-300 mx-2"></div>
+                </div>
+                <Input
+                  placeholder="Search"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="absolute inset-0 pl-28 border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+                />
+              </div>
+              <div className="w-full sm:w-56">
+                <Select onValueChange={setStatusFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="PO Received">PO Received</SelectItem>
+                    <SelectItem value="Inproduction">In Production</SelectItem>
+                    <SelectItem value="Shipped">Shipped</SelectItem>
+                    <SelectItem value="Rejected">Rejected</SelectItem>
+                    <SelectItem value="Awaiting feedback">Awaiting Feedback</SelectItem>
+                    <SelectItem value="Draft">Draft</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <Input
-              placeholder="Search"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="absolute inset-0 pl-28 border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-            />
-          </div>
-          <div className="w-full sm:w-56">
-            <Select onValueChange={setStatusFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="PO Received">PO Received</SelectItem>
-                <SelectItem value="Inproduction">In Production</SelectItem>
-                <SelectItem value="Shipped">Shipped</SelectItem>
-                <SelectItem value="Rejected">Rejected</SelectItem>
-                <SelectItem value="Awaiting feedback">Awaiting Feedback</SelectItem>
-                <SelectItem value="Draft">Draft</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
 
-        <Table className="border rounded-md">
-          <TableHeader>
-            <TableRow className="bg-gray-50">
-              <TableHead className="w-[150px] uppercase text-xs font-semibold text-gray-500">Order ID</TableHead>
-              <TableHead className="uppercase text-xs font-semibold text-gray-500">Status</TableHead>
-              <TableHead className="uppercase text-xs font-semibold text-gray-500">Customer Name</TableHead>
-              <TableHead className="uppercase text-xs font-semibold text-gray-500">Value</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentOrders.map((order) => (
-              <TableRow key={order.id} className="hover:bg-gray-50">
-                <TableCell className="font-medium">{order.id}</TableCell>
-                <TableCell>
-                  <Badge className={`font-normal ${statusColorMap[order.status]} border-0`}>
-                    {order.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>{order.customerName}</TableCell>
-                <TableCell>${order.value.toLocaleString()}</TableCell>
-                <TableCell>
-                  <Button variant="ghost" size="icon">
-                    <PenSquare className="h-5 w-5 text-gray-500" />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            <div className="overflow-hidden border rounded-md">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50">
+                    <TableHead className="w-[150px] uppercase text-xs font-semibold text-gray-500">Order ID</TableHead>
+                    <TableHead className="uppercase text-xs font-semibold text-gray-500">Status</TableHead>
+                    <TableHead className="uppercase text-xs font-semibold text-gray-500">Customer Name</TableHead>
+                    <TableHead className="uppercase text-xs font-semibold text-gray-500">Value</TableHead>
+                    <TableHead className="w-[50px]"></TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {currentOrders.map((order) => (
+                    <TableRow key={order.id} className="hover:bg-gray-50">
+                      <TableCell className="font-medium">{order.id}</TableCell>
+                      <TableCell>
+                        <Badge className={`font-normal ${statusColorMap[order.status]} border-0`}>
+                          {order.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{order.customerName}</TableCell>
+                      <TableCell>${order.value.toLocaleString()}</TableCell>
+                      <TableCell>
+                        <Button variant="ghost" size="icon">
+                          <PenSquare className="h-5 w-5 text-gray-500" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
-        <div className="flex items-center justify-between mt-4">
-          <p className="text-sm text-gray-500">
-            Showing {indexOfFirstOrder + 1} to {Math.min(indexOfLastOrder, filteredOrders.length)} of {filteredOrders.length} results
-          </p>
-          
-          <Pagination>
-            <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious 
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                  className={currentPage === 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
-                />
-              </PaginationItem>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-4">
+              <p className="text-sm text-gray-500">
+                Showing {indexOfFirstOrder + 1} to {Math.min(indexOfLastOrder, filteredOrders.length)} of {filteredOrders.length} results
+              </p>
               
-              {Array.from({ length: Math.min(5, totalPages) }).map((_, idx) => {
-                // Handle pagination display logic
-                let pageNumber;
-                if (totalPages <= 5) {
-                  pageNumber = idx + 1;
-                } else if (currentPage <= 3) {
-                  pageNumber = idx + 1;
-                  if (idx === 4) return (
-                    <PaginationItem key={idx}>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                  );
-                } else if (currentPage >= totalPages - 2) {
-                  pageNumber = totalPages - 4 + idx;
-                  if (idx === 0) return (
-                    <PaginationItem key={idx}>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                  );
-                } else {
-                  if (idx === 0) return (
-                    <PaginationItem key={idx}>
-                      <PaginationLink onClick={() => setCurrentPage(1)}>1</PaginationLink>
-                    </PaginationItem>
-                  );
-                  if (idx === 1) return (
-                    <PaginationItem key={idx}>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                  );
-                  if (idx === 3) return (
-                    <PaginationItem key={idx}>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                  );
-                  if (idx === 4) return (
-                    <PaginationItem key={idx}>
-                      <PaginationLink onClick={() => setCurrentPage(totalPages)}>{totalPages}</PaginationLink>
-                    </PaginationItem>
-                  );
-                  pageNumber = currentPage + idx - 2;
-                }
-                
-                return (
-                  <PaginationItem key={idx}>
-                    <PaginationLink 
-                      onClick={() => setCurrentPage(pageNumber)}
-                      isActive={currentPage === pageNumber}
-                    >
-                      {pageNumber}
-                    </PaginationLink>
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                      className={currentPage === 1 ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+                    />
                   </PaginationItem>
-                );
-              })}
-              
-              <PaginationItem>
-                <PaginationNext 
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                  className={currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
-                />
-              </PaginationItem>
-            </PaginationContent>
-          </Pagination>
+                  
+                  {Array.from({ length: Math.min(5, totalPages) }).map((_, idx) => {
+                    // Handle pagination display logic
+                    let pageNumber;
+                    if (totalPages <= 5) {
+                      pageNumber = idx + 1;
+                    } else if (currentPage <= 3) {
+                      pageNumber = idx + 1;
+                      if (idx === 4) return (
+                        <PaginationItem key={idx}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    } else if (currentPage >= totalPages - 2) {
+                      pageNumber = totalPages - 4 + idx;
+                      if (idx === 0) return (
+                        <PaginationItem key={idx}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                    } else {
+                      if (idx === 0) return (
+                        <PaginationItem key={idx}>
+                          <PaginationLink onClick={() => setCurrentPage(1)}>1</PaginationLink>
+                        </PaginationItem>
+                      );
+                      if (idx === 1) return (
+                        <PaginationItem key={idx}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                      if (idx === 3) return (
+                        <PaginationItem key={idx}>
+                          <PaginationEllipsis />
+                        </PaginationItem>
+                      );
+                      if (idx === 4) return (
+                        <PaginationItem key={idx}>
+                          <PaginationLink onClick={() => setCurrentPage(totalPages)}>{totalPages}</PaginationLink>
+                        </PaginationItem>
+                      );
+                      pageNumber = currentPage + idx - 2;
+                    }
+                    
+                    return (
+                      <PaginationItem key={idx}>
+                        <PaginationLink 
+                          onClick={() => setCurrentPage(pageNumber)}
+                          isActive={currentPage === pageNumber}
+                        >
+                          {pageNumber}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
+                  
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                      className={currentPage === totalPages ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
+          </div>
         </div>
-      </div>
+      </ScrollArea>
     </div>
   );
 };
