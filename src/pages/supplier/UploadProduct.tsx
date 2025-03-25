@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -538,7 +539,7 @@ export const UploadProduct: React.FC = () => {
         setDescriptionFormat(prev => ({ ...prev, bold: !prev.bold }));
         break;
       case 'italic':
-        newText = `${beforeText}_${selectedText}__${afterText}`;
+        newText = `${beforeText}_${selectedText}_${afterText}`;
         newCursorPos = end + 2;
         setDescriptionFormat(prev => ({ ...prev, italic: !prev.italic }));
         break;
@@ -875,4 +876,813 @@ export const UploadProduct: React.FC = () => {
         .single();
       
       if (productError) {
-        throw productError
+        throw productError;
+      }
+      
+      toast.success(`Product "${insertedProduct.name}" uploaded successfully!`);
+      
+      // If we have additional images, store them as product images
+      if (thumbnailUrls.length > 1) {
+        // First image is already used as the thumbnail
+        const additionalImages = thumbnailUrls.slice(1);
+        
+        for (const imageUrl of additionalImages) {
+          await supabase
+            .from('product_images')
+            .insert({
+              product_id: insertedProduct.id,
+              image_url: imageUrl,
+              user_id: user.id
+            });
+        }
+      }
+      
+      // Reset form
+      setProductData({
+        name: '',
+        price: '',
+        manufacturer: '',
+        brand: '',
+        sku: '',
+        currency: 'USD',
+        color: '',
+        material: '',
+        surfaceFinish: '',
+        weight: '',
+        countryOfOrigin: '',
+        warrantyPeriod: '',
+        leadTime: '',
+        minOrderQuantity: '',
+        application: '',
+        componentGroup: '',
+        componentCategory: '',
+        componentSubcategory: '',
+        description: ''
+      });
+      setImagePreviews([]);
+      setModelFile(null);
+      setSelectedVariants([]);
+      
+      // Navigate to products list
+      navigate('/supplier/products');
+      
+    } catch (error) {
+      console.error('Error uploading product:', error);
+      toast.error('Failed to upload product');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+  
+  return (
+    <div className="container max-w-4xl mx-auto py-6">
+      <h1 className="text-2xl font-bold mb-6">Upload New Product</h1>
+      
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Basic Info */}
+        <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+          <h2 className="text-xl font-semibold border-b pb-3">Basic Information</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="name">Product Name *</Label>
+              <Input 
+                id="name" 
+                value={productData.name} 
+                onChange={handleChange} 
+                placeholder="Enter product name"
+                suggestions={productNameSuggestions}
+                onSelectSuggestion={(suggestion) => setProductData(prev => ({ ...prev, name: suggestion }))}
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="manufacturer">Manufacturer *</Label>
+              <Input 
+                id="manufacturer" 
+                value={productData.manufacturer} 
+                onChange={handleChange} 
+                placeholder="Enter manufacturer name"
+                suggestions={manufacturerSuggestions}
+                onSelectSuggestion={(suggestion) => setProductData(prev => ({ ...prev, manufacturer: suggestion }))}
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="price">Price *</Label>
+              <div className="relative">
+                <Input 
+                  id="price" 
+                  value={productData.price} 
+                  onChange={handleChange} 
+                  type="number" 
+                  min="0" 
+                  step="0.01" 
+                  placeholder="0.00"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="currency">Currency</Label>
+              <select 
+                id="currency" 
+                value={productData.currency} 
+                onChange={handleChange}
+                className="w-full rounded-md border border-input bg-background px-3 py-2"
+              >
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="JPY">JPY (¥)</option>
+                <option value="CAD">CAD (C$)</option>
+                <option value="AUD">AUD (A$)</option>
+                <option value="CNY">CNY (¥)</option>
+              </select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="brand">Brand</Label>
+              <Input 
+                id="brand" 
+                value={productData.brand} 
+                onChange={handleChange} 
+                placeholder="Enter brand name"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="sku">SKU</Label>
+              <Input 
+                id="sku" 
+                value={productData.sku} 
+                onChange={handleChange} 
+                placeholder="Enter SKU"
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* Product Classification */}
+        <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+          <h2 className="text-xl font-semibold border-b pb-3">Product Classification</h2>
+          
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center">
+                <Label htmlFor="componentSearchTerm">Search Component Type</Label>
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs text-gray-500">Can't find what you need?</span>
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => setShowNewGroupDialog(true)}
+                  >
+                    <Plus className="w-3 h-3 mr-1" /> Add New
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="relative">
+                <div className="relative">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                  <Input
+                    id="componentSearchTerm"
+                    placeholder="Search for component type..."
+                    value={componentSearchTerm}
+                    onChange={(e) => setComponentSearchTerm(e.target.value)}
+                    className="pl-9"
+                  />
+                </div>
+                
+                {componentSearchTerm && filteredComponentItems.length > 0 && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-auto">
+                    {filteredComponentItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="px-4 py-2 hover:bg-gray-100 cursor-pointer flex items-center"
+                        onClick={() => handleComponentSelection(item)}
+                      >
+                        <span className={`w-2 h-2 rounded-full mr-2 ${
+                          item.type === 'group' ? 'bg-blue-500' : 
+                          item.type === 'category' ? 'bg-green-500' : 'bg-purple-500'
+                        }`} />
+                        <div>
+                          <div className="font-medium">{item.name}</div>
+                          {item.description && (
+                            <div className="text-xs text-gray-500">{item.description}</div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="componentGroup">Component Group *</Label>
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setShowNewGroupDialog(true)}
+                  >
+                    <Plus className="w-3 h-3 mr-1" /> Add
+                  </Button>
+                </div>
+                <select 
+                  id="componentGroup" 
+                  value={productData.componentGroup} 
+                  onChange={(e) => {
+                    const groupId = e.target.value;
+                    setProductData(prev => ({
+                      ...prev,
+                      componentGroup: groupId,
+                      componentCategory: '',
+                      componentSubcategory: ''
+                    }));
+                    
+                    if (groupId) {
+                      const filtered = componentCategories.filter(
+                        category => category.component_group === parseInt(groupId)
+                      );
+                      setFilteredCategories(filtered);
+                      setFilteredSubcategories([]);
+                    } else {
+                      setFilteredCategories([]);
+                      setFilteredSubcategories([]);
+                    }
+                  }}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2"
+                  required
+                >
+                  <option value="">Select Component Group</option>
+                  {componentGroups.map((group) => (
+                    <option key={group.id} value={group.id}>
+                      {group.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="componentCategory">Component Category</Label>
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="sm"
+
+                    disabled={!productData.componentGroup}
+                    onClick={() => setShowNewCategoryDialog(true)}
+                  >
+                    <Plus className="w-3 h-3 mr-1" /> Add
+                  </Button>
+                </div>
+                <select 
+                  id="componentCategory" 
+                  value={productData.componentCategory} 
+                  onChange={(e) => {
+                    const categoryId = e.target.value;
+                    setProductData(prev => ({
+                      ...prev,
+                      componentCategory: categoryId,
+                      componentSubcategory: ''
+                    }));
+                    
+                    if (categoryId) {
+                      const filtered = componentSubcategories.filter(
+                        subcategory => subcategory.component_category === parseInt(categoryId)
+                      );
+                      setFilteredSubcategories(filtered);
+                    } else {
+                      setFilteredSubcategories([]);
+                    }
+                  }}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2"
+                  disabled={!productData.componentGroup || filteredCategories.length === 0}
+                >
+                  <option value="">Select Category</option>
+                  {filteredCategories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              <div className="space-y-2">
+                <div className="flex justify-between items-center">
+                  <Label htmlFor="componentSubcategory">Component Subcategory</Label>
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="sm" 
+                    disabled={!productData.componentCategory}
+                    onClick={() => setShowNewSubcategoryDialog(true)}
+                  >
+                    <Plus className="w-3 h-3 mr-1" /> Add
+                  </Button>
+                </div>
+                <select 
+                  id="componentSubcategory" 
+                  value={productData.componentSubcategory} 
+                  onChange={(e) => {
+                    setProductData(prev => ({
+                      ...prev,
+                      componentSubcategory: e.target.value
+                    }));
+                  }}
+                  className="w-full rounded-md border border-input bg-background px-3 py-2"
+                  disabled={!productData.componentCategory || filteredSubcategories.length === 0}
+                >
+                  <option value="">Select Subcategory</option>
+                  {filteredSubcategories.map((subcategory) => (
+                    <option key={subcategory.id} value={subcategory.id}>
+                      {subcategory.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            
+            {availableVariants.length > 0 && (
+              <div className="space-y-2">
+                <Label>Variants</Label>
+                <div className="flex flex-wrap gap-2">
+                  {availableVariants.map((variant) => (
+                    <button
+                      key={variant}
+                      type="button"
+                      onClick={() => handleVariantToggle(variant)}
+                      className={`px-3 py-1.5 rounded-full text-sm ${
+                        selectedVariants.includes(variant)
+                          ? 'bg-black text-white'
+                          : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                      }`}
+                    >
+                      {variant}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+        
+        {/* Technical Specifications */}
+        <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+          <h2 className="text-xl font-semibold border-b pb-3">Technical Specifications</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="color">Color</Label>
+              <Input 
+                id="color" 
+                value={productData.color} 
+                onChange={handleChange} 
+                placeholder="e.g., Black, Red, Blue"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="material">Material</Label>
+              <Input 
+                id="material" 
+                value={productData.material} 
+                onChange={handleChange} 
+                placeholder="e.g., Aluminum, Carbon Fiber, Steel"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="surfaceFinish">Surface Finish</Label>
+              <Input 
+                id="surfaceFinish" 
+                value={productData.surfaceFinish} 
+                onChange={handleChange} 
+                placeholder="e.g., Matte, Glossy, Anodized"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="weight">Weight</Label>
+              <Input 
+                id="weight" 
+                value={productData.weight} 
+                onChange={handleChange} 
+                placeholder="e.g., 250g, 1.2kg"
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* Business Details */}
+        <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+          <h2 className="text-xl font-semibold border-b pb-3">Business Details</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="countryOfOrigin">Country of Origin</Label>
+              <Input 
+                id="countryOfOrigin" 
+                value={productData.countryOfOrigin} 
+                onChange={handleChange} 
+                placeholder="e.g., USA, China, Germany"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="warrantyPeriod">Warranty Period</Label>
+              <Input 
+                id="warrantyPeriod" 
+                value={productData.warrantyPeriod} 
+                onChange={handleChange} 
+                placeholder="e.g., 1 year, 24 months"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="leadTime">Lead Time</Label>
+              <Input 
+                id="leadTime" 
+                value={productData.leadTime} 
+                onChange={handleChange} 
+                placeholder="e.g., 2-3 weeks, 30 days"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="minOrderQuantity">Minimum Order Quantity</Label>
+              <Input 
+                id="minOrderQuantity" 
+                value={productData.minOrderQuantity} 
+                onChange={handleChange} 
+                placeholder="e.g., 10, 100, 1000"
+              />
+            </div>
+            
+            <div className="space-y-2 md:col-span-2">
+              <Label htmlFor="application">Application</Label>
+              <Input 
+                id="application" 
+                value={productData.application} 
+                onChange={handleChange} 
+                placeholder="e.g., Road Bikes, Mountain Bikes, E-Bikes"
+              />
+            </div>
+          </div>
+        </div>
+        
+        {/* Description */}
+        <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+          <h2 className="text-xl font-semibold border-b pb-3">Description</h2>
+          
+          <div className="space-y-2">
+            <div className="flex items-center space-x-2 border-b pb-2">
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => handleFormatText('bold')}
+                className={`p-1 ${descriptionFormat.bold ? 'bg-gray-200' : ''}`}
+              >
+                <Bold className="h-4 w-4" />
+              </Button>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => handleFormatText('italic')}
+                className={`p-1 ${descriptionFormat.italic ? 'bg-gray-200' : ''}`}
+              >
+                <Italic className="h-4 w-4" />
+              </Button>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => handleFormatText('underline')}
+                className={`p-1 ${descriptionFormat.underline ? 'bg-gray-200' : ''}`}
+              >
+                <Underline className="h-4 w-4" />
+              </Button>
+              <span className="border-l h-5 mx-2"></span>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => handleFormatText('list')}
+                className="p-1"
+              >
+                <List className="h-4 w-4" />
+              </Button>
+              <Button 
+                type="button" 
+                variant="ghost" 
+                size="sm" 
+                onClick={() => handleFormatText('ordered-list')}
+                className="p-1"
+              >
+                <ListOrdered className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            <Textarea 
+              id="description" 
+              value={productData.description} 
+              onChange={handleChange} 
+              placeholder="Enter detailed product description..."
+              className="min-h-[200px]"
+              ref={descriptionRef}
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Markdown formatting is supported. Use ** for bold, _ for italic, and &lt;u&gt; for underlined text.
+            </p>
+          </div>
+        </div>
+        
+        {/* Media Upload */}
+        <div className="bg-white rounded-lg shadow-sm p-6 space-y-6">
+          <h2 className="text-xl font-semibold border-b pb-3">Media</h2>
+          
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <Label>Product Images</Label>
+              <div className="border-2 border-dashed rounded-lg p-6 text-center">
+                {imagePreviews.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                    {imagePreviews.map((preview, index) => (
+                      <div key={index} className="relative group aspect-square">
+                        <img 
+                          src={preview} 
+                          alt={`Product preview ${index + 1}`} 
+                          className="w-full h-full object-cover rounded-md"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeImage(index)}
+                          className="absolute top-1 right-1 bg-red-500 rounded-full p-1 text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                          </svg>
+                        </button>
+                      </div>
+                    ))}
+                    <div 
+                      className="border-2 border-dashed rounded-md flex items-center justify-center cursor-pointer hover:bg-gray-50 aspect-square"
+                      onClick={triggerImageFileSelect}
+                    >
+                      <Plus className="h-8 w-8 text-gray-400" />
+                    </div>
+                  </div>
+                ) : (
+                  <div 
+                    className="flex flex-col items-center justify-center py-4 cursor-pointer"
+                    onClick={triggerImageFileSelect}
+                  >
+                    <Upload className="h-10 w-10 text-gray-400 mb-2" />
+                    <p className="text-sm">Click to upload product images</p>
+                    <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  multiple
+                  className="hidden"
+                  ref={productImageInputRef}
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>3D Model (Optional)</Label>
+              <div className="border-2 border-dashed rounded-lg p-6 text-center">
+                {modelFile ? (
+                  <div className="flex items-center justify-between bg-gray-50 p-3 rounded-md">
+                    <div className="flex items-center">
+                      <div className="bg-blue-100 p-2 rounded-md mr-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <div className="text-left">
+                        <p className="text-sm font-medium">{modelFile.name}</p>
+                        <p className="text-xs text-gray-500">{(modelFile.size / 1024 / 1024).toFixed(2)} MB</p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setModelFile(null)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                      </svg>
+                    </button>
+                  </div>
+                ) : (
+                  <div 
+                    className="flex flex-col items-center justify-center py-4 cursor-pointer"
+                    onClick={triggerModelFileSelect}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                    </svg>
+                    <p className="text-sm">Click to upload 3D model</p>
+                    <p className="text-xs text-gray-500 mt-1">STL, OBJ, GLB or GLTF up to 50MB</p>
+                  </div>
+                )}
+                <input
+                  type="file"
+                  accept=".stl,.obj,.glb,.gltf"
+                  onChange={handleModelFileChange}
+                  className="hidden"
+                  ref={modelFileInputRef}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="flex justify-end space-x-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => navigate('/supplier/products')}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            className="bg-black hover:bg-black/90"
+            disabled={isUploading}
+          >
+            {isUploading ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Uploading...
+              </>
+            ) : 'Upload Product'}
+          </Button>
+        </div>
+      </form>
+      
+      {/* New Group Dialog */}
+      <Dialog open={showNewGroupDialog} onOpenChange={setShowNewGroupDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Component Group</DialogTitle>
+            <DialogDescription>
+              Create a new component group category.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="newGroupName">Group Name</Label>
+              <Input
+                id="newGroupName"
+                value={newItemName}
+                onChange={(e) => setNewItemName(e.target.value)}
+                placeholder="Enter group name"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="newGroupDescription">Description (Optional)</Label>
+              <Textarea
+                id="newGroupDescription"
+                value={newItemDescription}
+                onChange={(e) => setNewItemDescription(e.target.value)}
+                placeholder="Enter description"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNewGroupDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={addNewGroup}>
+              Add Group
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* New Category Dialog */}
+      <Dialog open={showNewCategoryDialog} onOpenChange={setShowNewCategoryDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Component Category</DialogTitle>
+            <DialogDescription>
+              Create a new category under the selected component group.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Parent Group</Label>
+              <div className="bg-gray-100 px-3 py-2 rounded-md text-sm">
+                {componentGroups.find(g => g.id.toString() === productData.componentGroup)?.name || 'No group selected'}
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="newCategoryName">Category Name</Label>
+              <Input
+                id="newCategoryName"
+                value={newItemName}
+                onChange={(e) => setNewItemName(e.target.value)}
+                placeholder="Enter category name"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="newCategoryDescription">Description (Optional)</Label>
+              <Textarea
+                id="newCategoryDescription"
+                value={newItemDescription}
+                onChange={(e) => setNewItemDescription(e.target.value)}
+                placeholder="Enter description"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNewCategoryDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={addNewCategory}>
+              Add Category
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      
+      {/* New Subcategory Dialog */}
+      <Dialog open={showNewSubcategoryDialog} onOpenChange={setShowNewSubcategoryDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Component Subcategory</DialogTitle>
+            <DialogDescription>
+              Create a new subcategory under the selected category.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label>Parent Category</Label>
+              <div className="bg-gray-100 px-3 py-2 rounded-md text-sm">
+                {componentCategories.find(c => c.id.toString() === productData.componentCategory)?.name || 'No category selected'}
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="newSubcategoryName">Subcategory Name</Label>
+              <Input
+                id="newSubcategoryName"
+                value={newItemName}
+                onChange={(e) => setNewItemName(e.target.value)}
+                placeholder="Enter subcategory name"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="newSubcategoryDescription">Description (Optional)</Label>
+              <Textarea
+                id="newSubcategoryDescription"
+                value={newItemDescription}
+                onChange={(e) => setNewItemDescription(e.target.value)}
+                placeholder="Enter description"
+              />
+            </div>
+          </div>
+          
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowNewSubcategoryDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={addNewSubcategory}>
+              Add Subcategory
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+};
