@@ -1,10 +1,8 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   MessageCircle, 
   MoreVertical, 
   Bell, 
-  Copy, 
   Send, 
   FileText, 
   Smile, 
@@ -226,8 +224,8 @@ const MessagingPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-130px)] bg-white">
-      <h1 className="text-2xl font-bold mb-4 p-4 border-b">Messages</h1>
+    <div className="flex flex-col h-[calc(100vh-144px)] bg-white">
+      <h1 className="text-2xl font-bold mb-4 border-b pb-4">Messages</h1>
       <div className="flex flex-1 overflow-hidden">
         {/* Left sidebar - Conversations list */}
         <div className="w-1/3 border-r border-gray-200 flex flex-col overflow-hidden">
