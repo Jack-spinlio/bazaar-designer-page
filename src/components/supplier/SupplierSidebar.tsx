@@ -1,13 +1,34 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Grid } from 'lucide-react';
+import { Package, Upload, PenLine, ChevronRight, ChevronLeft, Grid } from 'lucide-react';
+
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarProvider,
+} from "@/components/ui/sidebar";
 
 const navItems = [
   { 
     path: '/supplier', 
     name: 'Dashboard', 
     icon: <Grid className="w-5 h-5" /> 
+  },
+  { 
+    path: '/supplier/products', 
+    name: 'Products', 
+    icon: <Package className="w-5 h-5" /> 
+  },
+  { 
+    path: '/supplier/upload', 
+    name: 'Upload Product', 
+    icon: <Upload className="w-5 h-5" /> 
+  },
+  { 
+    path: '/supplier/edit-profile', 
+    name: 'Edit Profile', 
+    icon: <PenLine className="w-5 h-5" /> 
   },
 ];
 
@@ -32,8 +53,8 @@ export const SupplierSidebar = () => {
           className="absolute -right-3 top-3 bg-gray-100 rounded-full p-1 shadow-md hover:bg-gray-200 transition-colors z-10"
         >
           {isCollapsed ? 
-            <span className="w-4 h-4">→</span> : 
-            <span className="w-4 h-4">←</span>
+            <ChevronRight className="w-4 h-4" /> : 
+            <ChevronLeft className="w-4 h-4" />
           }
         </button>
 

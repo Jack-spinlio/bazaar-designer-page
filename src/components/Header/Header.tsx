@@ -24,9 +24,7 @@ export const Header: React.FC = () => {
   const navigate = useNavigate();
   const isSupplierPage = location.pathname.includes('/supplier');
   const isDesignPage = location.pathname === '/design';
-  const [userRole, setUserRole] = React.useState(
-    isSupplierPage ? 'supplier' : 'designer'
-  );
+  const [userRole, setUserRole] = React.useState('designer');
   
   const handleRoleChange = (value: string) => {
     setUserRole(value);
@@ -97,6 +95,9 @@ export const Header: React.FC = () => {
                   <Link to="/supplier">Supplier Dashboard</Link>
                 </DropdownMenuItem>
               )}
+              <DropdownMenuItem asChild>
+                <Link to="/saved">Saved Designs</Link>
+              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Logout</DropdownMenuItem>
             </DropdownMenuContent>
