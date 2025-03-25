@@ -6,8 +6,8 @@ import { Header } from '@/components/Header/Header';
 import { SupplierDashboard } from './SupplierDashboard';
 import OrdersPage from './OrdersPage';
 import MessagingPage from './MessagingPage';
-import ProductsList from './ProductsList';
-import UploadProduct from './UploadProduct';
+import { ProductsList } from './ProductsList';
+import { UploadProduct } from './UploadProduct';
 
 const SupplierPage: React.FC = () => {
   return (

@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Grid, ShoppingBag, MessageCircle, Upload, Package } from 'lucide-react';
+import { Grid, ShoppingBag, MessageCircle, Upload, Package, ChevronRight, ChevronLeft } from 'lucide-react';
 
 import {
   Sidebar,
