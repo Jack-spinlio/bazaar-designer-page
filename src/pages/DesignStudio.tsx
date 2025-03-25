@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Viewport } from '@/components/Viewport';
 import { IconSidebar } from '@/components/IconSidebar';
@@ -27,7 +26,8 @@ const DesignStudio = () => {
     type: 'STL',
     thumbnail: '/placeholder.svg',
     folder: 'Default Models',
-    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//1742796907092_Shimano_Ep800.stl'
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//1742796907092_Shimano_Ep800.stl',
+    shape: 'box'
   };
 
   // Handlers for component selection

@@ -36,7 +36,8 @@ export const MainContent: React.FC<MainContentProps> = ({
     type: 'STL',
     thumbnail: '/placeholder.svg',
     folder: 'Default Models',
-    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//1742796907092_Shimano_Ep800.stl'
+    modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models//1742796907092_Shimano_Ep800.stl',
+    shape: 'box' // Added the required shape property
   } : null;
 
   return (
