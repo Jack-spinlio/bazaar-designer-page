@@ -11,7 +11,6 @@ import {
 import { Viewport } from '@/components/Viewport';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { 
-  Box, 
   Battery, 
   Cog, 
   Gamepad, 
@@ -46,7 +45,7 @@ const BOM = () => {
       productionTime: "90 days",
       country: "Vietnam",
       price: "$97",
-      icon: <Box size={16} />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-4 h-4 object-contain" />
     },
     {
       id: "2",

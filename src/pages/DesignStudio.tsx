@@ -6,7 +6,7 @@ import { PrefabSidebar, PrefabItem } from '@/components/PrefabSidebar';
 import { SavedSidebar, SavedDesign } from '@/components/SavedSidebar';
 import { Header } from '@/components/Header/Header';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Pencil, Puzzle, FileSpreadsheet, Bookmark, Box, Battery, Disc, Grip, Lightbulb, Shield, Link, Footprints, Cog, Gamepad, Utensils } from "lucide-react";
+import { Pencil, Puzzle, FileSpreadsheet, Bookmark, Battery, Disc, Grip, Lightbulb, Shield, Link, Footprints, Cog, Gamepad, Utensils } from "lucide-react";
 import EditToolbar from '@/components/EditToolbar';
 import { TimelineChart } from '@/components/TimelineChart';
 
@@ -168,7 +168,7 @@ const components = [
     productionTime: "90 days",
     country: "Vietnam",
     price: "$97",
-    icon: <Box size={16} />
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-4 h-4 object-contain" />
   }, {
     id: "2",
     image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#motor",
@@ -267,7 +267,7 @@ const bikeComponents = [
   {
     id: '1',
     name: 'Frame',
-    icon: <Box size={18} />,
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-[18px] h-[18px] object-contain" />,
     days: 90,
     color: 'bg-blue-100',
     startWeek: 1
