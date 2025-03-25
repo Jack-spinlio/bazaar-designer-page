@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   MessageCircle, 
@@ -178,18 +177,13 @@ const MessagingPage = () => {
   // Reference to the messages container to scroll to bottom
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to bottom when messages change, but not on initial load
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   // We'll use a ref to track if this is the initial render
   const initialRender = useRef(true);
 
+  // Scroll to bottom when messages change, but not on initial load
   useEffect(() => {
-    // Only scroll to bottom if it's not the initial render
     if (!initialRender.current) {
-      scrollToBottom();
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     } else {
       initialRender.current = false;
     }
@@ -233,7 +227,7 @@ const MessagingPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white rounded-lg shadow-sm overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-80px)] bg-white rounded-lg shadow-sm overflow-hidden">
       <h1 className="text-2xl font-bold mb-4 border-b pb-4 px-4 pt-4">Messages</h1>
       <div className="flex flex-1 overflow-hidden">
         {/* Left sidebar - Conversations list */}

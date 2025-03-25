@@ -11,16 +11,17 @@ const SupplierPage: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Fixed header at the top */}
-      <div className="sticky top-0 z-50">
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white">
         <Header />
       </div>
-      {/* Content area below fixed header */}
-      <div className="flex flex-1 overflow-hidden pt-1">
+      {/* Content area below fixed header with padding for header height */}
+      <div className="flex flex-1 pt-[68px]">
         {/* Fixed sidebar on the left */}
-        <div className="sticky top-[68px] self-start h-[calc(100vh-68px)]">
+        <div className="fixed left-0 top-[68px] h-[calc(100vh-68px)] z-40">
           <SupplierSidebar />
         </div>
-        <div className="flex-1 p-6 max-w-7xl mx-auto w-full overflow-y-auto">
+        {/* Main content area with appropriate padding for sidebar */}
+        <div className="ml-20 flex-1 p-6 w-full">
           <Routes>
             <Route path="/" element={<SupplierDashboard />} />
             <Route path="/orders" element={<OrdersPage />} />

@@ -55,9 +55,9 @@ export const SupplierSidebar = () => {
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
   return (
-    <div className={`${isCollapsed ? 'w-20' : 'w-64'} transition-all duration-300 ease-in-out relative h-full`}>
+    <div className={`${isCollapsed ? 'w-20' : 'w-64'} transition-all duration-300 ease-in-out h-full`}>
       <div className="bg-white rounded-lg p-4 shadow-sm h-full overflow-y-auto">
-        {/* Toggle Button - Moved to top right */}
+        {/* Toggle Button - Top right */}
         <button 
           onClick={toggleSidebar} 
           className="absolute -right-3 top-3 bg-gray-100 rounded-full p-1 shadow-md hover:bg-gray-200 transition-colors z-10"
