@@ -1,18 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Package, Grid } from 'lucide-react';
+import { Grid } from 'lucide-react';
 
 const navItems = [
   { 
     path: '/supplier', 
     name: 'Dashboard', 
     icon: <Grid className="w-5 h-5" /> 
-  },
-  { 
-    path: '/supplier/products', 
-    name: 'Products', 
-    icon: <Package className="w-5 h-5" /> 
   },
 ];
 
