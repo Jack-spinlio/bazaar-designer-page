@@ -36,7 +36,7 @@ const BOM = () => {
       productionTime: "90 days",
       country: "Vietnam",
       price: "$97",
-      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-6 h-6 object-cover" />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-full h-full object-contain" />
     },
     {
       id: "2",
@@ -47,7 +47,7 @@ const BOM = () => {
       productionTime: "42 days",
       country: "China",
       price: "$52",
-      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//hub.png" alt="Motor" className="w-6 h-6 object-cover" />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//hub.png" alt="Motor" className="w-full h-full object-contain" />
     },
     {
       id: "3",
@@ -58,7 +58,7 @@ const BOM = () => {
       productionTime: "35 days",
       country: "Taiwan",
       price: "$41",
-      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//handlebar.png" alt="Handlebar" className="w-6 h-6 object-cover" />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//handlebar.png" alt="Handlebar" className="w-full h-full object-contain" />
     },
     {
       id: "4",
@@ -69,7 +69,7 @@ const BOM = () => {
       productionTime: "40 days",
       country: "Taiwan",
       price: "$36",
-      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//brakes.png" alt="Brakes" className="w-6 h-6 object-cover" />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//brakes.png" alt="Brakes" className="w-full h-full object-contain" />
     },
     {
       id: "5",
@@ -80,7 +80,7 @@ const BOM = () => {
       productionTime: "60 days",
       country: "Netherlands",
       price: "$141",
-      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//rear_hub.png" alt="Hub" className="w-6 h-6 object-cover" />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//rear_hub.png" alt="Hub" className="w-full h-full object-contain" />
     },
     {
       id: "6",
@@ -91,7 +91,7 @@ const BOM = () => {
       productionTime: "60 days",
       country: "South Korea",
       price: "$221",
-      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//battery.png" alt="Battery" className="w-6 h-6 object-cover" />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//battery.png" alt="Battery" className="w-full h-full object-contain" />
     },
     {
       id: "7",
@@ -102,7 +102,7 @@ const BOM = () => {
       productionTime: "12 days",
       country: "Vietnam",
       price: "$6",
-      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//tyre.png" alt="Tires" className="w-6 h-6 object-cover" />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//tyre.png" alt="Tires" className="w-full h-full object-contain" />
     },
     {
       id: "8",
@@ -113,7 +113,7 @@ const BOM = () => {
       productionTime: "40 days",
       country: "China",
       price: "$37",
-      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//fork.png" alt="Fork" className="w-6 h-6 object-cover" />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//fork.png" alt="Fork" className="w-full h-full object-contain" />
     },
     {
       id: "9",
@@ -124,7 +124,7 @@ const BOM = () => {
       productionTime: "30 days",
       country: "Vietnam",
       price: "$3",
-      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//saddle.png" alt="Saddle" className="w-6 h-6 object-cover" />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//saddle.png" alt="Saddle" className="w-full h-full object-contain" />
     },
     {
       id: "10",
@@ -135,7 +135,7 @@ const BOM = () => {
       productionTime: "10 days",
       country: "China",
       price: "$1.3",
-      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//grips.png" alt="Grips" className="w-6 h-6 object-cover" />
+      icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//grips.png" alt="Grips" className="w-full h-full object-contain" />
     }
   ];
 

@@ -168,7 +168,7 @@ const components = [
     productionTime: "90 days",
     country: "Vietnam",
     price: "$97",
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-6 h-6 object-cover" />
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-full h-full object-contain" />
   }, {
     id: "2",
     image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#motor",
@@ -178,7 +178,7 @@ const components = [
     productionTime: "42 days",
     country: "China",
     price: "$52",
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//hub.png" alt="Motor" className="w-6 h-6 object-cover" />
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//hub.png" alt="Motor" className="w-full h-full object-contain" />
   }, {
     id: "3",
     image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#handlebar",
@@ -188,7 +188,7 @@ const components = [
     productionTime: "35 days",
     country: "Taiwan",
     price: "$41",
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//handlebar.png" alt="Handlebar" className="w-6 h-6 object-cover" />
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//handlebar.png" alt="Handlebar" className="w-full h-full object-contain" />
   }, {
     id: "4",
     image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#brakes",
@@ -198,7 +198,7 @@ const components = [
     productionTime: "40 days",
     country: "Taiwan",
     price: "$36",
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//brakes.png" alt="Brakes" className="w-6 h-6 object-cover" />
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//brakes.png" alt="Brakes" className="w-full h-full object-contain" />
   }, {
     id: "5",
     image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#hub",
@@ -208,7 +208,7 @@ const components = [
     productionTime: "60 days",
     country: "Netherlands",
     price: "$141",
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//rear_hub.png" alt="Hub" className="w-6 h-6 object-cover" />
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//rear_hub.png" alt="Hub" className="w-full h-full object-contain" />
   }, {
     id: "6",
     image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#battery",
@@ -218,7 +218,7 @@ const components = [
     productionTime: "60 days",
     country: "South Korea",
     price: "$221",
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//battery.png" alt="Battery" className="w-6 h-6 object-cover" />
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//battery.png" alt="Battery" className="w-full h-full object-contain" />
   }, {
     id: "7",
     image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#tires",
@@ -228,7 +228,7 @@ const components = [
     productionTime: "12 days",
     country: "Vietnam",
     price: "$6",
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//tyre.png" alt="Tires" className="w-6 h-6 object-cover" />
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//tyre.png" alt="Tires" className="w-full h-full object-contain" />
   }, {
     id: "8",
     image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#fork",
@@ -238,7 +238,7 @@ const components = [
     productionTime: "40 days",
     country: "China",
     price: "$37",
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//fork.png" alt="Fork" className="w-6 h-6 object-cover" />
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//fork.png" alt="Fork" className="w-full h-full object-contain" />
   }, {
     id: "9",
     image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#saddle",
@@ -248,7 +248,7 @@ const components = [
     productionTime: "30 days",
     country: "Vietnam",
     price: "$3",
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//saddle.png" alt="Saddle" className="w-6 h-6 object-cover" />
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//saddle.png" alt="Saddle" className="w-full h-full object-contain" />
   }, {
     id: "10",
     image: "/lovable-uploads/42f9f00c-fd1c-4b97-807d-f44175f2b2ed.png#grips",
@@ -258,7 +258,7 @@ const components = [
     productionTime: "10 days",
     country: "China",
     price: "$1.3",
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//grips.png" alt="Grips" className="w-6 h-6 object-cover" />
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//grips.png" alt="Grips" className="w-full h-full object-contain" />
   }
 ];
 
@@ -267,63 +267,63 @@ const bikeComponents = [
   {
     id: '1',
     name: 'Frame',
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-[24px] h-[24px] object-cover" />,
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//frame_image.png" alt="Frame" className="w-full h-full object-contain" />,
     days: 90,
     color: 'bg-blue-100',
     startWeek: 1
   }, {
     id: '2',
     name: 'Fork',
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//fork.png" alt="Fork" className="w-[24px] h-[24px] object-cover" />,
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//fork.png" alt="Fork" className="w-full h-full object-contain" />,
     days: 42,
     color: 'bg-purple-100',
     startWeek: 8
   }, {
     id: '3',
     name: 'Motor',
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//hub.png" alt="Motor" className="w-[24px] h-[24px] object-cover" />,
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//hub.png" alt="Motor" className="w-full h-full object-contain" />,
     days: 35,
     color: 'bg-green-100',
     startWeek: 11
   }, {
     id: '4',
     name: 'Rear Hub',
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//rear_hub.png" alt="Rear Hub" className="w-[24px] h-[24px] object-cover" />,
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//rear_hub.png" alt="Rear Hub" className="w-full h-full object-contain" />,
     days: 40,
     color: 'bg-pink-100',
     startWeek: 9
   }, {
     id: '5',
     name: 'Handlebar',
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//handlebar.png" alt="Handlebar" className="w-[24px] h-[24px] object-cover" />,
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//handlebar.png" alt="Handlebar" className="w-full h-full object-contain" />,
     days: 60,
     color: 'bg-cyan-100',
     startWeek: 8
   }, {
     id: '6',
     name: 'Brakes',
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//brakes.png" alt="Brakes" className="w-[24px] h-[24px] object-cover" />,
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//brakes.png" alt="Brakes" className="w-full h-full object-contain" />,
     days: 60,
     color: 'bg-yellow-100',
     startWeek: 8
   }, {
     id: '7',
     name: 'Battery',
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//battery.png" alt="Battery" className="w-[24px] h-[24px] object-cover" />,
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//battery.png" alt="Battery" className="w-full h-full object-contain" />,
     days: 12,
     color: 'bg-red-100',
     startWeek: 11
   }, {
     id: '8',
     name: 'Tires',
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//tyre.png" alt="Tires" className="w-[24px] h-[24px] object-cover" />,
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//tyre.png" alt="Tires" className="w-full h-full object-contain" />,
     days: 31,
     color: 'bg-green-100',
     startWeek: 10
   }, {
     id: '9',
     name: 'Grips',
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//grips.png" alt="Grips" className="w-[24px] h-[24px] object-cover" />,
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//grips.png" alt="Grips" className="w-full h-full object-contain" />,
     days: 30,
     color: 'bg-blue-100',
     startWeek: 10
@@ -365,7 +365,7 @@ const bikeComponents = [
   }, {
     id: '15',
     name: 'Crankset',
-    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//hub.png" alt="Crankset" className="w-[24px] h-[24px] object-cover" />,
+    icon: <img src="https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/thumbnails//hub.png" alt="Crankset" className="w-full h-full object-contain" />,
     days: 60,
     color: 'bg-violet-400',
     startWeek: 8
