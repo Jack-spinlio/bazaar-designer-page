@@ -224,8 +224,8 @@ const MessagingPage = () => {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-144px)] bg-white">
-      <h1 className="text-2xl font-bold mb-4 border-b pb-4">Messages</h1>
+    <div className="flex flex-col h-[calc(100vh-180px)] bg-white rounded-lg shadow-sm overflow-hidden">
+      <h1 className="text-2xl font-bold mb-4 border-b pb-4 px-4 pt-4">Messages</h1>
       <div className="flex flex-1 overflow-hidden">
         {/* Left sidebar - Conversations list */}
         <div className="w-1/3 border-r border-gray-200 flex flex-col overflow-hidden">
