@@ -5,6 +5,7 @@ import { SupplierSidebar } from '@/components/supplier/SupplierSidebar';
 import { Header } from '@/components/Header/Header';
 import { SupplierDashboard } from './SupplierDashboard';
 import OrdersPage from './OrdersPage';
+import MessagingPage from './MessagingPage';
 
 const SupplierPage: React.FC = () => {
   return (
@@ -16,6 +17,7 @@ const SupplierPage: React.FC = () => {
           <Routes>
             <Route path="/" element={<SupplierDashboard />} />
             <Route path="/orders" element={<OrdersPage />} />
+            <Route path="/messaging" element={<MessagingPage />} />
             <Route path="*" element={<Navigate to="/supplier" replace />} />
           </Routes>
         </div>
