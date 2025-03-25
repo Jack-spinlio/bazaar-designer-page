@@ -267,7 +267,7 @@ export const UploadProduct: React.FC = () => {
       }
       
       // Insert product into database
-      const { data: productData, error: productError } = await supabase
+      const { data: insertedProduct, error: productError } = await supabase
         .from('products')
         .insert([{
           name: productData.name,
@@ -279,7 +279,7 @@ export const UploadProduct: React.FC = () => {
           thumbnail_url: thumbnailUrl || null,
           user_id: user.id
         }])
-        .select('id')
+        .select('id, name, price, manufacturer, description')
         .single();
       
       if (productError) {
@@ -287,36 +287,38 @@ export const UploadProduct: React.FC = () => {
       }
       
       // Store parameters (subcategory and variants)
-      if (productData.subCategory) {
+      if (productData.subCategory && insertedProduct) {
         await supabase
           .from('product_parameters')
           .insert({
-            product_id: productData.id,
+            product_id: insertedProduct.id,
             name: 'subcategory',
             value: productData.subCategory
           });
       }
       
       // Store selected variants as parameters
-      for (const variant of selectedVariants) {
-        await supabase
-          .from('product_parameters')
-          .insert({
-            product_id: productData.id,
-            name: 'variant',
-            value: variant
-          });
+      if (insertedProduct) {
+        for (const variant of selectedVariants) {
+          await supabase
+            .from('product_parameters')
+            .insert({
+              product_id: insertedProduct.id,
+              name: 'variant',
+              value: variant
+            });
+        }
       }
       
       setIsUploading(false);
       toast.success('Product uploaded successfully');
       
       // If model file exists, go to parameters page, otherwise go back to products list
-      if (modelFile) {
+      if (modelFile && insertedProduct) {
         // Create component object for the viewport
         const component: ComponentItem = {
           id: `product-${Date.now()}`,
-          name: productData.name,
+          name: insertedProduct.name,
           type: modelFile.name.split('.').pop()?.toUpperCase() || 'STL',
           thumbnail: thumbnailUrl || '/placeholder.svg',
           folder: productData.category,
@@ -327,9 +329,9 @@ export const UploadProduct: React.FC = () => {
         // Store component in local storage for parameters page
         localStorage.setItem('currentUploadedProduct', JSON.stringify({
           ...component,
-          price: productData.price,
-          manufacturer: productData.manufacturer,
-          description: productData.description
+          price: insertedProduct.price,
+          manufacturer: insertedProduct.manufacturer,
+          description: insertedProduct.description
         }));
         
         navigate('/supplier/parameters');
