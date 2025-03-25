@@ -1,4 +1,3 @@
-
 import * as THREE from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
@@ -30,13 +29,81 @@ export const loadModel = async (url: string, type: ModelType): Promise<THREE.Obj
       return loadGLTFModel(url);
     case 'STP':
     case 'STEP':
-      // STEP files can't be loaded directly in Three.js
-      console.log(`STEP/STP format not directly supported: ${url}`);
-      throw new Error('STEP/STP files are not directly supported in web browsers');
+      // Create a placeholder for STEP files
+      console.log(`Creating placeholder for STEP file: ${url}`);
+      return createPlaceholderForSTEPModel(url);
     default:
       console.log(`Unknown model type: ${type}, defaulting to STL loader`);
       return loadSTLModel(url);
   }
+};
+
+/**
+ * Create a placeholder for STEP models
+ * @param url The URL of the STEP file
+ * @returns A Promise that resolves to a THREE.Object3D
+ */
+const createPlaceholderForSTEPModel = (url: string): Promise<THREE.Object3D> => {
+  return new Promise((resolve) => {
+    console.log(`Creating placeholder for STEP model: ${url}`);
+    
+    // Create a group to hold our placeholder visualization
+    const group = new THREE.Group();
+    
+    // Create a box geometry as placeholder
+    const geometry = new THREE.BoxGeometry(1, 0.7, 1.5);
+    
+    // Create a material with a distinct appearance
+    const material = new THREE.MeshStandardMaterial({
+      color: 0x3498db,
+      metalness: 0.7,
+      roughness: 0.3,
+      transparent: true,
+      opacity: 0.85
+    });
+    
+    const mesh = new THREE.Mesh(geometry, material);
+    group.add(mesh);
+
+    // Add wireframe
+    const wireframe = new THREE.LineSegments(
+      new THREE.WireframeGeometry(geometry),
+      new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 1 })
+    );
+    group.add(wireframe);
+    
+    // Add a label to indicate this is a STEP file
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = 256;
+    canvas.height = 64;
+    
+    if (context) {
+      context.fillStyle = '#333333';
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      context.font = 'bold 24px Arial';
+      context.fillStyle = 'white';
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+      context.fillText('STEP MODEL', canvas.width / 2, canvas.height / 2);
+      
+      const texture = new THREE.CanvasTexture(canvas);
+      const labelMaterial = new THREE.MeshBasicMaterial({
+        map: texture,
+        transparent: true,
+        side: THREE.DoubleSide
+      });
+      
+      const labelGeometry = new THREE.PlaneGeometry(1, 0.25);
+      const label = new THREE.Mesh(labelGeometry, labelMaterial);
+      label.position.set(0, 1, 0);
+      label.rotation.x = -Math.PI / 2;
+      group.add(label);
+    }
+    
+    console.log('Placeholder for STEP model created successfully');
+    resolve(group);
+  });
 };
 
 /**

@@ -17,6 +17,7 @@ import { loadModel } from '@/utils/modelLoader';
 import { ComponentItem } from './Sidebar';
 import { useLocation } from 'react-router-dom';
 import { SnapPointEditor, SnapPoint } from './SnapPointEditor';
+import { StepFileViewer } from './StepFileViewer';
 
 interface PlacedObjectProps {
   component: ComponentItem;
@@ -103,7 +104,15 @@ const PlacedObject: React.FC<PlacedObjectProps> = ({
               });
               
               componentRef.current.add(model);
-              toast.success(`Model ${component.name} loaded successfully`);
+              
+              if (component.type === 'STEP' || component.type === 'STP') {
+                toast.info(`${component.name} loaded as placeholder (STEP format)`, {
+                  description: "STEP files display as placeholders in the 3D viewport",
+                  duration: 5000,
+                });
+              } else {
+                toast.success(`Model ${component.name} loaded successfully`);
+              }
             }
             setIsLoading(false);
           })
@@ -352,6 +361,18 @@ export const Viewport: React.FC<ViewportProps> = ({
   const isEditPage = location.pathname === '/edit';
   const isSupplierParameters = location.pathname === '/supplier/parameters';
   const isDesignPage = location.pathname === '/design';
+  const [showStepViewer, setShowStepViewer] = useState(false);
+  const [selectedStepComponent, setSelectedStepComponent] = useState<ComponentItem | null>(null);
+  
+  useEffect(() => {
+    if (selectedComponent?.type === 'STEP' || selectedComponent?.type === 'STP') {
+      setSelectedStepComponent(selectedComponent);
+      setShowStepViewer(true);
+    } else if (selectedComponent) {
+      setShowStepViewer(false);
+      setSelectedStepComponent(null);
+    }
+  }, [selectedComponent]);
   
   useEffect(() => {
     if ((isSupplierParameters || isDesignPage) && selectedComponent && !hasLoadedModel) {
@@ -468,6 +489,13 @@ export const Viewport: React.FC<ViewportProps> = ({
 
   return (
     <div className="relative w-full h-full bg-white overflow-hidden rounded-2xl">
+      {showStepViewer && selectedStepComponent && (
+        <StepFileViewer 
+          component={selectedStepComponent} 
+          onClose={() => setShowStepViewer(false)} 
+        />
+      )}
+      
       <div className="absolute top-4 right-4 z-10">
         <Button
           variant="outline"
