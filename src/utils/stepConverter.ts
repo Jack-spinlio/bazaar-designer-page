@@ -42,5 +42,6 @@ export const notifyStepFileHandling = (filename: string): void => {
   toast.info(`STEP file detected: ${filename}`, {
     description: 'STEP files are displayed as placeholders in the 3D viewport',
     duration: 4000,
+    closeButton: true
   });
 };

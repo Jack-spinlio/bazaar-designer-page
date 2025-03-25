@@ -8,7 +8,8 @@ import NotFound from './pages/NotFound';
 import ProductDetail from './pages/ProductDetail';
 import SupplierPage from './pages/supplier/SupplierPage';
 import './App.css';
-import { Toaster } from 'sonner';
+import { Toaster as SonnerToaster } from 'sonner';
+import { Toaster } from '@/components/ui/toaster';
 import * as THREE from 'three';
 
 // Augment the window interface to include THREE
@@ -35,7 +36,8 @@ function App() {
         <Route path="/supplier/*" element={<SupplierPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <Toaster position="top-right" richColors />
+      <SonnerToaster position="top-right" richColors closeButton />
+      <Toaster />
     </div>
   );
 }

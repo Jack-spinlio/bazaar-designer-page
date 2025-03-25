@@ -42,12 +42,16 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     e.preventDefault();
     
     if (!file) {
-      toast.error('Please select a file to upload');
+      toast.error('Please select a file to upload', {
+        closeButton: true
+      });
       return;
     }
     
     if (!componentName.trim()) {
-      toast.error('Please enter a component name');
+      toast.error('Please enter a component name', {
+        closeButton: true
+      });
       return;
     }
     
@@ -57,7 +61,9 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     
     if (newComponent && onFileUploaded) {
       onFileUploaded(newComponent);
-      toast.success(`Component "${componentName}" uploaded successfully!`);
+      toast.success(`Component "${componentName}" uploaded successfully!`, {
+        closeButton: true
+      });
       onClose();
     }
     
