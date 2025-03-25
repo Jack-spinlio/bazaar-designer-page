@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { 
   Pencil, 
@@ -84,9 +83,9 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
-                  variant="default" 
+                  variant="ghost" 
                   size="icon" 
-                  className="bg-black text-white hover:bg-black hover:text-white"
+                  className="text-gray-400 hover:text-gray-600"
                   onClick={() => setUploadDialogOpen(true)}
                 >
                   <Upload size={20} />
