@@ -86,7 +86,7 @@ const OrdersPage: React.FC = () => {
   return (
     <div className="flex flex-col h-full">
       <ScrollArea className="h-[calc(100vh-130px)] pr-4">
-        <div className="space-y-6">
+        <div className="space-y-6 pt-4">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">Order</h1>
             <Button className="bg-black hover:bg-black/90 rounded-full">
@@ -95,7 +95,7 @@ const OrdersPage: React.FC = () => {
             </Button>
           </div>
 
-          <div className="border-t border-gray-200 pt-6">
+          <div className="border-t border-gray-200 pt-8 mt-4">
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
               <div className="relative flex-1">
                 <Select onValueChange={(value) => setSearchTerm(value)}>
