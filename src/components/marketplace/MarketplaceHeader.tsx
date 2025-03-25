@@ -77,6 +77,9 @@ export const MarketplaceHeader: React.FC = () => {
             
             <DropdownMenuSeparator />
             <DropdownMenuItem>
+              <Link to="/design" className="w-full">Design Studio</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem>
               <Link to="/marketplace" className="w-full">Marketplace</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
