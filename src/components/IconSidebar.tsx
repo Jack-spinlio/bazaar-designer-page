@@ -84,9 +84,9 @@ export const IconSidebar = ({ activeTab, setActiveTab }: IconSidebarProps) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button 
-                  variant="ghost" 
+                  variant="default" 
                   size="icon" 
-                  className="text-gray-400 hover:text-gray-600"
+                  className="bg-black text-white hover:bg-black/90 hover:text-white"
                   onClick={() => setUploadDialogOpen(true)}
                 >
                   <Upload size={20} />
