@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { ArrowLeft, Upload, AlertCircle, Plus, Search } from 'lucide-react';
+import { Upload, AlertCircle, Plus, Search } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { ComponentItem } from '@/components/Sidebar';
 
@@ -860,22 +860,9 @@ export const UploadProduct: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="flex items-center mb-6">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="mr-2"
-          onClick={() => navigate('/supplier')}
-        >
-          <ArrowLeft className="h-4 w-4 mr-1" />
-          Back
-        </Button>
-        <h1 className="text-2xl font-bold">Upload New Product</h1>
-      </div>
-      
-      <div className="bg-white p-6 rounded-lg shadow-sm">
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <div className="container mx-auto h-full overflow-hidden">
+      <div className="bg-white rounded-lg shadow-sm h-full overflow-auto">
+        <form onSubmit={handleSubmit} className="space-y-6 p-6">
           <div>
             <Label htmlFor="name" className="block text-gray-700 mb-1">Product Name <span className="text-red-500">*</span></Label>
             <Input
@@ -1406,3 +1393,4 @@ export const UploadProduct: React.FC = () => {
     </div>
   );
 };
+
