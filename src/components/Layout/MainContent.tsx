@@ -30,7 +30,7 @@ export const MainContent: React.FC<MainContentProps> = ({
     location.pathname !== '/uploads';
 
   // Define the Shimano motor model from "My Uploads" as the default model
-  const defaultShimanoModel: ComponentItem | null = {
+  const defaultShimanoModel: ComponentItem = {
     id: 'shimano-ep800-uploaded',
     name: 'Shimano Ep800',
     type: 'STL',
@@ -38,7 +38,7 @@ export const MainContent: React.FC<MainContentProps> = ({
     folder: 'Uploads',
     modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
     modelType: 'STL',
-    shape: 'box'
+    shape: 'box' as const
   };
 
   console.log('MainContent - Current pathname:', location.pathname);

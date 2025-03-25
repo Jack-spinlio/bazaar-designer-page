@@ -18,7 +18,7 @@ const Edit = () => {
     folder: 'Uploads',
     modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
     modelType: 'STL',
-    shape: 'box'
+    shape: 'box' as const
   };
 
   const location = useLocation();
@@ -44,7 +44,7 @@ const Edit = () => {
           folder: prefab.folder || 'Prefabs',
           modelUrl: prefab.modelUrl,
           modelType: prefab.modelType || 'GLTF', // Ensure model type is specified
-          shape: prefab.shape
+          shape: (prefab.shape as 'box' | 'sphere' | 'cylinder' | 'cone' | 'torus') || 'box'
         };
         
         console.log('Setting component with processed prefab:', componentFromPrefab);

@@ -29,7 +29,7 @@ const DesignStudio = () => {
     folder: 'Uploads',
     modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
     modelType: 'STL',
-    shape: 'box'
+    shape: 'box' as const
   };
 
   useEffect(() => {

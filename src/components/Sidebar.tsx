@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -186,7 +185,7 @@ const CUSTOM_COMPONENTS = [
     folder: 'Uploads',
     modelUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/models/1742796907092_Shimano_Ep800.stl',
     modelType: 'STL',
-    shape: 'box'
+    shape: 'box' as const
   },
   {
     id: 'custom-fork-1',
@@ -267,7 +266,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           throw error;
         }
         if (data) {
-          const modelComponents = data.map(file => {
+          const modelComponents: ComponentItem[] = data.map(file => {
             const fileExt = file.name.split('.').pop()?.toUpperCase() || '';
             const name = file.name.split('.')[0].replace(/_/g, ' ').replace(/^\d+_/, '');
 
