@@ -59,7 +59,7 @@ export const Header: React.FC = () => {
           </Button>
           
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger>
               <Avatar className="h-9 w-9 cursor-pointer">
                 <AvatarImage src="https://github.com/shadcn.png" />
                 <AvatarFallback>CN</AvatarFallback>
@@ -84,19 +84,19 @@ export const Header: React.FC = () => {
               </DropdownMenuGroup>
               
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link to="/marketplace">Marketplace</Link>
+              <DropdownMenuItem>
+                <Link to="/marketplace" className="w-full">Marketplace</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/design">Design</Link>
+              <DropdownMenuItem>
+                <Link to="/design" className="w-full">Design</Link>
               </DropdownMenuItem>
               {userRole === 'supplier' && (
-                <DropdownMenuItem asChild>
-                  <Link to="/supplier">Supplier Dashboard</Link>
+                <DropdownMenuItem>
+                  <Link to="/supplier" className="w-full">Supplier Dashboard</Link>
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem asChild>
-                <Link to="/saved">Saved Designs</Link>
+              <DropdownMenuItem>
+                <Link to="/saved" className="w-full">Saved Designs</Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem>Logout</DropdownMenuItem>
