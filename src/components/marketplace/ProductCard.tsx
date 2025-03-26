@@ -35,10 +35,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   
   // Determine which logo to use based on manufacturer
   const getLogo = () => {
-    if (product.manufacturer === 'Shimano') {
+    if (product.manufacturer.toLowerCase() === 'shimano') {
       return 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Shimano-Logo-1990.png';
-    } else if (product.manufacturer === 'BRAKCO') {
+    } else if (product.manufacturer.toLowerCase() === 'brakco') {
       return 'https://www.brakco.com/images/en/logo.svg';
+    } else if (product.manufacturer.toLowerCase() === 'sram') {
+      return 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Shimano-Logo-1990.png'; // Replace with actual SRAM logo when available
     }
     return 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//PHOTO-2025-01-16-17-11-25%202.jpg';
   };
