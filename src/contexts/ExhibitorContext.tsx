@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -9,7 +10,6 @@ const DEFAULT_THUMBNAIL = "https://storage.googleapis.com/www.taiwantradeshow.co
 // JSON data sources
 const JSON_SOURCES = [
   '/all-exhibitors-alpha.json',
-
 ];
 
 interface ExhibitorContextType {
@@ -99,21 +99,37 @@ export const ExhibitorProvider: React.FC<ExhibitorProviderProps> = ({ children }
     
     try {
       // First try Supabase
-      const { data, error } = await supabase
-        .from('exhibitors')
-        .select('id, name, slug, booth_info, address, thumbnail_url, products, description');
+      let supbaseError = false;
+      try {
+        const { data, error } = await supabase
+          .from('exhibitors')
+          .select('*');
+        
+        if (error) {
+          console.error('Error loading from Supabase:', error);
+          supbaseError = true;
+        } else if (data && data.length > 0) {
+          // Sort exhibitors - those with default thumbnail last
+          const sortedData = sortExhibitors(data as Exhibitor[]);
+          setExhibitors(sortedData);
+          setLoading(false);
+          console.log(`Successfully loaded ${sortedData.length} exhibitors from Supabase`);
+          return;
+        } else {
+          console.log('No exhibitors found in Supabase, falling back to JSON');
+          supbaseError = true;
+        }
+      } catch (e) {
+        console.error('Exception when loading from Supabase:', e);
+        supbaseError = true;
+      }
       
-      if (error || !data || data.length === 0) {
-        // If database fails, try loading from JSON
+      // If database fails or is empty, try loading from JSON
+      if (supbaseError) {
         await loadFromJson();
-      } else {
-        // Sort exhibitors - those with default thumbnail last
-        const sortedData = sortExhibitors(data);
-        setExhibitors(sortedData);
-        setLoading(false);
       }
     } catch (error) {
-      console.error('Error loading from Supabase:', error);
+      console.error('Error in loadExhibitorData:', error);
       await loadFromJson();
     }
   };
@@ -198,4 +214,4 @@ export const ExhibitorProvider: React.FC<ExhibitorProviderProps> = ({ children }
       {children}
     </ExhibitorContext.Provider>
   );
-}; 
+};

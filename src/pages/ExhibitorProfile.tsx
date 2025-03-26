@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
@@ -17,7 +18,6 @@ interface GalleryImage {
 // Define the JSON data sources
 const JSON_SOURCES = [
   '/all-exhibitors-alpha.json',
-
 ];
 
 const ExhibitorProfile = () => {
@@ -35,57 +35,73 @@ const ExhibitorProfile = () => {
       
       try {
         // First try to fetch from Supabase
-        const { data: exhibitorData, error: exhibitorError } = await supabase
-          .from('exhibitors')
-          .select('*')
-          .eq('slug', slug)
-          .single();
-        
-        if (exhibitorError) {
-          console.error('Error fetching exhibitor from DB:', exhibitorError);
+        let supabaseError = false;
+        try {
+          const { data: exhibitorData, error: exhibitorError } = await supabase
+            .from('exhibitors')
+            .select('*')
+            .eq('slug', slug || '')
+            .maybeSingle();
           
-          // If no DB data found, try to load from JSON files
-          await loadExhibitorFromJSON();
-          return;
+          if (exhibitorError) {
+            console.error('Error fetching exhibitor from DB:', exhibitorError);
+            supabaseError = true;
+          } else if (exhibitorData) {
+            setExhibitor(exhibitorData as Exhibitor);
+            
+            // Get gallery images if any
+            try {
+              const { data: galleryData, error: galleryError } = await supabase
+                .from('exhibitor_gallery')
+                .select('*')
+                .eq('exhibitor_id', exhibitorData.id)
+                .order('display_order', { ascending: true });
+              
+              if (!galleryError && galleryData && galleryData.length > 0) {
+                const formattedGallery = galleryData.map((img, index) => ({
+                  id: index,
+                  url: img.image_url,
+                  alt: `${exhibitorData.name} gallery image ${index + 1}`
+                }));
+                
+                setGallery(formattedGallery);
+                
+                // Set featured image to first gallery image if available
+                if (formattedGallery.length > 0) {
+                  setFeaturedImage(formattedGallery[0].url);
+                }
+              } else if (exhibitorData.thumbnail_url) {
+                // If no gallery images, use the thumbnail as the featured image
+                setFeaturedImage(exhibitorData.thumbnail_url);
+                
+                // Add thumbnail to gallery as well
+                setGallery([{
+                  id: 0,
+                  url: exhibitorData.thumbnail_url,
+                  alt: `${exhibitorData.name} thumbnail`
+                }]);
+              }
+            } catch (galleryError) {
+              console.error('Error fetching gallery:', galleryError);
+            }
+            
+            setLoading(false);
+            return; // Successfully loaded from DB
+          } else {
+            console.log('Exhibitor not found in database, trying JSON files');
+            supabaseError = true;
+          }
+        } catch (error) {
+          console.error('Exception when loading from Supabase:', error);
+          supabaseError = true;
         }
         
-        if (exhibitorData) {
-          setExhibitor(exhibitorData);
-          
-          // Get gallery images if any
-          const { data: galleryData, error: galleryError } = await supabase
-            .from('exhibitor_gallery')
-            .select('*')
-            .eq('exhibitor_id', exhibitorData.id)
-            .order('display_order', { ascending: true });
-          
-          if (!galleryError && galleryData) {
-            const formattedGallery = galleryData.map((img, index) => ({
-              id: index,
-              url: img.image_url,
-              alt: `${exhibitorData.name} gallery image ${index + 1}`
-            }));
-            
-            setGallery(formattedGallery);
-            
-            // Set featured image to first gallery image if available
-            if (formattedGallery.length > 0) {
-              setFeaturedImage(formattedGallery[0].url);
-            } else if (exhibitorData.thumbnail_url) {
-              // If no gallery images, use the thumbnail as the featured image
-              setFeaturedImage(exhibitorData.thumbnail_url);
-              
-              // Add thumbnail to gallery as well
-              setGallery([{
-                id: 0,
-                url: exhibitorData.thumbnail_url,
-                alt: `${exhibitorData.name} thumbnail`
-              }]);
-            }
-          }
+        // If no DB data found or error occurred, try to load from JSON files
+        if (supabaseError) {
+          await loadExhibitorFromJSON();
         }
       } catch (error) {
-        console.error('Error loading exhibitor:', error);
+        console.error('Error in loadExhibitorFromDB:', error);
         toast.error('Failed to load exhibitor information');
         
         // Try loading from JSON as fallback
@@ -445,4 +461,4 @@ const ExhibitorProfile = () => {
   );
 };
 
-export default ExhibitorProfile; 
+export default ExhibitorProfile;

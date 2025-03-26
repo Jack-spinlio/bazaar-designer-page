@@ -1,1 +1,40 @@
-[]
+
+[
+  {
+    "exhibitor_name": "Sample Exhibitor 1",
+    "booth_info": "Hall A, Booth 123",
+    "address": "123 Example Street, City, Country",
+    "telephone": "+1-123-456-7890",
+    "fax": "+1-123-456-7891",
+    "website": "https://example.com",
+    "email": "contact@example.com",
+    "products": "Bicycle Frames, Bicycle Components, Electric Bikes",
+    "description": "A sample exhibitor description for testing purposes. This company specializes in high-quality bicycle components and frames.",
+    "thumbnail_url": "https://storage.googleapis.com/www.taiwantradeshow.com.tw/exhibitor-logo/202411/T-58665412.jpg",
+    "gallery_images": [
+      "https://storage.googleapis.com/www.taiwantradeshow.com.tw/product/202411/T-38721817.jpg",
+      "https://storage.googleapis.com/www.taiwantradeshow.com.tw/product/202411/T-22600756.jpg",
+      "https://storage.googleapis.com/www.taiwantradeshow.com.tw/product/202411/T-83201135.jpg"
+    ],
+    "slug": "sample-exhibitor-1",
+    "source_url": "https://example.com/exhibitor/sample-1"
+  },
+  {
+    "exhibitor_name": "Sample Exhibitor 2",
+    "booth_info": "Hall B, Booth 456",
+    "address": "456 Test Avenue, City, Country",
+    "telephone": "+1-234-567-8901",
+    "fax": "+1-234-567-8902",
+    "website": "https://example2.com",
+    "email": "info@example2.com",
+    "products": "Mountain Bikes, Road Bikes, Cycling Accessories",
+    "description": "Another sample exhibitor description for testing. This company focuses on complete bicycle solutions including mountain and road bikes.",
+    "thumbnail_url": "https://storage.googleapis.com/www.taiwantradeshow.com.tw/exhibitor-logo/202412/T-66323219.jpg",
+    "gallery_images": [
+      "https://storage.googleapis.com/www.taiwantradeshow.com.tw/product/202301/T-55093625.jpg",
+      "https://storage.googleapis.com/www.taiwantradeshow.com.tw/product/202301/T-19367440.jpg"
+    ],
+    "slug": "sample-exhibitor-2",
+    "source_url": "https://example.com/exhibitor/sample-2"
+  }
+]
