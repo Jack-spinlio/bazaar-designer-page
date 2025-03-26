@@ -1,8 +1,9 @@
+
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Package, Upload, Users } from 'lucide-react';
+import { Package, Upload } from 'lucide-react';
 import { StatsCard } from '@/components/supplier/StatsCard';
 import { ProductsPopularityChart } from '@/components/supplier/ProductsPopularityChart';
 import { CustomerInsightsChart } from '@/components/supplier/CustomerInsightsChart';
@@ -175,7 +176,7 @@ export const SupplierDashboard: React.FC = () => {
                         {new Date(product.created_at).toLocaleDateString()}
                       </span>
                       <Button variant="ghost" size="sm" asChild>
-                        <Link to={`/supplier/products`}>
+                        <Link to="/supplier/products">
                           Edit
                         </Link>
                       </Button>

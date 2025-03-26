@@ -67,9 +67,9 @@ function App() {
         <Route path="/exhibitors" element={<ExhibitorListings />} />
         <Route path="/admin" element={<Admin />} />
         
-        {/* Supplier routes */}
+        {/* Supplier routes - make sure it's properly nested */}
         <Route path="/supplier/*" element={<SupplierPage />} />
-        <Route path="/supplier/:id" element={<SupplierProfilePage />} />
+        <Route path="/supplier-profile/:id" element={<SupplierProfilePage />} />
         
         <Route path="/product/:id" element={<ProductDetail />} />
         

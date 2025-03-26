@@ -30,7 +30,7 @@ const SupplierPage: React.FC = () => {
             <Route path="/orders" element={<OrdersPage />} />
             <Route path="/enquiries" element={<MessagingPage />} />
             <Route path="/upload" element={<UploadProduct />} />
-            <Route path="*" element={<Navigate to="/supplier" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </div>
