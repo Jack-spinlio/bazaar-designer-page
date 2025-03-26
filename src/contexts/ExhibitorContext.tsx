@@ -1,16 +1,12 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { Exhibitor } from '@/components/exhibitors/ExhibitorCard';
 
 // Default thumbnail to deprioritize
 const DEFAULT_THUMBNAIL = "https://storage.googleapis.com/www.taiwantradeshow.com.tw/ttsShowYear/202406/T-68557044.jpg";
 
-// JSON data sources
-const JSON_SOURCES = [
-  '/all-exhibitors-alpha.json',
-];
+// The single source of truth
+const JSON_SOURCE = '/all-exhibitors-alpha.json';
 
 interface ExhibitorContextType {
   exhibitors: Exhibitor[];
@@ -98,86 +94,45 @@ export const ExhibitorProvider: React.FC<ExhibitorProviderProps> = ({ children }
     setLoading(true);
     
     try {
-      // First try Supabase
-      let supbaseError = false;
-      try {
-        const { data, error } = await supabase
-          .from('exhibitors')
-          .select('*');
-        
-        if (error) {
-          console.error('Error loading from Supabase:', error);
-          supbaseError = true;
-        } else if (data && data.length > 0) {
-          // Sort exhibitors - those with default thumbnail last
-          const sortedData = sortExhibitors(data as Exhibitor[]);
-          setExhibitors(sortedData);
-          setLoading(false);
-          console.log(`Successfully loaded ${sortedData.length} exhibitors from Supabase`);
-          return;
-        } else {
-          console.log('No exhibitors found in Supabase, falling back to JSON');
-          supbaseError = true;
-        }
-      } catch (e) {
-        console.error('Exception when loading from Supabase:', e);
-        supbaseError = true;
+      console.log(`Trying to load data from ${JSON_SOURCE}`);
+      const response = await fetch(JSON_SOURCE);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load data from ${JSON_SOURCE}: ${response.statusText}`);
       }
       
-      // If database fails or is empty, try loading from JSON
-      if (supbaseError) {
-        await loadFromJson();
+      const jsonData = await response.json();
+      
+      if (!jsonData || !Array.isArray(jsonData) || jsonData.length === 0) {
+        throw new Error(`No valid data found in ${JSON_SOURCE}`);
       }
+      
+      // Transform the data to match our Exhibitor interface
+      const transformedData = jsonData.map((item: any) => ({
+        id: item.id || `temp-${Math.random().toString(36).substring(2, 9)}`,
+        name: item.exhibitor_name || item.name,
+        slug: item.slug,
+        booth_info: item.booth_info,
+        address: item.address,
+        thumbnail_url: item.thumbnail_url,
+        products: item.products,
+        description: item.description,
+        telephone: item.telephone,
+        email: item.email,
+        website: item.website,
+        fax: item.fax
+      }));
+      
+      // Sort exhibitors - those with default thumbnail last
+      const sortedData = sortExhibitors(transformedData);
+      setExhibitors(sortedData);
+      console.log(`Successfully loaded ${sortedData.length} exhibitors from ${JSON_SOURCE}`);
     } catch (error) {
-      console.error('Error in loadExhibitorData:', error);
-      await loadFromJson();
+      console.error(`Error loading data:`, error);
+      toast.error('Failed to load exhibitor data');
+    } finally {
+      setLoading(false);
     }
-  };
-
-  const loadFromJson = async () => {
-    for (const source of JSON_SOURCES) {
-      try {
-        console.log(`Trying to load data from ${source}`);
-        const response = await fetch(source);
-        
-        if (!response.ok) {
-          console.error(`Failed to load data from ${source}`);
-          continue; // Try next source if this one fails
-        }
-        
-        const jsonData = await response.json();
-        
-        if (!jsonData || !Array.isArray(jsonData) || jsonData.length === 0) {
-          console.error(`No valid data found in ${source}`);
-          continue;
-        }
-        
-        // Transform the data to match our Exhibitor interface
-        const transformedData = jsonData.map((item: any) => ({
-          id: item.id || `temp-${Math.random().toString(36).substring(2, 9)}`,
-          name: item.exhibitor_name || item.name,
-          slug: item.slug,
-          booth_info: item.booth_info,
-          address: item.address,
-          thumbnail_url: item.thumbnail_url,
-          products: item.products,
-          description: item.description
-        }));
-        
-        // Sort exhibitors - those with default thumbnail last
-        const sortedData = sortExhibitors(transformedData);
-        setExhibitors(sortedData);
-        setLoading(false);
-        console.log(`Successfully loaded ${sortedData.length} exhibitors from ${source}`);
-        return; // Exit once we've successfully loaded data
-      } catch (error) {
-        console.error(`Error loading JSON from ${source}:`, error);
-      }
-    }
-    
-    // If we get here, all sources failed
-    toast.error('Failed to load exhibitor data from any source');
-    setLoading(false);
   };
 
   const clearFilters = () => {

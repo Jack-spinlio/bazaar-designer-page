@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+
+import React from 'react';
 import { Header } from '@/components/Header/Header';
 import ExhibitorCard from '@/components/exhibitors/ExhibitorCard';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, Filter } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { useExhibitors } from '@/contexts/ExhibitorContext';
 
 export default function ExhibitorListings() {
@@ -14,7 +15,6 @@ export default function ExhibitorListings() {
     selectedCategory,
     setSelectedCategory,
     clearFilters,
-    defaultThumbnailCount,
     page,
     setPage,
     pageSize,
@@ -77,18 +77,6 @@ export default function ExhibitorListings() {
             )}
           </div>
         </div>
-
-        {/* Status message */}
-        {!loading && (
-          <div className="bg-green-50 border border-green-200 rounded-md p-4 mb-6">
-            <p className="text-green-800">
-              Exhibitor Data Loaded
-            </p>
-            <p className="text-green-700 text-sm">
-              Displaying {currentExhibitors.length} exhibitors. Note: {defaultThumbnailCount} exhibitors have the default thumbnail and are shown last.
-            </p>
-          </div>
-        )}
 
         {/* Loading state */}
         {loading && (
@@ -160,4 +148,4 @@ export default function ExhibitorListings() {
       </div>
     </div>
   );
-} 
+}
