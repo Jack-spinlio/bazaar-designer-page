@@ -268,7 +268,7 @@ const suppliers: Record<string, SupplierData> = {
     name: 'BRAKCO',
     shortDescription: 'Brake System Specialist',
     type: 'Brake Components Manufacturer',
-    logoUrl: 'https://www.brakco.com/images/new_logo.png',
+    logoUrl: 'https://www.brakco.com/images/en/logo.svg',
     rating: 4.3,
     information: 'BRAKCO is a specialized manufacturer focused on high-quality braking systems for bicycles. Based in Taiwan, BRAKCO has been designing and manufacturing reliable braking products since 1997. Their extensive product line includes disc brakes, V-brakes, brake pads, and various brake accessories for all types of cycling applications, from mountain biking to road cycling and commuting.',
     socialMedia: [
@@ -436,4 +436,3 @@ export const getAllSuppliers = (): SupplierData[] => {
 export const addSupplier = (supplier: SupplierData): void => {
   suppliers[supplier.id.toLowerCase()] = supplier;
 };
-
