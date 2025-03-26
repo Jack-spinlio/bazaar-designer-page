@@ -14,7 +14,6 @@ import { Toaster } from '@/components/ui/toaster';
 import * as THREE from 'three';
 import SupplierProfilePage from './pages/SupplierProfilePage';
 
-// Augment the window interface to include THREE
 declare global {
   interface Window {
     THREE: typeof THREE;
@@ -22,7 +21,6 @@ declare global {
 }
 
 function App() {
-  // Enable THREE.js debugging
   if (import.meta.env.DEV) {
     window.THREE = THREE;
   }
@@ -36,10 +34,8 @@ function App() {
         <Route path="/prefabs" element={<Prefabs />} />
         <Route path="/marketplace" element={<Marketplace />} />
         
-        {/* Keep the original route for backward compatibility */}
         <Route path="/producer/:id" element={<ProducerProfile />} />
         
-        {/* New route for the template-based supplier profiles */}
         <Route path="/supplier/:id" element={<SupplierProfilePage />} />
         
         <Route path="/product/:id" element={<ProductDetail />} />
