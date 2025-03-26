@@ -1,3 +1,4 @@
+
 import { SupplierData } from '@/components/supplier/SupplierProfile';
 
 // Sample supplier data
@@ -268,7 +269,7 @@ const suppliers: Record<string, SupplierData> = {
     name: 'BRAKCO',
     shortDescription: 'Brake System Specialist',
     type: 'Brake Components Manufacturer',
-    logoUrl: 'https://www.brakco.com/images/logo.gif',
+    logoUrl: 'https://www.brakco.com/_i/assets/upload/product/9c36de5115cb7df64a4ed53a363d73b7.jpg',
     rating: 4.3,
     information: 'BRAKCO is a specialized manufacturer focused on high-quality braking systems for bicycles. With years of experience in the industry, BRAKCO produces reliable rim brakes, disc brakes, and various brake fittings trusted by cyclists worldwide. Their products are known for durability, precision, and consistent performance in all riding conditions.',
     socialMedia: [
@@ -290,17 +291,17 @@ const suppliers: Record<string, SupplierData> = {
     gallery: [
       {
         id: 1,
-        url: 'https://brakco.com/images/product/big/DV8CW201.jpg',
+        url: 'https://www.brakco.com/_i/assets/upload/product/9c36de5115cb7df64a4ed53a363d73b7.jpg',
         alt: 'BRAKCO Brake Products'
       },
       {
         id: 2,
-        url: 'https://brakco.com/images/product/big/DCR1001.jpg',
+        url: 'https://www.brakco.com/_i/assets/upload/product/3ee61a9c9cc6dadfb0c7dd36afed8b1f.jpg',
         alt: 'BRAKCO Disc Brake'
       },
       {
         id: 3,
-        url: 'https://brakco.com/images/product/big/BKR13.jpg',
+        url: 'https://www.brakco.com/_i/assets/upload/product/00b99a17aae8f7d1c1bd97b5c4da39a5.jpg',
         alt: 'BRAKCO Rim Brake'
       }
     ],
@@ -308,7 +309,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-1',
         name: 'BRAKCO V-Brake Set',
-        image: 'https://brakco.com/images/product/big/BKR15.jpg',
+        image: 'https://www.brakco.com/_i/assets/upload/product/9c36de5115cb7df64a4ed53a363d73b7.jpg',
         price: 85,
         manufacturer: 'BRAKCO',
         category: 'rim-brake'
@@ -316,7 +317,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-2',
         name: 'BRAKCO Hydraulic Disc Brake',
-        image: 'https://brakco.com/images/product/big/DX4CM202.jpg',
+        image: 'https://www.brakco.com/_i/assets/upload/product/3ee61a9c9cc6dadfb0c7dd36afed8b1f.jpg',
         price: 175,
         manufacturer: 'BRAKCO',
         category: 'disc-brake'
@@ -324,7 +325,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-3',
         name: 'BRAKCO Brake Pads - Carbon Rim',
-        image: 'https://brakco.com/images/product/big/BPR05.jpg',
+        image: 'https://www.brakco.com/_i/assets/upload/product/00b99a17aae8f7d1c1bd97b5c4da39a5.jpg',
         price: 35,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
@@ -332,7 +333,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-4',
         name: 'BRAKCO Brake Levers - Road',
-        image: 'https://brakco.com/images/product/big/LR03.jpg',
+        image: 'https://www.brakco.com/_i/assets/upload/product/1b5a0ac2ee0d10c2bb0d12a2e75459dd.jpg',
         price: 60,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
@@ -340,7 +341,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-5',
         name: 'BRAKCO Mechanical Disc Brake',
-        image: 'https://brakco.com/images/product/big/DCR1001.jpg',
+        image: 'https://www.brakco.com/_i/assets/upload/product/3ee61a9c9cc6dadfb0c7dd36afed8b1f.jpg',
         price: 120,
         manufacturer: 'BRAKCO',
         category: 'disc-brake'
@@ -348,7 +349,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-6',
         name: 'BRAKCO Cable Housing Set',
-        image: 'https://brakco.com/images/product/big/CBSLC01.jpg',
+        image: 'https://www.brakco.com/_i/assets/upload/product/9a78e6e28de63fb1d7e7e5f94e8d2cc9.jpg',
         price: 28,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
