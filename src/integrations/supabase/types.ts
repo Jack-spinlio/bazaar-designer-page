@@ -117,6 +117,106 @@ export type Database = {
         }
         Relationships: []
       }
+      exhibitor_gallery: {
+        Row: {
+          id: string
+          exhibitor_id: string
+          image_url: string
+          display_order: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          exhibitor_id: string
+          image_url: string
+          display_order: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          exhibitor_id?: string
+          image_url?: string
+          display_order?: number
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exhibitor_gallery_exhibitor_id_fkey"
+            columns: ["exhibitor_id"]
+            isOneToOne: false
+            referencedRelation: "exhibitors"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      exhibitors: {
+        Row: {
+          id: string
+          name: string
+          slug: string
+          booth_info: string | null
+          address: string | null
+          telephone: string | null
+          fax: string | null
+          website: string | null
+          email: string | null
+          products: string | null
+          description: string | null
+          thumbnail_url: string | null
+          source_url: string | null
+          created_at: string
+          updated_at: string
+          claimed: boolean
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          slug: string
+          booth_info?: string | null
+          address?: string | null
+          telephone?: string | null
+          fax?: string | null
+          website?: string | null
+          email?: string | null
+          products?: string | null
+          description?: string | null
+          thumbnail_url?: string | null
+          source_url?: string | null
+          created_at?: string
+          updated_at?: string
+          claimed?: boolean
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          slug?: string
+          booth_info?: string | null
+          address?: string | null
+          telephone?: string | null
+          fax?: string | null
+          website?: string | null
+          email?: string | null
+          products?: string | null
+          description?: string | null
+          thumbnail_url?: string | null
+          source_url?: string | null
+          created_at?: string
+          updated_at?: string
+          claimed?: boolean
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exhibitors_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       product_parameters: {
         Row: {
           created_at: string

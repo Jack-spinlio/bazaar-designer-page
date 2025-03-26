@@ -147,3 +147,10 @@
   opacity: 0;
   transition: opacity 300ms;
 }
+
+/* Add this at the top of the file */
+html, body, #root {
+  height: 100%;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+}
