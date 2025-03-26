@@ -7,8 +7,6 @@ import { Link } from 'react-router-dom';
 import { MarketplaceHeader } from '@/components/marketplace/MarketplaceHeader';
 import { ExhibitorScraperService } from '@/integrations/scrapers/exhibitorScraper';
 import { ExhibitorData } from '@/integrations/scrapers/types';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 
 const Exhibitors = () => {
   const [exhibitors, setExhibitors] = useState<ExhibitorData[]>([]);
@@ -41,7 +39,6 @@ const Exhibitors = () => {
       setFilteredExhibitors(data);
     } catch (error) {
       console.error('Error fetching exhibitors:', error);
-      toast.error('Failed to load exhibitors');
     } finally {
       setLoading(false);
     }
@@ -49,7 +46,6 @@ const Exhibitors = () => {
 
   const handleStartScraping = async () => {
     setScraping(true);
-    toast.info("Starting to scrape exhibitor data...");
     
     try {
       // Call the server endpoint that triggers the scraping process
@@ -68,15 +64,11 @@ const Exhibitors = () => {
       const result = await response.json();
       
       if (result.success) {
-        toast.success(`Scraping completed! Found ${result.count} exhibitors.`);
         // Refresh exhibitors list after scraping
         fetchExhibitors();
-      } else {
-        toast.error(result.message || 'Scraping failed');
       }
     } catch (error) {
       console.error('Error during scraping:', error);
-      toast.error('Failed to scrape exhibitor data');
     } finally {
       setScraping(false);
     }
@@ -92,7 +84,7 @@ const Exhibitors = () => {
           <p className="text-gray-600 mb-6">Browse and discover component manufacturers</p>
           
           <div className="flex justify-between items-center mb-6">
-            <div className="flex w-full max-w-md gap-4">
+            <div className="flex w-full max-w-md">
               <Input
                 type="text"
                 placeholder="Search exhibitors..."
@@ -100,7 +92,6 @@ const Exhibitors = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="max-w-md"
               />
-              <Button variant="outline">Filters</Button>
             </div>
             
             <Button 
@@ -159,7 +150,7 @@ const Exhibitors = () => {
               <h2 className="text-xl font-semibold mb-2">No exhibitors found</h2>
               <p className="text-gray-600 mb-4">We couldn't find any exhibitors matching your search criteria.</p>
               {searchTerm && (
-                <Button onClick={() => setSearchTerm('')}>Clear Filters</Button>
+                <Button onClick={() => setSearchTerm('')}>Clear Search</Button>
               )}
             </div>
           )}

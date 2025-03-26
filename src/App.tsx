@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import DesignStudio from './pages/DesignStudio';
@@ -12,8 +13,6 @@ import SupplierPage from './pages/supplier/SupplierPage';
 import Edit from './pages/Edit';
 import Prefabs from './pages/Prefabs';
 import './App.css';
-import { Toaster as SonnerToaster } from 'sonner';
-import { Toaster } from '@/components/ui/toaster';
 import * as THREE from 'three';
 import SupplierProfilePage from './pages/SupplierProfilePage';
 
@@ -77,8 +76,6 @@ function App() {
         {/* Fallback route */}
         <Route path="*" element={<NotFound />} />
       </Routes>
-      <SonnerToaster position="top-right" richColors closeButton />
-      <Toaster />
     </div>
   );
 }

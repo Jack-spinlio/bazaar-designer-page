@@ -5,11 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChevronRight, Package, Upload, Users, ChartLine } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 import { StatsCard } from '@/components/supplier/StatsCard';
 import { ProductsPopularityChart } from '@/components/supplier/ProductsPopularityChart';
 import { CustomerInsightsChart } from '@/components/supplier/CustomerInsightsChart';
-import { SalesByCountryMap } from '@/components/supplier/SalesByCountryMap';
 
 interface DashboardStats {
   totalProducts: number;
@@ -85,16 +83,6 @@ export const SupplierDashboard: React.FC = () => {
     { name: 'Dec', loyal: 140, new: 80, unique: 160 }
   ];
 
-  // Mock data for sales by country
-  const countriesData = [
-    { id: '1', name: 'USA', value: 42, color: 'bg-amber-300' },
-    { id: '2', name: 'China', value: 28, color: 'bg-purple-400' },
-    { id: '3', name: 'Brazil', value: 15, color: 'bg-red-300' },
-    { id: '4', name: 'India', value: 10, color: 'bg-blue-300' },
-    { id: '5', name: 'Saudi Arabia', value: 13, color: 'bg-green-400' },
-    { id: '6', name: 'Indonesia', value: 12, color: 'bg-teal-400' }
-  ];
-
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
@@ -114,7 +102,6 @@ export const SupplierDashboard: React.FC = () => {
         setStats(mockStats);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
-        toast.error('Failed to load dashboard data');
       } finally {
         setLoading(false);
       }
@@ -150,9 +137,8 @@ export const SupplierDashboard: React.FC = () => {
       </div>
       
       {/* Charts Section */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
         <ProductsPopularityChart products={productsData} />
-        <SalesByCountryMap countries={countriesData} />
       </div>
       
       <CustomerInsightsChart data={customerInsightsData} />
