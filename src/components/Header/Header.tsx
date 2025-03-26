@@ -2,7 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { UserCog, Upload, Building, LayoutDashboard } from 'lucide-react';
+import { UserCog, Upload, Building, LayoutDashboard, Bell } from 'lucide-react';
 import { DesignTitle } from './DesignTitle';
 import { SharePopover } from './SharePopover';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -23,6 +23,11 @@ export const Header: React.FC = () => {
   const isDesignPage = location.pathname === '/design';
   const isMarketplacePage = location.pathname.includes('/marketplace');
   
+  const handleNavigation = (path: string, role: string) => {
+    navigate(path);
+    toast.success(`Switched to ${role} mode`);
+  };
+
   return (
     <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 z-10 bg-white rounded-2xl shadow-sm">
       <div className="flex items-center gap-4">
@@ -51,16 +56,10 @@ export const Header: React.FC = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuLabel className="font-normal text-xs text-gray-500 pl-2 pt-4">Switch Role</DropdownMenuLabel>
               
               <DropdownMenuItem
-                className="relative"
-                onClick={() => { 
-                  if (isSupplierPage) {
-                    navigate('/design');
-                    toast.success('Switched to Designer mode');
-                  }
-                }}
+                className="relative cursor-pointer"
+                onClick={() => handleNavigation('/design', 'Designer')}
               >
                 <UserCog className="mr-2 h-4 w-4" />
                 <span>Designer</span>
@@ -70,13 +69,8 @@ export const Header: React.FC = () => {
               </DropdownMenuItem>
               
               <DropdownMenuItem
-                className="relative"
-                onClick={() => { 
-                  if (!isSupplierPage) {
-                    navigate('/supplier/dashboard');
-                    toast.success('Switched to Supplier mode');
-                  }
-                }}
+                className="relative cursor-pointer"
+                onClick={() => handleNavigation('/supplier/dashboard', 'Supplier')}
               >
                 <Upload className="mr-2 h-4 w-4" />
                 <span>Supplier</span>
@@ -85,15 +79,9 @@ export const Header: React.FC = () => {
                 )}
               </DropdownMenuItem>
               
-              <DropdownMenuSeparator />
-              
               <DropdownMenuItem
-                className="relative"
-                onClick={() => {
-                  if (!isMarketplacePage) {
-                    navigate('/marketplace');
-                  }
-                }}
+                className="relative cursor-pointer"
+                onClick={() => handleNavigation('/marketplace', 'Marketplace')}
               >
                 <Building className="mr-2 h-4 w-4" />
                 <span>Marketplace</span>
