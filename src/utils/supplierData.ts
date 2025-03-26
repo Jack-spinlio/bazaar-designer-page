@@ -1,3 +1,4 @@
+
 import { SupplierData } from '@/components/supplier/SupplierProfile';
 
 // Sample supplier data
@@ -290,65 +291,65 @@ const suppliers: Record<string, SupplierData> = {
     gallery: [
       {
         id: 1,
-        url: 'https://www.brakco.com/images/products/brake_shoe.jpg',
-        alt: 'BRAKCO Brake Shoe'
+        url: 'https://www.brakco.com.tw/_i/assets/upload/product/8c112ef9b692deb812b5d22a0c40abf9.jpg',
+        alt: 'BRAKCO Brake Pads'
       },
       {
         id: 2,
-        url: 'https://www.brakco.com/images/products/brake_pad.jpg',
-        alt: 'BRAKCO Brake Pad'
+        url: 'https://www.brakco.com/_i/assets/upload/product/f40c711f2d27a089c70b56210c64c93c.jpg',
+        alt: 'BRAKCO Brake Rotor'
       },
       {
         id: 3,
-        url: 'https://www.brakco.com/images/products/standard_rotor.jpg',
-        alt: 'BRAKCO Standard Rotor'
+        url: 'https://www.brakco.com/_i/assets/upload/product/834fbad839aba2dd8bc911ec2e1d8bf0.jpg',
+        alt: 'BRAKCO Adapter'
       },
       {
         id: 4,
-        url: 'https://www.brakco.com/images/products/sport_rotor.jpg',
-        alt: 'BRAKCO Sport Rotor'
+        url: 'https://www.brakco.com/_i/assets/upload/product/484aaf383087d5eb4c15d053514cc86f.jpg',
+        alt: 'BRAKCO Brake Cable'
       }
     ],
     products: [
       {
         id: 'brakco-1',
-        name: 'BRAKCO Brake Shoe',
-        image: 'https://www.brakco.com/images/products/brake_shoe.jpg',
+        name: 'BRAKCO Brake Pads',
+        image: 'https://www.brakco.com.tw/_i/assets/upload/product/8c112ef9b692deb812b5d22a0c40abf9.jpg',
         price: 25,
-        manufacturer: 'BRAKCO',
-        category: 'rim-brake'
-      },
-      {
-        id: 'brakco-2',
-        name: 'BRAKCO Brake Pad',
-        image: 'https://www.brakco.com/images/products/brake_pad.jpg',
-        price: 35,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
       },
       {
-        id: 'brakco-3',
-        name: 'BRAKCO Standard Rotor',
-        image: 'https://www.brakco.com/images/products/standard_rotor.jpg',
-        price: 45,
+        id: 'brakco-2',
+        name: 'BRAKCO Brake Rotor',
+        image: 'https://www.brakco.com/_i/assets/upload/product/f40c711f2d27a089c70b56210c64c93c.jpg',
+        price: 35,
         manufacturer: 'BRAKCO',
         category: 'disc-brake'
+      },
+      {
+        id: 'brakco-3',
+        name: 'BRAKCO Adapter',
+        image: 'https://www.brakco.com/_i/assets/upload/product/834fbad839aba2dd8bc911ec2e1d8bf0.jpg',
+        price: 45,
+        manufacturer: 'BRAKCO',
+        category: 'brake-fitting'
       },
       {
         id: 'brakco-4',
-        name: 'BRAKCO Sport Rotor',
-        image: 'https://www.brakco.com/images/products/sport_rotor.jpg',
+        name: 'BRAKCO Brake Cable',
+        image: 'https://www.brakco.com/_i/assets/upload/product/484aaf383087d5eb4c15d053514cc86f.jpg',
         price: 60,
         manufacturer: 'BRAKCO',
-        category: 'disc-brake'
+        category: 'brake-fitting'
       },
       {
         id: 'brakco-5',
-        name: 'BRAKCO Centerlock Rotor',
-        image: 'https://www.brakco.com/images/products/centerlock_rotor.jpg',
-        price: 75,
+        name: 'BRAKCO Hydraulic Needle',
+        image: 'https://www.brakco.com/images/products/hydraulic_parts.jpg',
+        price: 38,
         manufacturer: 'BRAKCO',
-        category: 'disc-brake'
+        category: 'brake-fitting'
       },
       {
         id: 'brakco-6',
