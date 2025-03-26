@@ -180,7 +180,7 @@ const suppliers: Record<string, SupplierData> = {
     name: 'SRAM Corporation, USA',
     shortDescription: 'Premium Component Manufacturer',
     type: 'Premium Component Manufacturer',
-    logoUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Shimano-Logo-1990.png',
+    logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/SRAM_logo.svg/2560px-SRAM_logo.svg.png',
     rating: 4.7,
     information: 'SRAM LLC is an American manufacturer of bicycle components founded in 1987 in Chicago, Illinois. SRAM is an acronym comprising the names of its founders, Scott, Ray, and Sam. The company pioneered the twist shifter, and has expanded through acquisition of many component manufacturers including RockShox, Avid, Truvativ, Zipp, and Quarq.',
     socialMedia: [
@@ -204,25 +204,20 @@ const suppliers: Record<string, SupplierData> = {
     gallery: [
       {
         id: 1,
-        url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//shimano.avif',
-        alt: 'SRAM Headquarters'
+        url: 'https://www.bikeaholic.co.nz/cdn/shop/products/8ea09e89221b0f484c43c639c50d1830_3e298b3b-c29c-439d-bb65-c019296b8dac.jpg?v=1705394301',
+        alt: 'SRAM Banner 1'
       },
       {
         id: 2,
-        url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz%20factory%20.jpg',
-        alt: 'SRAM Factory'
-      },
-      {
-        id: 3,
-        url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz33.jpeg',
-        alt: 'SRAM Manufacturing'
+        url: 'https://bike198.com/wp-content/uploads/2010/04/sram-x0-components.jpg',
+        alt: 'SRAM Components'
       }
     ],
     products: [
       {
         id: 'sram-1',
         name: 'SRAM RED eTap AXS Rear Derailleur',
-        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20front%20calliper.jpeg',
+        image: 'https://cdn.shoplightspeed.com/shops/616818/files/63486773/1024x1024x2/sram-sram-red-etap-axs-2x-e1-hrd-groupset.jpg',
         price: 710,
         manufacturer: 'SRAM',
         category: 'drivetrain'
@@ -230,7 +225,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'sram-2',
         name: 'SRAM Force AXS Crankset',
-        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20hub.jpeg',
+        image: 'https://www.bikeaholic.co.nz/cdn/shop/files/1f001530323ae4c3fa6ff45a4a438209_3274a421-54a4-4e79-bb37-4d7e75507c7f.jpg?v=1715849124&width=1080',
         price: 420,
         manufacturer: 'SRAM',
         category: 'drivetrain'
