@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -34,6 +33,28 @@ export const Header: React.FC = () => {
         <Link to="/marketplace" className="text-3xl font-bold text-gray-900">
           Bazaar
         </Link>
+        <nav className="hidden md:flex items-center space-x-4 ml-4">
+          <Link 
+            to="/marketplace" 
+            className={`text-sm font-medium ${location.pathname === '/marketplace' ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
+          >
+            Marketplace
+          </Link>
+          <Link 
+            to="/exhibitors" 
+            className={`text-sm font-medium ${location.pathname === '/exhibitors' ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
+          >
+            Exhibitors
+          </Link>
+          {!isSupplierPage && (
+            <Link 
+              to="/design" 
+              className={`text-sm font-medium ${isDesignPage ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
+            >
+              Design Studio
+            </Link>
+          )}
+        </nav>
       </div>
       <div className="flex items-center">
         {isDesignPage && (
@@ -88,6 +109,9 @@ export const Header: React.FC = () => {
                 {isMarketplacePage && (
                   <div className="absolute right-2 w-2 h-2 bg-green-500 rounded-full"></div>
                 )}
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link to="/exhibitors" className="w-full">Exhibitors</Link>
               </DropdownMenuItem>
               
               <DropdownMenuSeparator />
