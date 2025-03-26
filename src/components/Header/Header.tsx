@@ -54,14 +54,12 @@ export const Header: React.FC = () => {
           >
             Supplier Dashboard
           </Link>
-          {!isSupplierPage && (
-            <Link 
-              to="/design" 
-              className={`text-sm font-medium ${isDesignPage ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
-            >
-              Design Studio
-            </Link>
-          )}
+          <Link 
+            to="/design" 
+            className={`text-sm font-medium ${isDesignPage ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
+          >
+            Design Studio
+          </Link>
         </nav>
       </div>
       <div className="flex items-center">
