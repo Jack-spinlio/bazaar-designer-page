@@ -21,6 +21,7 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const navigate = useNavigate();
   const [previewOpen, setPreviewOpen] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   const handleCardClick = () => {
     setPreviewOpen(true);
@@ -28,14 +29,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   
   const handleManufacturerClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Updated to use the new supplier/:id route instead of producer/:id
+    // Navigate to the supplier profile
     navigate(`/supplier/${product.manufacturer.toLowerCase()}`);
   };
   
   // Determine which logo to use based on manufacturer
-  const manufacturerLogo = product.manufacturer === 'Shimano' 
-    ? 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Shimano-Logo-1990.png'
-    : 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//PHOTO-2025-01-16-17-11-25%202.jpg';
+  const getLogo = () => {
+    if (product.manufacturer === 'Shimano') {
+      return 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Shimano-Logo-1990.png';
+    } else if (product.manufacturer === 'BRAKCO') {
+      return 'https://www.brakco.com/images/en/logo.svg';
+    }
+    return 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//PHOTO-2025-01-16-17-11-25%202.jpg';
+  };
     
   // Convert to ProductDetails format for the dialog
   const productDetails: ProductDetails = {
@@ -43,14 +49,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     rating: 4.5,
     reviewCount: 392,
     features: [
-      { name: 'Handlebar Display' },
-      { name: 'Integrated Lighting' },
-      { name: 'Hydraulic Brakes' },
-      { name: '700C' },
-      { name: '15Ah Battery' },
+      { name: 'Quality Components' },
+      { name: 'Precision Engineering' },
+      { name: 'Durable Materials' },
     ],
-    leadTime: '90 Day',
-    moq: 100,
+    leadTime: '30 Day',
+    moq: 50,
     origin: 'Taiwan'
   };
   
@@ -61,11 +65,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         onClick={handleCardClick}
       >
         <div className="h-36 overflow-hidden">
-          <img 
-            src={product.image} 
-            alt={product.name} 
-            className="w-full h-full object-cover rounded-t-lg"
-          />
+          {!imageError ? (
+            <img 
+              src={product.image} 
+              alt={product.name} 
+              className="w-full h-full object-cover rounded-t-lg"
+              onError={(e) => {
+                console.error("Failed to load product image:", product.image);
+                setImageError(true);
+              }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-100">
+              <p className="text-gray-500 text-sm">Image not available</p>
+            </div>
+          )}
         </div>
         <CardContent className="p-3">
           <h3 className="font-medium text-gray-900 line-clamp-2 h-10 text-sm mb-2 text-left">{product.name}</h3>
@@ -74,7 +88,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             className="flex items-center gap-2 mb-2 cursor-pointer group"
           >
             <Avatar className="h-5 w-5">
-              <AvatarImage src={manufacturerLogo} alt={`${product.manufacturer} logo`} />
+              <AvatarImage src={getLogo()} alt={`${product.manufacturer} logo`} />
               <AvatarFallback>{product.manufacturer.charAt(0)}</AvatarFallback>
             </Avatar>
             <span className="text-xs text-gray-600 group-hover:text-blue-600 border-b border-gray-300 group-hover:border-blue-600">

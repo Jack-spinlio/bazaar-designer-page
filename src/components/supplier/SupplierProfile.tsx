@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header/Header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProductCard } from '@/components/marketplace/ProductCard';
 import { Star, StarHalf, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 
 // Types for our supplier data
 export interface SupplierProduct {
@@ -59,8 +60,18 @@ interface SupplierProfileProps {
 
 export const SupplierProfile: React.FC<SupplierProfileProps> = ({ supplierData }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [featuredImage, setFeaturedImage] = useState<string>(supplierData.gallery[0]?.url || '');
+  const [featuredImage, setFeaturedImage] = useState<string>('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    // Make sure we have gallery images and set the first one as featured
+    if (supplierData.gallery && supplierData.gallery.length > 0) {
+      setFeaturedImage(supplierData.gallery[0].url);
+      console.log("Setting featured image to:", supplierData.gallery[0].url);
+    } else {
+      console.log("No gallery images found for this supplier");
+    }
+  }, [supplierData.gallery]);
 
   // Filter products based on selected category
   const filteredProducts = selectedCategory === 'all' 
@@ -71,14 +82,27 @@ export const SupplierProfile: React.FC<SupplierProfileProps> = ({ supplierData }
   const displayedProducts = filteredProducts.slice(0, 6);
 
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) => (prev === 0 ? supplierData.gallery.length - 1 : prev - 1));
-    setFeaturedImage(supplierData.gallery[(currentImageIndex === 0 ? supplierData.gallery.length - 1 : currentImageIndex - 1)].url);
+    if (!supplierData.gallery || supplierData.gallery.length === 0) return;
+    
+    const newIndex = currentImageIndex === 0 ? supplierData.gallery.length - 1 : currentImageIndex - 1;
+    setCurrentImageIndex(newIndex);
+    setFeaturedImage(supplierData.gallery[newIndex].url);
+    console.log("Changed to previous image:", supplierData.gallery[newIndex].url);
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) => (prev === supplierData.gallery.length - 1 ? 0 : prev + 1));
-    setFeaturedImage(supplierData.gallery[(currentImageIndex === supplierData.gallery.length - 1 ? 0 : currentImageIndex + 1)].url);
+    if (!supplierData.gallery || supplierData.gallery.length === 0) return;
+    
+    const newIndex = currentImageIndex === supplierData.gallery.length - 1 ? 0 : currentImageIndex + 1;
+    setCurrentImageIndex(newIndex);
+    setFeaturedImage(supplierData.gallery[newIndex].url);
+    console.log("Changed to next image:", supplierData.gallery[newIndex].url);
   };
+
+  if (!supplierData) {
+    toast.error("No supplier data available");
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="h-screen w-full overflow-y-auto">
@@ -109,7 +133,21 @@ export const SupplierProfile: React.FC<SupplierProfileProps> = ({ supplierData }
             <div className="flex flex-col space-y-4 max-w-[70%]">
               {/* Main image */}
               <div className="rounded-lg overflow-hidden h-72 w-full">
-                <img src={featuredImage} alt="Featured" className="w-full h-full object-cover" />
+                {featuredImage ? (
+                  <img 
+                    src={featuredImage} 
+                    alt="Featured" 
+                    className="w-full h-full object-cover" 
+                    onError={(e) => {
+                      console.error("Failed to load image:", featuredImage);
+                      e.currentTarget.src = "https://placehold.co/600x400?text=Image+Not+Available";
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-gray-100">
+                    <p className="text-gray-500">No image available</p>
+                  </div>
+                )}
               </div>
               
               {/* Thumbnails row with navigation */}
@@ -119,21 +157,31 @@ export const SupplierProfile: React.FC<SupplierProfileProps> = ({ supplierData }
                   onClick={handlePrevImage}
                   className="absolute -left-4 z-10 bg-white/80 rounded-full p-1 shadow-md hover:bg-gray-100"
                   aria-label="Previous image"
+                  disabled={!supplierData.gallery || supplierData.gallery.length === 0}
                 >
                   <ChevronLeft className="h-6 w-6" />
                 </button>
                 
                 <div className="w-full grid grid-cols-3 gap-4">
-                  {supplierData.gallery.slice(0, 3).map((image, index) => (
+                  {supplierData.gallery && supplierData.gallery.slice(0, 3).map((image, index) => (
                     <div 
                       key={image.id} 
                       className={`rounded-lg overflow-hidden cursor-pointer h-24 transition-all ${currentImageIndex === index ? 'ring-2 ring-black' : ''}`}
                       onClick={() => {
                         setFeaturedImage(image.url);
                         setCurrentImageIndex(index);
+                        console.log("Clicked on thumbnail:", image.url);
                       }}
                     >
-                      <img src={image.url} alt={image.alt} className="w-full h-full object-cover" />
+                      <img 
+                        src={image.url} 
+                        alt={image.alt} 
+                        className="w-full h-full object-cover" 
+                        onError={(e) => {
+                          console.error("Failed to load thumbnail:", image.url);
+                          e.currentTarget.src = "https://placehold.co/600x400?text=Thumbnail+Not+Available";
+                        }}
+                      />
                     </div>
                   ))}
                 </div>
@@ -142,6 +190,7 @@ export const SupplierProfile: React.FC<SupplierProfileProps> = ({ supplierData }
                   onClick={handleNextImage}
                   className="absolute -right-4 z-10 bg-white/80 rounded-full p-1 shadow-md hover:bg-gray-100"
                   aria-label="Next image"
+                  disabled={!supplierData.gallery || supplierData.gallery.length === 0}
                 >
                   <ChevronRight className="h-6 w-6" />
                 </button>
@@ -233,7 +282,9 @@ export const SupplierProfile: React.FC<SupplierProfileProps> = ({ supplierData }
           </div>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-            {displayedProducts.map(product => <ProductCard key={product.id} product={product} />)}
+            {displayedProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
           </div>
           
           {filteredProducts.length > 6 && (

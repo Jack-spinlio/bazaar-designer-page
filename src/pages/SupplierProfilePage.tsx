@@ -1,14 +1,23 @@
 
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { SupplierProfile, SupplierData } from '@/components/supplier/SupplierProfile';
 import { getSupplierData } from '@/utils/supplierData';
+import { toast } from 'sonner';
 
 const SupplierProfilePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   
   // Get supplier data based on the ID from the URL
   const supplierData = getSupplierData(id || '');
+  
+  useEffect(() => {
+    if (!id) {
+      toast.error("Missing supplier ID");
+      navigate('/');
+    }
+  }, [id, navigate]);
   
   if (!supplierData) {
     return (

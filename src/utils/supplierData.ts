@@ -1,4 +1,3 @@
-
 import { SupplierData } from '@/components/supplier/SupplierProfile';
 
 // Sample supplier data
@@ -419,7 +418,7 @@ const suppliers: Record<string, SupplierData> = {
  * @returns The supplier data or undefined if not found
  */
 export const getSupplierData = (id: string): SupplierData | undefined => {
-  return suppliers[id.toLowerCase()];
+  return suppliers[id?.toLowerCase()];
 };
 
 /**
