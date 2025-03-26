@@ -38,15 +38,21 @@ export const Header: React.FC = () => {
         <nav className="hidden md:flex items-center space-x-4 ml-4">
           <Link 
             to="/marketplace" 
-            className={`text-sm font-medium ${location.pathname === '/marketplace' ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
+            className={`text-sm font-medium ${isMarketplacePage ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
           >
             Marketplace
           </Link>
           <Link 
             to="/exhibitors" 
-            className={`text-sm font-medium ${location.pathname === '/exhibitors' ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
+            className={`text-sm font-medium ${isExhibitorsPage ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
           >
             Exhibitors
+          </Link>
+          <Link 
+            to="/supplier" 
+            className={`text-sm font-medium ${isSupplierPage ? 'text-blue-600' : 'text-gray-600 hover:text-gray-900'}`}
+          >
+            Supplier Dashboard
           </Link>
           {!isSupplierPage && (
             <Link 
