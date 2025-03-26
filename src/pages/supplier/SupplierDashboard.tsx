@@ -1,10 +1,8 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronRight, Package, Upload, Users, ChartLine } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { Package, Upload, Users } from 'lucide-react';
 import { StatsCard } from '@/components/supplier/StatsCard';
 import { ProductsPopularityChart } from '@/components/supplier/ProductsPopularityChart';
 import { CustomerInsightsChart } from '@/components/supplier/CustomerInsightsChart';
@@ -27,7 +25,6 @@ export const SupplierDashboard: React.FC = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  // Mock data for the stats cards
   const statsCardData = [
     {
       title: 'Revenue',
@@ -58,7 +55,6 @@ export const SupplierDashboard: React.FC = () => {
     }
   ];
 
-  // Mock data for products popularity
   const productsData = [
     { id: '1', name: 'eGravel Bike', popularity: 90, sales: 46, color: 'amber' },
     { id: '2', name: 'Electric Step-Thru', popularity: 75, sales: 17, color: 'teal' },
@@ -67,7 +63,6 @@ export const SupplierDashboard: React.FC = () => {
     { id: '5', name: 'Step-Thru Frame', popularity: 30, sales: 8, color: 'green' }
   ];
 
-  // Mock data for customer insights
   const customerInsightsData = [
     { name: 'Jan', loyal: 300, new: 220, unique: 320 },
     { name: 'Feb', loyal: 280, new: 180, unique: 350 },
@@ -88,7 +83,6 @@ export const SupplierDashboard: React.FC = () => {
       try {
         setLoading(true);
         
-        // Mock data for development without login
         const mockStats = {
           totalProducts: 12,
           categories: 5,
@@ -122,7 +116,6 @@ export const SupplierDashboard: React.FC = () => {
         </Button>
       </div>
       
-      {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {statsCardData.map((stat, index) => (
           <StatsCard 
@@ -136,14 +129,12 @@ export const SupplierDashboard: React.FC = () => {
         ))}
       </div>
       
-      {/* Charts Section */}
       <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
         <ProductsPopularityChart products={productsData} />
       </div>
       
       <CustomerInsightsChart data={customerInsightsData} />
       
-      {/* Quick Actions */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardHeader className="pb-2">
@@ -159,9 +150,9 @@ export const SupplierDashboard: React.FC = () => {
               </Link>
             </Button>
             <Button variant="outline" className="w-full justify-start" asChild>
-              <Link to="/supplier/edit-profile">
-                <Users className="mr-2 h-4 w-4" />
-                Edit Profile
+              <Link to="/supplier/products">
+                <Package className="mr-2 h-4 w-4" />
+                Manage Products
               </Link>
             </Button>
           </CardContent>
@@ -184,7 +175,7 @@ export const SupplierDashboard: React.FC = () => {
                         {new Date(product.created_at).toLocaleDateString()}
                       </span>
                       <Button variant="ghost" size="sm" asChild>
-                        <Link to={`/supplier/edit/${product.id}`}>
+                        <Link to={`/supplier/products`}>
                           Edit
                         </Link>
                       </Button>

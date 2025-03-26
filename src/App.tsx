@@ -64,14 +64,14 @@ function App() {
         
         <Route path="/producer/:id" element={<ProducerProfile />} />
         <Route path="/exhibitor/:slug" element={<ExhibitorProfile />} />
-        <Route path="/supplier/:slug" element={<ExhibitorProfile />} />
         <Route path="/exhibitors" element={<ExhibitorListings />} />
         <Route path="/admin" element={<Admin />} />
         
+        {/* Supplier routes */}
+        <Route path="/supplier/*" element={<SupplierPage />} />
         <Route path="/supplier/:id" element={<SupplierProfilePage />} />
         
         <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/supplier/*" element={<SupplierPage />} />
         
         {/* Fallback route */}
         <Route path="*" element={<NotFound />} />

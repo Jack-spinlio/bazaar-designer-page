@@ -28,7 +28,7 @@ const SupplierPage: React.FC = () => {
             <Route path="/" element={<SupplierDashboard />} />
             <Route path="/products" element={<ProductsList />} />
             <Route path="/orders" element={<OrdersPage />} />
-            <Route path="/messaging" element={<MessagingPage />} />
+            <Route path="/enquiries" element={<MessagingPage />} />
             <Route path="/upload" element={<UploadProduct />} />
             <Route path="*" element={<Navigate to="/supplier" replace />} />
           </Routes>
