@@ -1,3 +1,4 @@
+
 import { SupplierData } from '@/components/supplier/SupplierProfile';
 
 // Sample supplier data
@@ -290,103 +291,103 @@ const suppliers: Record<string, SupplierData> = {
     gallery: [
       {
         id: 1,
-        url: 'https://www.brakco.com/_i/assets/upload/product/9c36de5115cb7df64a4ed53a363d73b7.jpg',
-        alt: 'BRAKCO V-Brake'
+        url: 'https://www.brakco.com/images/products/brake_shoe.jpg',
+        alt: 'BRAKCO Brake Shoe'
       },
       {
         id: 2,
-        url: 'https://www.brakco.com/_i/assets/upload/product/3ee61a9c9cc6dadfb0c7dd36afed8b1f.jpg',
-        alt: 'BRAKCO Hydraulic Disc Brake'
+        url: 'https://www.brakco.com/images/products/brake_pad.jpg',
+        alt: 'BRAKCO Brake Pad'
       },
       {
         id: 3,
-        url: 'https://www.brakco.com/_i/assets/upload/product/00b99a17aae8f7d1c1bd97b5c4da39a5.jpg',
-        alt: 'BRAKCO Brake Pads'
+        url: 'https://www.brakco.com/images/products/standard_rotor.jpg',
+        alt: 'BRAKCO Standard Rotor'
       },
       {
         id: 4,
-        url: 'https://www.brakco.com/_i/assets/upload/product/4a27ddde1d2a40677eef7c93d3f5ac37.jpg',
-        alt: 'BRAKCO Mountain Bike Brakes'
+        url: 'https://www.brakco.com/images/products/sport_rotor.jpg',
+        alt: 'BRAKCO Sport Rotor'
       }
     ],
     products: [
       {
         id: 'brakco-1',
-        name: 'BRAKCO BKR-15 V-Brake Set',
-        image: 'https://www.brakco.com/_i/assets/upload/product/9c36de5115cb7df64a4ed53a363d73b7.jpg',
-        price: 85,
+        name: 'BRAKCO Brake Shoe',
+        image: 'https://www.brakco.com/images/products/brake_shoe.jpg',
+        price: 25,
         manufacturer: 'BRAKCO',
         category: 'rim-brake'
       },
       {
         id: 'brakco-2',
-        name: 'BRAKCO DX4 Hydraulic Disc Brake',
-        image: 'https://www.brakco.com/_i/assets/upload/product/3ee61a9c9cc6dadfb0c7dd36afed8b1f.jpg',
-        price: 175,
-        manufacturer: 'BRAKCO',
-        category: 'disc-brake'
-      },
-      {
-        id: 'brakco-3',
-        name: 'BRAKCO BPR-05 Carbon Rim Brake Pads',
-        image: 'https://www.brakco.com/_i/assets/upload/product/00b99a17aae8f7d1c1bd97b5c4da39a5.jpg',
+        name: 'BRAKCO Brake Pad',
+        image: 'https://www.brakco.com/images/products/brake_pad.jpg',
         price: 35,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
       },
       {
+        id: 'brakco-3',
+        name: 'BRAKCO Standard Rotor',
+        image: 'https://www.brakco.com/images/products/standard_rotor.jpg',
+        price: 45,
+        manufacturer: 'BRAKCO',
+        category: 'disc-brake'
+      },
+      {
         id: 'brakco-4',
-        name: 'BRAKCO LR-03 Road Brake Levers',
-        image: 'https://www.brakco.com/_i/assets/upload/product/1b5a0ac2ee0d10c2bb0d12a2e75459dd.jpg',
+        name: 'BRAKCO Sport Rotor',
+        image: 'https://www.brakco.com/images/products/sport_rotor.jpg',
         price: 60,
         manufacturer: 'BRAKCO',
-        category: 'brake-fitting'
+        category: 'disc-brake'
       },
       {
         id: 'brakco-5',
-        name: 'BRAKCO DCR-1001 Mechanical Disc Brake',
-        image: 'https://www.brakco.com/_i/assets/upload/product/3ee61a9c9cc6dadfb0c7dd36afed8b1f.jpg',
-        price: 120,
+        name: 'BRAKCO Centerlock Rotor',
+        image: 'https://www.brakco.com/images/products/centerlock_rotor.jpg',
+        price: 75,
         manufacturer: 'BRAKCO',
         category: 'disc-brake'
       },
       {
         id: 'brakco-6',
-        name: 'BRAKCO CBSLC-01 Cable Housing Set',
-        image: 'https://www.brakco.com/_i/assets/upload/product/9a78e6e28de63fb1d7e7e5f94e8d2cc9.jpg',
+        name: 'BRAKCO CMA Adapter',
+        image: 'https://www.brakco.com/images/products/cma_adapter.jpg',
         price: 28,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
       },
       {
         id: 'brakco-7',
-        name: 'BRAKCO DCR-2001 MTB Disc Brake Set',
-        image: 'https://www.brakco.com/_i/assets/upload/product/4a27ddde1d2a40677eef7c93d3f5ac37.jpg',
-        price: 145,
+        name: 'BRAKCO Centerlock Adapter',
+        image: 'https://www.brakco.com/images/products/centerlock_adapter.jpg',
+        price: 32,
         manufacturer: 'BRAKCO',
-        category: 'disc-brake'
+        category: 'brake-fitting'
       },
       {
         id: 'brakco-8',
-        name: 'BRAKCO BG-01 Brake Grease',
-        image: 'https://www.brakco.com/_i/assets/upload/product/a72d8a8d9f1c9c9cf2abe0fd39783ad0.jpg',
+        name: 'BRAKCO Hydraulic Hose',
+        image: 'https://www.brakco.com/images/products/hydraulic_hose.jpg',
         price: 18,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
       },
       {
         id: 'brakco-9',
-        name: 'BRAKCO BR-04 MTB V-Brake',
-        image: 'https://www.brakco.com/_i/assets/upload/product/dfd3e6a80cd0a12d382cd9a8b8dc1161.jpg',
-        price: 72,
+        name: 'BRAKCO Hydraulic Parts',
+        image: 'https://www.brakco.com/images/products/hydraulic_parts.jpg',
+        price: 38,
         manufacturer: 'BRAKCO',
-        category: 'rim-brake'
+        category: 'brake-fitting'
       },
       {
         id: 'brakco-10',
-        name: 'BRAKCO LM-01 MTB Brake Levers',
-        image: 'https://www.brakco.com/_i/assets/upload/product/9d71f60a7ea3e155f18a0b7c8f09f9e5.jpg',
-        price: 45,
+        name: 'BRAKCO Mechanical Parts',
+        image: 'https://www.brakco.com/images/products/mechanical_parts.jpg',
+        price: 29,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
       }
