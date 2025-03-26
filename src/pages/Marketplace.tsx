@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { ProductCategory } from '@/components/marketplace/ProductCategory';
 import { MarketplaceHeader } from '@/components/marketplace/MarketplaceHeader';
 import { MarketplaceSearch } from '@/components/marketplace/MarketplaceSearch';
+import { SupplierCategory } from '@/components/marketplace/SupplierCategory';
+import { getAllSuppliers } from '@/utils/supplierData';
 
 // Bike products
 const eBikes = [
@@ -213,6 +215,7 @@ const eBikeComponents = [
 
 const Marketplace = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const suppliers = getAllSuppliers();
   
   return (
     <div className="bg-white h-screen w-full overflow-y-auto">
@@ -225,6 +228,17 @@ const Marketplace = () => {
         />
         
         <div className="mt-8 space-y-12">
+          {/* Add the suppliers category at the top */}
+          <SupplierCategory 
+            title="Suppliers" 
+            suppliers={suppliers.map(s => ({
+              id: s.id,
+              name: s.name,
+              logoUrl: s.logoUrl,
+              shortDescription: s.shortDescription
+            }))} 
+          />
+          
           <ProductCategory 
             title="eBikes" 
             products={eBikes} 

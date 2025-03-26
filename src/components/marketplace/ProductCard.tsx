@@ -28,8 +28,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   
   const handleManufacturerClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Navigate to producer profile page
-    navigate('/producer/shimano');
+    // Updated to use the new supplier/:id route instead of producer/:id
+    navigate(`/supplier/${product.manufacturer.toLowerCase()}`);
   };
   
   // Determine which logo to use based on manufacturer
