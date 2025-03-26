@@ -17,13 +17,16 @@ import {
 interface MarketplaceSearchProps {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
+  onSearch: (query: string, category: string) => void;
 }
 
 export const MarketplaceSearch: React.FC<MarketplaceSearchProps> = ({
   searchQuery,
-  setSearchQuery
+  setSearchQuery,
+  onSearch
 }) => {
   const [supplierSuggestions, setSupplierSuggestions] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const navigate = useNavigate();
   
   // Get all suppliers for suggestions
@@ -43,6 +46,11 @@ export const MarketplaceSearch: React.FC<MarketplaceSearchProps> = ({
     }
   };
   
+  // Handle search button click
+  const handleSearch = () => {
+    onSearch(searchQuery, selectedCategory);
+  };
+  
   return (
     <div className="flex w-full max-w-4xl mx-auto mt-4 rounded-full overflow-hidden border border-gray-200">
       <div className="relative flex-grow">
@@ -58,7 +66,7 @@ export const MarketplaceSearch: React.FC<MarketplaceSearchProps> = ({
         />
       </div>
       
-      <Select defaultValue="all">
+      <Select defaultValue="all" onValueChange={setSelectedCategory}>
         <SelectTrigger className="w-[200px] border-0 border-l border-gray-200 rounded-none h-12 focus:ring-0">
           <SelectValue placeholder="All Categories" />
         </SelectTrigger>
@@ -74,7 +82,10 @@ export const MarketplaceSearch: React.FC<MarketplaceSearchProps> = ({
         </SelectContent>
       </Select>
       
-      <Button className="rounded-none rounded-r-full h-12 px-8 bg-black text-white hover:bg-gray-800">
+      <Button 
+        className="rounded-none rounded-r-full h-12 px-8 bg-black text-white hover:bg-gray-800"
+        onClick={handleSearch}
+      >
         Search
       </Button>
     </div>

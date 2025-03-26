@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ProductCategory } from '@/components/marketplace/ProductCategory';
 import { MarketplaceHeader } from '@/components/marketplace/MarketplaceHeader';
 import { MarketplaceSearch } from '@/components/marketplace/MarketplaceSearch';
 import { SupplierCategory } from '@/components/marketplace/SupplierCategory';
 import { getAllSuppliers } from '@/utils/supplierData';
+import { toast } from 'sonner';
 
 // Bike products
 const eBikes = [
@@ -215,7 +216,105 @@ const eBikeComponents = [
 
 const Marketplace = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const suppliers = getAllSuppliers();
+  const [filteredEBikes, setFilteredEBikes] = useState(eBikes);
+  const [filteredDrivetrainComponents, setFilteredDrivetrainComponents] = useState(drivetrainComponents);
+  const [filteredRoadBikes, setFilteredRoadBikes] = useState(roadBikes);
+  const [filteredEBikeComponents, setFilteredEBikeComponents] = useState(eBikeComponents);
+  const [filteredSuppliers, setFilteredSuppliers] = useState(getAllSuppliers());
+  const [activeCategory, setActiveCategory] = useState('all');
+  
+  // Filter products when search query changes
+  useEffect(() => {
+    filterProducts(searchQuery, activeCategory);
+  }, [searchQuery, activeCategory]);
+  
+  // Handle search from the search button
+  const handleSearch = (query: string, category: string) => {
+    setSearchQuery(query);
+    setActiveCategory(category);
+    filterProducts(query, category);
+    
+    if (query.trim()) {
+      toast.success(`Searching for "${query}" in ${category === 'all' ? 'all categories' : category}`);
+    }
+  };
+  
+  // Filter products based on search query and category
+  const filterProducts = (query: string, category: string) => {
+    const normalizedQuery = query.toLowerCase().trim();
+    
+    // If no query, show all products
+    if (!normalizedQuery) {
+      setFilteredEBikes(eBikes);
+      setFilteredDrivetrainComponents(drivetrainComponents);
+      setFilteredRoadBikes(roadBikes);
+      setFilteredEBikeComponents(eBikeComponents);
+      setFilteredSuppliers(getAllSuppliers());
+      return;
+    }
+    
+    // Filter suppliers
+    const suppliers = getAllSuppliers().filter(supplier => 
+      supplier.name.toLowerCase().includes(normalizedQuery) || 
+      supplier.shortDescription.toLowerCase().includes(normalizedQuery)
+    );
+    setFilteredSuppliers(suppliers);
+    
+    // Filter eBikes
+    const filteredEBs = eBikes.filter(bike => 
+      bike.name.toLowerCase().includes(normalizedQuery) || 
+      bike.manufacturer.toLowerCase().includes(normalizedQuery)
+    );
+    setFilteredEBikes(filteredEBs);
+    
+    // Filter drivetrain components
+    const filteredDTs = drivetrainComponents.filter(component => 
+      component.name.toLowerCase().includes(normalizedQuery) || 
+      component.manufacturer.toLowerCase().includes(normalizedQuery)
+    );
+    setFilteredDrivetrainComponents(filteredDTs);
+    
+    // Filter road bikes
+    const filteredRBs = roadBikes.filter(bike => 
+      bike.name.toLowerCase().includes(normalizedQuery) || 
+      bike.manufacturer.toLowerCase().includes(normalizedQuery)
+    );
+    setFilteredRoadBikes(filteredRBs);
+    
+    // Filter eBike components
+    const filteredEBCs = eBikeComponents.filter(component => 
+      component.name.toLowerCase().includes(normalizedQuery) || 
+      component.manufacturer.toLowerCase().includes(normalizedQuery)
+    );
+    setFilteredEBikeComponents(filteredEBCs);
+  };
+  
+  // Get filtered products based on active category
+  const getVisibleProducts = () => {
+    switch (activeCategory) {
+      case 'suppliers':
+        return { suppliers: filteredSuppliers, showOthers: false };
+      case 'ebikes':
+        return { ebikes: filteredEBikes, showOthers: false };
+      case 'roadbikes':
+        return { roadbikes: filteredRoadBikes, showOthers: false };
+      case 'drivetrain':
+        return { drivetrain: filteredDrivetrainComponents, showOthers: false };
+      case 'ebikecomp':
+        return { ebikecomp: filteredEBikeComponents, showOthers: false };
+      default:
+        return { 
+          suppliers: filteredSuppliers, 
+          ebikes: filteredEBikes, 
+          roadbikes: filteredRoadBikes, 
+          drivetrain: filteredDrivetrainComponents, 
+          ebikecomp: filteredEBikeComponents,
+          showOthers: true
+        };
+    }
+  };
+  
+  const visibleProducts = getVisibleProducts();
   
   return (
     <div className="bg-white h-screen w-full overflow-y-auto">
@@ -224,40 +323,65 @@ const Marketplace = () => {
       <div className="w-full mx-auto py-6 px-4 sm:px-6 lg:px-8 pb-20">
         <MarketplaceSearch 
           searchQuery={searchQuery} 
-          setSearchQuery={setSearchQuery} 
+          setSearchQuery={setSearchQuery}
+          onSearch={handleSearch}
         />
         
         <div className="mt-8 space-y-12">
-          {/* Add the suppliers category at the top */}
-          <SupplierCategory 
-            title="Suppliers" 
-            suppliers={suppliers.map(s => ({
-              id: s.id,
-              name: s.name,
-              logoUrl: s.logoUrl,
-              shortDescription: s.shortDescription
-            }))} 
-          />
+          {/* Show suppliers if in 'all' or 'suppliers' category */}
+          {(visibleProducts.showOthers || activeCategory === 'suppliers') && visibleProducts.suppliers && visibleProducts.suppliers.length > 0 && (
+            <SupplierCategory 
+              title="Suppliers" 
+              suppliers={visibleProducts.suppliers.map(s => ({
+                id: s.id,
+                name: s.name,
+                logoUrl: s.logoUrl,
+                shortDescription: s.shortDescription
+              }))} 
+            />
+          )}
           
-          <ProductCategory 
-            title="eBikes" 
-            products={eBikes} 
-          />
+          {/* Show eBikes if in 'all' or 'ebikes' category */}
+          {(visibleProducts.showOthers || activeCategory === 'ebikes') && visibleProducts.ebikes && visibleProducts.ebikes.length > 0 && (
+            <ProductCategory 
+              title="eBikes" 
+              products={visibleProducts.ebikes} 
+            />
+          )}
           
-          <ProductCategory 
-            title="Drivetrain Components" 
-            products={drivetrainComponents} 
-          />
+          {/* Show drivetrain components if in 'all' or 'drivetrain' category */}
+          {(visibleProducts.showOthers || activeCategory === 'drivetrain') && visibleProducts.drivetrain && visibleProducts.drivetrain.length > 0 && (
+            <ProductCategory 
+              title="Drivetrain Components" 
+              products={visibleProducts.drivetrain} 
+            />
+          )}
           
-          <ProductCategory 
-            title="Road Bikes" 
-            products={roadBikes} 
-          />
+          {/* Show road bikes if in 'all' or 'roadbikes' category */}
+          {(visibleProducts.showOthers || activeCategory === 'roadbikes') && visibleProducts.roadbikes && visibleProducts.roadbikes.length > 0 && (
+            <ProductCategory 
+              title="Road Bikes" 
+              products={visibleProducts.roadbikes} 
+            />
+          )}
           
-          <ProductCategory 
-            title="eBike Components" 
-            products={eBikeComponents} 
-          />
+          {/* Show eBike components if in 'all' or 'ebikecomp' category */}
+          {(visibleProducts.showOthers || activeCategory === 'ebikecomp') && visibleProducts.ebikecomp && visibleProducts.ebikecomp.length > 0 && (
+            <ProductCategory 
+              title="eBike Components" 
+              products={visibleProducts.ebikecomp} 
+            />
+          )}
+          
+          {/* Show message when no products found */}
+          {searchQuery && !Object.values(visibleProducts).some(value => 
+            Array.isArray(value) && value.length > 0
+          ) && (
+            <div className="flex flex-col items-center justify-center py-12">
+              <p className="text-xl font-semibold text-gray-800">No products found</p>
+              <p className="text-gray-500 mt-2">Try adjusting your search or category filter</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
