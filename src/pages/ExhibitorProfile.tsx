@@ -1,24 +1,13 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Building2, Star, StarHalf, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Exhibitor } from '@/components/exhibitors/ExhibitorCard';
-
-interface GalleryImage {
-  id: number;
-  url: string;
-  alt: string;
-}
-
-// Define the JSON data sources
-const JSON_SOURCES = [
-  '/all-exhibitors-alpha.json',
-];
+import { ExhibitorScraperService } from '@/integrations/scrapers/exhibitorScraper';
+import { GalleryImage } from '@/integrations/scrapers/types';
 
 const ExhibitorProfile = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -28,167 +17,62 @@ const ExhibitorProfile = () => {
   const [loading, setLoading] = useState(true);
   const [featuredImage, setFeaturedImage] = useState<string>('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  
+  const scraperService = new ExhibitorScraperService();
 
   useEffect(() => {
-    const loadExhibitorFromDB = async () => {
+    const loadExhibitorData = async () => {
       setLoading(true);
       
       try {
-        // First try to fetch from Supabase
-        let supabaseError = false;
-        try {
-          const { data: exhibitorData, error: exhibitorError } = await supabase
-            .from('exhibitors')
-            .select('*')
-            .eq('slug', slug || '')
-            .maybeSingle();
-          
-          if (exhibitorError) {
-            console.error('Error fetching exhibitor from DB:', exhibitorError);
-            supabaseError = true;
-          } else if (exhibitorData) {
-            setExhibitor(exhibitorData as Exhibitor);
-            
-            // Get gallery images if any
-            try {
-              const { data: galleryData, error: galleryError } = await supabase
-                .from('exhibitor_gallery')
-                .select('*')
-                .eq('exhibitor_id', exhibitorData.id)
-                .order('display_order', { ascending: true });
-              
-              if (!galleryError && galleryData && galleryData.length > 0) {
-                const formattedGallery = galleryData.map((img, index) => ({
-                  id: index,
-                  url: img.image_url,
-                  alt: `${exhibitorData.name} gallery image ${index + 1}`
-                }));
-                
-                setGallery(formattedGallery);
-                
-                // Set featured image to first gallery image if available
-                if (formattedGallery.length > 0) {
-                  setFeaturedImage(formattedGallery[0].url);
-                }
-              } else if (exhibitorData.thumbnail_url) {
-                // If no gallery images, use the thumbnail as the featured image
-                setFeaturedImage(exhibitorData.thumbnail_url);
-                
-                // Add thumbnail to gallery as well
-                setGallery([{
-                  id: 0,
-                  url: exhibitorData.thumbnail_url,
-                  alt: `${exhibitorData.name} thumbnail`
-                }]);
-              }
-            } catch (galleryError) {
-              console.error('Error fetching gallery:', galleryError);
-            }
-            
-            setLoading(false);
-            return; // Successfully loaded from DB
-          } else {
-            console.log('Exhibitor not found in database, trying JSON files');
-            supabaseError = true;
-          }
-        } catch (error) {
-          console.error('Exception when loading from Supabase:', error);
-          supabaseError = true;
+        if (!slug) {
+          toast.error('Missing exhibitor slug');
+          navigate('/exhibitors');
+          return;
         }
         
-        // If no DB data found or error occurred, try to load from JSON files
-        if (supabaseError) {
-          await loadExhibitorFromJSON();
+        const exhibitorData = await scraperService.fetchExhibitorBySlug(slug);
+        
+        if (!exhibitorData) {
+          toast.error('Exhibitor not found');
+          navigate('/exhibitors');
+          return;
+        }
+        
+        // Format the data to match the Exhibitor interface
+        const formattedExhibitor: Exhibitor = {
+          id: exhibitorData.id || `temp-${Math.random().toString(36).substring(2, 9)}`,
+          name: exhibitorData.exhibitor_name || exhibitorData.name || 'Unknown Exhibitor',
+          slug: exhibitorData.slug,
+          booth_info: exhibitorData.booth_info,
+          address: exhibitorData.address,
+          thumbnail_url: exhibitorData.thumbnail_url,
+          products: exhibitorData.products,
+          description: exhibitorData.description,
+          website: exhibitorData.website,
+          email: exhibitorData.email,
+          telephone: exhibitorData.telephone
+        };
+        
+        setExhibitor(formattedExhibitor);
+        
+        // Get gallery images
+        const galleryImages = scraperService.formatGalleryImages(exhibitorData);
+        setGallery(galleryImages);
+        
+        // Set featured image to first gallery image if available
+        if (galleryImages.length > 0) {
+          setFeaturedImage(galleryImages[0].url);
         }
       } catch (error) {
-        console.error('Error in loadExhibitorFromDB:', error);
+        console.error('Error loading exhibitor:', error);
         toast.error('Failed to load exhibitor information');
-        
-        // Try loading from JSON as fallback
-        await loadExhibitorFromJSON();
       } finally {
         setLoading(false);
       }
     };
     
-    const loadExhibitorFromJSON = async () => {
-      let foundExhibitor = null;
-      
-      // Try each JSON source in sequence until we find the exhibitor
-      for (const source of JSON_SOURCES) {
-        try {
-          console.log(`Trying to load exhibitor from ${source}`);
-          
-          const response = await fetch(source);
-          if (!response.ok) {
-            console.error(`Failed to load data from ${source}`);
-            continue;
-          }
-          
-          const jsonData = await response.json();
-          const matchingExhibitor = jsonData.find((item: any) => item.slug === slug);
-          
-          if (matchingExhibitor) {
-            console.log(`Found exhibitor in ${source}`);
-            foundExhibitor = matchingExhibitor;
-            break;
-          }
-        } catch (error) {
-          console.error(`Error loading exhibitor from ${source}:`, error);
-        }
-      }
-      
-      if (foundExhibitor) {
-        const exhibitorData = {
-          id: foundExhibitor.id || `temp-${Math.random().toString(36).substring(2, 9)}`,
-          name: foundExhibitor.exhibitor_name || foundExhibitor.name,
-          slug: foundExhibitor.slug,
-          booth_info: foundExhibitor.booth_info,
-          address: foundExhibitor.address,
-          thumbnail_url: foundExhibitor.thumbnail_url,
-          products: foundExhibitor.products,
-          description: foundExhibitor.description,
-          website: foundExhibitor.website,
-          email: foundExhibitor.email,
-          telephone: foundExhibitor.telephone
-        };
-        
-        setExhibitor(exhibitorData);
-        
-        // Create gallery from gallery_images if available
-        if (foundExhibitor.gallery_images && foundExhibitor.gallery_images.length > 0) {
-          const galleryImages = foundExhibitor.gallery_images.map((url: string, index: number) => ({
-            id: index,
-            url: url,
-            alt: `${exhibitorData.name} gallery image ${index + 1}`
-          }));
-          
-          setGallery(galleryImages);
-          
-          // Set featured image to first gallery image
-          if (galleryImages.length > 0) {
-            setFeaturedImage(galleryImages[0].url);
-          }
-        } else if (exhibitorData.thumbnail_url) {
-          // If no gallery images, use thumbnail as featured image
-          setFeaturedImage(exhibitorData.thumbnail_url);
-          
-          // Add thumbnail to gallery as well
-          setGallery([{
-            id: 0,
-            url: exhibitorData.thumbnail_url,
-            alt: `${exhibitorData.name} thumbnail`
-          }]);
-        }
-      } else {
-        toast.error('Exhibitor not found in any data source');
-        navigate('/exhibitors');
-      }
-    };
-    
-    if (slug) {
-      loadExhibitorFromDB();
-    }
+    loadExhibitorData();
   }, [slug, navigate]);
 
   const handlePrevImage = () => {

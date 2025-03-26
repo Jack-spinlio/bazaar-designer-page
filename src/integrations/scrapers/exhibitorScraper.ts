@@ -1,5 +1,5 @@
 
-import { ExhibitorData } from './types';
+import { ExhibitorData, GalleryImage } from './types';
 
 export class ExhibitorScraperService {
   /**
@@ -37,5 +37,29 @@ export class ExhibitorScraperService {
       console.error('Error fetching exhibitor by slug:', error);
       return null;
     }
+  }
+
+  /**
+   * Formats gallery images from an exhibitor
+   */
+  formatGalleryImages(exhibitor: ExhibitorData): GalleryImage[] {
+    if (!exhibitor.gallery_images || exhibitor.gallery_images.length === 0) {
+      // If no gallery images but has thumbnail, use it as the first gallery image
+      if (exhibitor.thumbnail_url) {
+        return [{
+          id: 0,
+          url: exhibitor.thumbnail_url,
+          alt: `${exhibitor.exhibitor_name || exhibitor.name} thumbnail`
+        }];
+      }
+      return [];
+    }
+
+    // Create gallery images from the array of URLs
+    return exhibitor.gallery_images.map((url, index) => ({
+      id: index,
+      url: url,
+      alt: `${exhibitor.exhibitor_name || exhibitor.name} gallery image ${index + 1}`
+    }));
   }
 }

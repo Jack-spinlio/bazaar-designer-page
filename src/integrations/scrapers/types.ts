@@ -16,3 +16,10 @@ export interface ExhibitorData {
   gallery_images?: string[];
   source_url?: string;
 }
+
+// Define a GalleryImage interface for consistency
+export interface GalleryImage {
+  id: number;
+  url: string;
+  alt: string;
+}
