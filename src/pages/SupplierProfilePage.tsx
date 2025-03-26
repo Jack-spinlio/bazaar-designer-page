@@ -1,0 +1,27 @@
+
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import { SupplierProfile, SupplierData } from '@/components/supplier/SupplierProfile';
+import { getSupplierData } from '@/utils/supplierData';
+
+const SupplierProfilePage: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  
+  // Get supplier data based on the ID from the URL
+  const supplierData = getSupplierData(id || '');
+  
+  if (!supplierData) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Supplier Not Found</h1>
+          <p className="text-gray-600">The supplier you are looking for does not exist.</p>
+        </div>
+      </div>
+    );
+  }
+  
+  return <SupplierProfile supplierData={supplierData} />;
+};
+
+export default SupplierProfilePage;

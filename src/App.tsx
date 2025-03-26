@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import DesignStudio from './pages/DesignStudio';
@@ -13,6 +12,7 @@ import './App.css';
 import { Toaster as SonnerToaster } from 'sonner';
 import { Toaster } from '@/components/ui/toaster';
 import * as THREE from 'three';
+import SupplierProfilePage from './pages/SupplierProfilePage';
 
 // Augment the window interface to include THREE
 declare global {
@@ -35,7 +35,13 @@ function App() {
         <Route path="/edit" element={<Edit />} />
         <Route path="/prefabs" element={<Prefabs />} />
         <Route path="/marketplace" element={<Marketplace />} />
+        
+        {/* Keep the original route for backward compatibility */}
         <Route path="/producer/:id" element={<ProducerProfile />} />
+        
+        {/* New route for the template-based supplier profiles */}
+        <Route path="/supplier/:id" element={<SupplierProfilePage />} />
+        
         <Route path="/product/:id" element={<ProductDetail />} />
         <Route path="/supplier/*" element={<SupplierPage />} />
         <Route path="*" element={<NotFound />} />
