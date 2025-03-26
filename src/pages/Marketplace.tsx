@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ProductCategory } from '@/components/marketplace/ProductCategory';
 import { MarketplaceHeader } from '@/components/marketplace/MarketplaceHeader';
 import { MarketplaceSearch } from '@/components/marketplace/MarketplaceSearch';
@@ -214,17 +214,18 @@ const eBikeComponents = [
   }
 ];
 
-const Marketplace = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredEBikes, setFilteredEBikes] = useState(eBikes);
-  const [filteredDrivetrainComponents, setFilteredDrivetrainComponents] = useState(drivetrainComponents);
-  const [filteredRoadBikes, setFilteredRoadBikes] = useState(roadBikes);
-  const [filteredEBikeComponents, setFilteredEBikeComponents] = useState(eBikeComponents);
-  const [filteredSuppliers, setFilteredSuppliers] = useState(getAllSuppliers());
-  const [activeCategory, setActiveCategory] = useState('all');
+// The key fix: Properly declare the component as React.FC
+const Marketplace: React.FC = () => {
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const [filteredEBikes, setFilteredEBikes] = React.useState(eBikes);
+  const [filteredDrivetrainComponents, setFilteredDrivetrainComponents] = React.useState(drivetrainComponents);
+  const [filteredRoadBikes, setFilteredRoadBikes] = React.useState(roadBikes);
+  const [filteredEBikeComponents, setFilteredEBikeComponents] = React.useState(eBikeComponents);
+  const [filteredSuppliers, setFilteredSuppliers] = React.useState(getAllSuppliers());
+  const [activeCategory, setActiveCategory] = React.useState('all');
   
   // Filter products when search query changes
-  useEffect(() => {
+  React.useEffect(() => {
     filterProducts(searchQuery, activeCategory);
   }, [searchQuery, activeCategory]);
   
