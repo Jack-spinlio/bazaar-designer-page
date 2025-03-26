@@ -175,13 +175,12 @@ const suppliers: Record<string, SupplierData> = {
       }
     ]
   },
-  // Add a second sample supplier to demonstrate the template works for different suppliers
   'sram': {
     id: 'sram',
     name: 'SRAM Corporation, USA',
     shortDescription: 'Premium Component Manufacturer',
     type: 'Premium Component Manufacturer',
-    logoUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Shimano-Logo-1990.png', // You would use SRAM's actual logo here
+    logoUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Shimano-Logo-1990.png',
     rating: 4.7,
     information: 'SRAM LLC is an American manufacturer of bicycle components founded in 1987 in Chicago, Illinois. SRAM is an acronym comprising the names of its founders, Scott, Ray, and Sam. The company pioneered the twist shifter, and has expanded through acquisition of many component manufacturers including RockShox, Avid, Truvativ, Zipp, and Quarq.',
     socialMedia: [
@@ -205,7 +204,7 @@ const suppliers: Record<string, SupplierData> = {
     gallery: [
       {
         id: 1,
-        url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//shimano.avif', // Placeholders, would use SRAM images
+        url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//shimano.avif',
         alt: 'SRAM Headquarters'
       },
       {
@@ -223,7 +222,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'sram-1',
         name: 'SRAM RED eTap AXS Rear Derailleur',
-        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20front%20calliper.jpeg', // Placeholder, would use actual SRAM product images
+        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20front%20calliper.jpeg',
         price: 710,
         manufacturer: 'SRAM',
         category: 'drivetrain'
@@ -264,7 +263,6 @@ const suppliers: Record<string, SupplierData> = {
       }
     ]
   },
-  // Update the BRAKCO supplier with the correct logo
   'brakco': {
     id: 'brakco',
     name: 'BRAKCO',
@@ -292,17 +290,17 @@ const suppliers: Record<string, SupplierData> = {
     gallery: [
       {
         id: 1,
-        url: 'https://www.brakco.com/images/product/big/DV8CW201.jpg',
+        url: 'https://brakco.com/images/product/big/DV8CW201.jpg',
         alt: 'BRAKCO Brake Products'
       },
       {
         id: 2,
-        url: 'https://www.brakco.com/images/product/big/DCR1001.jpg',
+        url: 'https://brakco.com/images/product/big/DCR1001.jpg',
         alt: 'BRAKCO Disc Brake'
       },
       {
         id: 3,
-        url: 'https://www.brakco.com/images/product/big/BKR13.jpg',
+        url: 'https://brakco.com/images/product/big/BKR13.jpg',
         alt: 'BRAKCO Rim Brake'
       }
     ],
@@ -310,7 +308,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-1',
         name: 'BRAKCO V-Brake Set',
-        image: 'https://www.brakco.com/images/product/big/BKR15.jpg',
+        image: 'https://brakco.com/images/product/big/BKR15.jpg',
         price: 85,
         manufacturer: 'BRAKCO',
         category: 'rim-brake'
@@ -318,7 +316,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-2',
         name: 'BRAKCO Hydraulic Disc Brake',
-        image: 'https://www.brakco.com/images/product/big/DX4CM202.jpg',
+        image: 'https://brakco.com/images/product/big/DX4CM202.jpg',
         price: 175,
         manufacturer: 'BRAKCO',
         category: 'disc-brake'
@@ -326,7 +324,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-3',
         name: 'BRAKCO Brake Pads - Carbon Rim',
-        image: 'https://www.brakco.com/images/product/big/BPR05.jpg',
+        image: 'https://brakco.com/images/product/big/BPR05.jpg',
         price: 35,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
@@ -334,7 +332,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-4',
         name: 'BRAKCO Brake Levers - Road',
-        image: 'https://www.brakco.com/images/product/big/LR03.jpg',
+        image: 'https://brakco.com/images/product/big/LR03.jpg',
         price: 60,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
@@ -342,7 +340,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-5',
         name: 'BRAKCO Mechanical Disc Brake',
-        image: 'https://www.brakco.com/images/product/big/DCR1001.jpg',
+        image: 'https://brakco.com/images/product/big/DCR1001.jpg',
         price: 120,
         manufacturer: 'BRAKCO',
         category: 'disc-brake'
@@ -350,7 +348,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-6',
         name: 'BRAKCO Cable Housing Set',
-        image: 'https://www.brakco.com/images/product/big/CBSLC01.jpg',
+        image: 'https://brakco.com/images/product/big/CBSLC01.jpg',
         price: 28,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
