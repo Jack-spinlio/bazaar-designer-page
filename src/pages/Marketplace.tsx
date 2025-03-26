@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ProductCategory } from '@/components/marketplace/ProductCategory';
-import { MarketplaceHeader } from '@/components/marketplace/MarketplaceHeader';
+import { Header } from '@/components/Header/Header';
 import { MarketplaceSearch } from '@/components/marketplace/MarketplaceSearch';
 import { SupplierCategory } from '@/components/marketplace/SupplierCategory';
 import { getAllSuppliers } from '@/utils/supplierData';
@@ -319,7 +319,7 @@ const Marketplace: React.FC = () => {
   
   return (
     <div className="bg-white h-screen w-full overflow-y-auto">
-      <MarketplaceHeader />
+      <Header />
       
       <div className="w-full mx-auto py-6 px-4 sm:px-6 lg:px-8 pb-20">
         <MarketplaceSearch 
