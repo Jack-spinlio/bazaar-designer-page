@@ -1,4 +1,3 @@
-
 import { SupplierData } from '@/components/supplier/SupplierProfile';
 
 // Sample supplier data
@@ -262,6 +261,117 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'suspension',
         name: 'Suspension'
+      }
+    ]
+  },
+  // Add the new BRAKCO supplier
+  'brakco': {
+    id: 'brakco',
+    name: 'BRAKCO',
+    shortDescription: 'Brake System Specialist',
+    type: 'Brake Components Manufacturer',
+    logoUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Shimano-Logo-1990.png', // This would be replaced with BRAKCO's actual logo
+    rating: 4.3,
+    information: 'BRAKCO is a specialized manufacturer focused on high-quality braking systems for bicycles. With years of experience in the industry, BRAKCO produces reliable rim brakes, disc brakes, and various brake fittings trusted by cyclists worldwide. Their products are known for durability, precision, and consistent performance in all riding conditions.',
+    socialMedia: [
+      { platform: 'Instagram', handle: '@brakco_official' },
+      { platform: 'Facebook', handle: 'BRAKCO' },
+      { platform: 'Twitter', handle: '@BRAKCOglobal' }
+    ],
+    certifications: [
+      'ISO 9001:2015 Quality Management',
+      'ISO 14001:2015 Environmental Management',
+      'CE Certified Products'
+    ],
+    contact: {
+      address: '123 Braking Street, Taipei, Taiwan',
+      phone: '+886-2-1234-5678',
+      email: 'info@brakco.com',
+      website: 'www.brakco.com'
+    },
+    gallery: [
+      {
+        id: 1,
+        url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//shimano.avif', // Would use BRAKCO images
+        alt: 'BRAKCO Factory'
+      },
+      {
+        id: 2,
+        url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz%20factory%20.jpg',
+        alt: 'BRAKCO Manufacturing'
+      },
+      {
+        id: 3,
+        url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz33.jpeg',
+        alt: 'BRAKCO Quality Control'
+      }
+    ],
+    products: [
+      {
+        id: 'brakco-1',
+        name: 'BRAKCO V-Brake Set',
+        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20front%20calliper.jpeg', // Placeholder image
+        price: 85,
+        manufacturer: 'BRAKCO',
+        category: 'rim-brake'
+      },
+      {
+        id: 'brakco-2',
+        name: 'BRAKCO Hydraulic Disc Brake',
+        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Dura-ace%20calliper.jpeg', // Placeholder image
+        price: 175,
+        manufacturer: 'BRAKCO',
+        category: 'disc-brake'
+      },
+      {
+        id: 'brakco-3',
+        name: 'BRAKCO Brake Pads - Carbon Rim',
+        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//cassette.jpeg', // Placeholder image
+        price: 35,
+        manufacturer: 'BRAKCO',
+        category: 'brake-fitting'
+      },
+      {
+        id: 'brakco-4',
+        name: 'BRAKCO Brake Levers - Road',
+        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//CUES%20lever.jpeg', // Placeholder image
+        price: 60,
+        manufacturer: 'BRAKCO',
+        category: 'brake-fitting'
+      },
+      {
+        id: 'brakco-5',
+        name: 'BRAKCO Mechanical Disc Brake',
+        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//xtra%20lever.jpeg', // Placeholder image
+        price: 120,
+        manufacturer: 'BRAKCO',
+        category: 'disc-brake'
+      },
+      {
+        id: 'brakco-6',
+        name: 'BRAKCO Cable Housing Set',
+        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//GRX%20Pedals.jpeg', // Placeholder image
+        price: 28,
+        manufacturer: 'BRAKCO',
+        category: 'brake-fitting'
+      }
+    ],
+    categories: [
+      {
+        id: 'all',
+        name: 'All Products'
+      },
+      {
+        id: 'rim-brake',
+        name: 'Rim Brakes'
+      },
+      {
+        id: 'disc-brake',
+        name: 'Disc Brakes'
+      },
+      {
+        id: 'brake-fitting',
+        name: 'Brake Fittings'
       }
     ]
   }
