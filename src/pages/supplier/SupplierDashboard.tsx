@@ -39,11 +39,11 @@ export const SupplierDashboard: React.FC = () => {
     {
       title: 'Orders',
       value: '75',
-      change: -2.5,
+      change: 55.0, // Updated to +55%
       data: Array.from({ length: 20 }, (_, i) => ({ 
         value: 80 + Math.cos(i / 3) * 20 + Math.random() * 10 
       })),
-      gradient: { from: '#10B981', to: '#0EA5E9' }
+      gradient: { from: '#10B981', to: '#0EA5E9' } // Kept same gradient as Revenue
     },
     {
       title: 'Draft Designs',
@@ -52,7 +52,7 @@ export const SupplierDashboard: React.FC = () => {
       data: Array.from({ length: 20 }, (_, i) => ({ 
         value: 90 + Math.sin(i / 2) * 25 + Math.random() * 15 
       })),
-      gradient: { from: '#10B981', to: '#0EA5E9' }
+      gradient: { from: '#10B981', to: '#0EA5E9' } // Updated gradient to match Orders
     }
   ];
 
