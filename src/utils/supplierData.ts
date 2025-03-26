@@ -1,4 +1,3 @@
-
 import { SupplierData } from '@/components/supplier/SupplierProfile';
 
 // Sample supplier data
