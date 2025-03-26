@@ -264,13 +264,13 @@ const suppliers: Record<string, SupplierData> = {
       }
     ]
   },
-  // Add the new BRAKCO supplier
+  // Update the BRAKCO supplier with the correct logo
   'brakco': {
     id: 'brakco',
     name: 'BRAKCO',
     shortDescription: 'Brake System Specialist',
     type: 'Brake Components Manufacturer',
-    logoUrl: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Shimano-Logo-1990.png', // This would be replaced with BRAKCO's actual logo
+    logoUrl: 'https://www.brakco.com/images/logo.gif',
     rating: 4.3,
     information: 'BRAKCO is a specialized manufacturer focused on high-quality braking systems for bicycles. With years of experience in the industry, BRAKCO produces reliable rim brakes, disc brakes, and various brake fittings trusted by cyclists worldwide. Their products are known for durability, precision, and consistent performance in all riding conditions.',
     socialMedia: [
@@ -292,25 +292,25 @@ const suppliers: Record<string, SupplierData> = {
     gallery: [
       {
         id: 1,
-        url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//shimano.avif', // Would use BRAKCO images
-        alt: 'BRAKCO Factory'
+        url: 'https://www.brakco.com/images/product/big/DV8CW201.jpg',
+        alt: 'BRAKCO Brake Products'
       },
       {
         id: 2,
-        url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz%20factory%20.jpg',
-        alt: 'BRAKCO Manufacturing'
+        url: 'https://www.brakco.com/images/product/big/DCR1001.jpg',
+        alt: 'BRAKCO Disc Brake'
       },
       {
         id: 3,
-        url: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz33.jpeg',
-        alt: 'BRAKCO Quality Control'
+        url: 'https://www.brakco.com/images/product/big/BKR13.jpg',
+        alt: 'BRAKCO Rim Brake'
       }
     ],
     products: [
       {
         id: 'brakco-1',
         name: 'BRAKCO V-Brake Set',
-        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//105%20front%20calliper.jpeg', // Placeholder image
+        image: 'https://www.brakco.com/images/product/big/BKR15.jpg',
         price: 85,
         manufacturer: 'BRAKCO',
         category: 'rim-brake'
@@ -318,7 +318,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-2',
         name: 'BRAKCO Hydraulic Disc Brake',
-        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//Dura-ace%20calliper.jpeg', // Placeholder image
+        image: 'https://www.brakco.com/images/product/big/DX4CM202.jpg',
         price: 175,
         manufacturer: 'BRAKCO',
         category: 'disc-brake'
@@ -326,7 +326,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-3',
         name: 'BRAKCO Brake Pads - Carbon Rim',
-        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//cassette.jpeg', // Placeholder image
+        image: 'https://www.brakco.com/images/product/big/BPR05.jpg',
         price: 35,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
@@ -334,7 +334,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-4',
         name: 'BRAKCO Brake Levers - Road',
-        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//CUES%20lever.jpeg', // Placeholder image
+        image: 'https://www.brakco.com/images/product/big/LR03.jpg',
         price: 60,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
@@ -342,7 +342,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-5',
         name: 'BRAKCO Mechanical Disc Brake',
-        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//xtra%20lever.jpeg', // Placeholder image
+        image: 'https://www.brakco.com/images/product/big/DCR1001.jpg',
         price: 120,
         manufacturer: 'BRAKCO',
         category: 'disc-brake'
@@ -350,7 +350,7 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 'brakco-6',
         name: 'BRAKCO Cable Housing Set',
-        image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//GRX%20Pedals.jpeg', // Placeholder image
+        image: 'https://www.brakco.com/images/product/big/CBSLC01.jpg',
         price: 28,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
