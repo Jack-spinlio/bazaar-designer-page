@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
@@ -44,7 +45,7 @@ const ExhibitorCard: React.FC<ExhibitorCardProps> = ({ exhibitor, className }) =
 
   return (
     <Card className={cn("h-full flex flex-col overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200", className)}>
-      <Link to={`/supplier/${exhibitor.slug}`} className="h-full flex flex-col">
+      <Link to={`/exhibitor/${exhibitor.slug}`} className="h-full flex flex-col">
         <div className="h-44 overflow-hidden bg-gray-100">
           {exhibitor.thumbnail_url ? (
             <img
