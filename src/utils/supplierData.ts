@@ -1,4 +1,3 @@
-
 import { SupplierData } from '@/components/supplier/SupplierProfile';
 
 // Sample supplier data
@@ -269,9 +268,9 @@ const suppliers: Record<string, SupplierData> = {
     name: 'BRAKCO',
     shortDescription: 'Brake System Specialist',
     type: 'Brake Components Manufacturer',
-    logoUrl: 'https://www.brakco.com/_i/assets/upload/product/9c36de5115cb7df64a4ed53a363d73b7.jpg',
+    logoUrl: 'https://www.brakco.com/images/new_logo.png',
     rating: 4.3,
-    information: 'BRAKCO is a specialized manufacturer focused on high-quality braking systems for bicycles. With years of experience in the industry, BRAKCO produces reliable rim brakes, disc brakes, and various brake fittings trusted by cyclists worldwide. Their products are known for durability, precision, and consistent performance in all riding conditions.',
+    information: 'BRAKCO is a specialized manufacturer focused on high-quality braking systems for bicycles. Based in Taiwan, BRAKCO has been designing and manufacturing reliable braking products since 1997. Their extensive product line includes disc brakes, V-brakes, brake pads, and various brake accessories for all types of cycling applications, from mountain biking to road cycling and commuting.',
     socialMedia: [
       { platform: 'Instagram', handle: '@brakco_official' },
       { platform: 'Facebook', handle: 'BRAKCO' },
@@ -283,8 +282,8 @@ const suppliers: Record<string, SupplierData> = {
       'CE Certified Products'
     ],
     contact: {
-      address: '123 Braking Street, Taipei, Taiwan',
-      phone: '+886-2-1234-5678',
+      address: 'No.85, Ln. 2, Henglin Rd., Houli Dist., Taichung City, Taiwan',
+      phone: '+886-4-2539-1223',
       email: 'info@brakco.com',
       website: 'www.brakco.com'
     },
@@ -292,23 +291,28 @@ const suppliers: Record<string, SupplierData> = {
       {
         id: 1,
         url: 'https://www.brakco.com/_i/assets/upload/product/9c36de5115cb7df64a4ed53a363d73b7.jpg',
-        alt: 'BRAKCO Brake Products'
+        alt: 'BRAKCO V-Brake'
       },
       {
         id: 2,
         url: 'https://www.brakco.com/_i/assets/upload/product/3ee61a9c9cc6dadfb0c7dd36afed8b1f.jpg',
-        alt: 'BRAKCO Disc Brake'
+        alt: 'BRAKCO Hydraulic Disc Brake'
       },
       {
         id: 3,
         url: 'https://www.brakco.com/_i/assets/upload/product/00b99a17aae8f7d1c1bd97b5c4da39a5.jpg',
-        alt: 'BRAKCO Rim Brake'
+        alt: 'BRAKCO Brake Pads'
+      },
+      {
+        id: 4,
+        url: 'https://www.brakco.com/_i/assets/upload/product/4a27ddde1d2a40677eef7c93d3f5ac37.jpg',
+        alt: 'BRAKCO Mountain Bike Brakes'
       }
     ],
     products: [
       {
         id: 'brakco-1',
-        name: 'BRAKCO V-Brake Set',
+        name: 'BRAKCO BKR-15 V-Brake Set',
         image: 'https://www.brakco.com/_i/assets/upload/product/9c36de5115cb7df64a4ed53a363d73b7.jpg',
         price: 85,
         manufacturer: 'BRAKCO',
@@ -316,7 +320,7 @@ const suppliers: Record<string, SupplierData> = {
       },
       {
         id: 'brakco-2',
-        name: 'BRAKCO Hydraulic Disc Brake',
+        name: 'BRAKCO DX4 Hydraulic Disc Brake',
         image: 'https://www.brakco.com/_i/assets/upload/product/3ee61a9c9cc6dadfb0c7dd36afed8b1f.jpg',
         price: 175,
         manufacturer: 'BRAKCO',
@@ -324,7 +328,7 @@ const suppliers: Record<string, SupplierData> = {
       },
       {
         id: 'brakco-3',
-        name: 'BRAKCO Brake Pads - Carbon Rim',
+        name: 'BRAKCO BPR-05 Carbon Rim Brake Pads',
         image: 'https://www.brakco.com/_i/assets/upload/product/00b99a17aae8f7d1c1bd97b5c4da39a5.jpg',
         price: 35,
         manufacturer: 'BRAKCO',
@@ -332,7 +336,7 @@ const suppliers: Record<string, SupplierData> = {
       },
       {
         id: 'brakco-4',
-        name: 'BRAKCO Brake Levers - Road',
+        name: 'BRAKCO LR-03 Road Brake Levers',
         image: 'https://www.brakco.com/_i/assets/upload/product/1b5a0ac2ee0d10c2bb0d12a2e75459dd.jpg',
         price: 60,
         manufacturer: 'BRAKCO',
@@ -340,7 +344,7 @@ const suppliers: Record<string, SupplierData> = {
       },
       {
         id: 'brakco-5',
-        name: 'BRAKCO Mechanical Disc Brake',
+        name: 'BRAKCO DCR-1001 Mechanical Disc Brake',
         image: 'https://www.brakco.com/_i/assets/upload/product/3ee61a9c9cc6dadfb0c7dd36afed8b1f.jpg',
         price: 120,
         manufacturer: 'BRAKCO',
@@ -348,9 +352,41 @@ const suppliers: Record<string, SupplierData> = {
       },
       {
         id: 'brakco-6',
-        name: 'BRAKCO Cable Housing Set',
+        name: 'BRAKCO CBSLC-01 Cable Housing Set',
         image: 'https://www.brakco.com/_i/assets/upload/product/9a78e6e28de63fb1d7e7e5f94e8d2cc9.jpg',
         price: 28,
+        manufacturer: 'BRAKCO',
+        category: 'brake-fitting'
+      },
+      {
+        id: 'brakco-7',
+        name: 'BRAKCO DCR-2001 MTB Disc Brake Set',
+        image: 'https://www.brakco.com/_i/assets/upload/product/4a27ddde1d2a40677eef7c93d3f5ac37.jpg',
+        price: 145,
+        manufacturer: 'BRAKCO',
+        category: 'disc-brake'
+      },
+      {
+        id: 'brakco-8',
+        name: 'BRAKCO BG-01 Brake Grease',
+        image: 'https://www.brakco.com/_i/assets/upload/product/a72d8a8d9f1c9c9cf2abe0fd39783ad0.jpg',
+        price: 18,
+        manufacturer: 'BRAKCO',
+        category: 'brake-fitting'
+      },
+      {
+        id: 'brakco-9',
+        name: 'BRAKCO BR-04 MTB V-Brake',
+        image: 'https://www.brakco.com/_i/assets/upload/product/dfd3e6a80cd0a12d382cd9a8b8dc1161.jpg',
+        price: 72,
+        manufacturer: 'BRAKCO',
+        category: 'rim-brake'
+      },
+      {
+        id: 'brakco-10',
+        name: 'BRAKCO LM-01 MTB Brake Levers',
+        image: 'https://www.brakco.com/_i/assets/upload/product/9d71f60a7ea3e155f18a0b7c8f09f9e5.jpg',
+        price: 45,
         manufacturer: 'BRAKCO',
         category: 'brake-fitting'
       }
@@ -400,3 +436,4 @@ export const getAllSuppliers = (): SupplierData[] => {
 export const addSupplier = (supplier: SupplierData): void => {
   suppliers[supplier.id.toLowerCase()] = supplier;
 };
+
