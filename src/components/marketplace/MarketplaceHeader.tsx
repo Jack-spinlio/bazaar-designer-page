@@ -62,7 +62,7 @@ export const MarketplaceHeader: React.FC = () => {
             
             <DropdownMenuItem
               className="relative cursor-pointer"
-              onClick={() => handleNavigation('/supplier/dashboard', 'Supplier')}
+              onClick={() => handleNavigation('/supplier', 'Supplier')}
             >
               <Upload className="mr-2 h-4 w-4" />
               <span>Supplier</span>
