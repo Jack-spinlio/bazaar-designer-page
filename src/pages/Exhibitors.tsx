@@ -1,9 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Link } from 'react-router-dom';
-import { Header } from '@/components/Header/Header';
+import { MarketplaceHeader } from '@/components/marketplace/MarketplaceHeader';
 import { ExhibitorScraperService } from '@/integrations/scrapers/exhibitorScraper';
 import { ExhibitorData } from '@/integrations/scrapers/types';
 import { toast } from 'sonner';
@@ -83,7 +84,7 @@ const Exhibitors = () => {
 
   return (
     <div className="min-h-screen">
-      <Header />
+      <MarketplaceHeader />
       
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">

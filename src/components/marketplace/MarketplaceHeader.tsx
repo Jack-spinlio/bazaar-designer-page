@@ -3,7 +3,7 @@ import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Bell, UserCog, Upload, Building } from 'lucide-react';
+import { Bell, UserCog, Upload, Building, Users } from 'lucide-react';
 import { toast } from 'sonner';
 import { 
   DropdownMenu,
@@ -20,6 +20,7 @@ export const MarketplaceHeader: React.FC = () => {
   const isSupplierPage = location.pathname.includes('/supplier');
   const isDesignPage = location.pathname === '/design';
   const isMarketplacePage = location.pathname.includes('/marketplace');
+  const isExhibitorsPage = location.pathname.includes('/exhibitors');
   
   const handleNavigation = (path: string, role: string) => {
     navigate(path);
@@ -78,6 +79,17 @@ export const MarketplaceHeader: React.FC = () => {
               <Building className="mr-2 h-4 w-4" />
               <span>Marketplace</span>
               {isMarketplacePage && (
+                <div className="absolute right-2 w-2 h-2 bg-green-500 rounded-full"></div>
+              )}
+            </DropdownMenuItem>
+            
+            <DropdownMenuItem
+              className="relative cursor-pointer"
+              onClick={() => handleNavigation('/exhibitors', 'Exhibitors')}
+            >
+              <Users className="mr-2 h-4 w-4" />
+              <span>Exhibitors</span>
+              {isExhibitorsPage && (
                 <div className="absolute right-2 w-2 h-2 bg-green-500 rounded-full"></div>
               )}
             </DropdownMenuItem>

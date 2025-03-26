@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { UserCog, Upload, Building, LayoutDashboard, Bell } from 'lucide-react';
+import { UserCog, Upload, Building, LayoutDashboard, Bell, Users } from 'lucide-react';
 import { DesignTitle } from './DesignTitle';
 import { SharePopover } from './SharePopover';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
@@ -21,6 +22,7 @@ export const Header: React.FC = () => {
   const isSupplierPage = location.pathname.includes('/supplier');
   const isDesignPage = location.pathname === '/design';
   const isMarketplacePage = location.pathname.includes('/marketplace');
+  const isExhibitorsPage = location.pathname.includes('/exhibitors');
   
   const handleNavigation = (path: string, role: string) => {
     navigate(path);
@@ -110,8 +112,16 @@ export const Header: React.FC = () => {
                   <div className="absolute right-2 w-2 h-2 bg-green-500 rounded-full"></div>
                 )}
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link to="/exhibitors" className="w-full">Exhibitors</Link>
+              
+              <DropdownMenuItem
+                className="relative cursor-pointer"
+                onClick={() => handleNavigation('/exhibitors', 'Exhibitors')}
+              >
+                <Users className="mr-2 h-4 w-4" />
+                <span>Exhibitors</span>
+                {isExhibitorsPage && (
+                  <div className="absolute right-2 w-2 h-2 bg-green-500 rounded-full"></div>
+                )}
               </DropdownMenuItem>
               
               <DropdownMenuSeparator />
