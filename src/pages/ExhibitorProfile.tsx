@@ -8,6 +8,9 @@ import { Button } from '@/components/ui/button';
 import { Exhibitor } from '@/components/exhibitors/ExhibitorCard';
 import { ExhibitorScraperService } from '@/integrations/scrapers/exhibitorScraper';
 import { GalleryImage } from '@/integrations/scrapers/types';
+import BusinessAccountForm from '@/components/BusinessAccount/BusinessAccountForm';
+import SubscriptionForm from '@/components/Subscription/SubscriptionForm';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 const ExhibitorProfile = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -17,6 +20,8 @@ const ExhibitorProfile = () => {
   const [loading, setLoading] = useState(true);
   const [featuredImage, setFeaturedImage] = useState<string>('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showClaimForm, setShowClaimForm] = useState(false);
+  const [showSubscriptionForm, setShowSubscriptionForm] = useState(false);
   
   const scraperService = new ExhibitorScraperService();
 
@@ -98,6 +103,27 @@ const ExhibitorProfile = () => {
         .map(cat => cat.trim())
         .filter(cat => cat.length > 0)
     : [];
+
+  const handleClaimSuccess = () => {
+    setShowClaimForm(false);
+    // Show subscription form after successful claim
+    setShowSubscriptionForm(true);
+    toast.success("Profile claimed successfully! Set up your subscription to continue.");
+  };
+  
+  const handleClaimCancel = () => {
+    setShowClaimForm(false);
+  };
+  
+  const handleSubscriptionSuccess = () => {
+    setShowSubscriptionForm(false);
+    toast.success("Your exhibitor profile is now active! You can now manage your profile and products.");
+  };
+  
+  const handleSubscriptionCancel = () => {
+    setShowSubscriptionForm(false);
+    toast.info("You can subscribe later from your profile settings.");
+  };
 
   if (loading) {
     return (
@@ -330,17 +356,40 @@ const ExhibitorProfile = () => {
           </Tabs>
         </div>
         
-        {/* Edit Button */}
+        {/* Claim Profile Button */}
         <div className="mt-8 text-center">
           <Button 
             variant="outline" 
-            onClick={() => toast.info("Edit functionality coming soon!")}
+            onClick={() => setShowClaimForm(true)}
             className="px-6"
           >
-            Edit Exhibitor
+            Claim Profile
           </Button>
         </div>
       </div>
+      
+      {/* Claim Profile Dialog */}
+      <Dialog open={showClaimForm} onOpenChange={setShowClaimForm}>
+        <DialogContent className="sm:max-w-[700px]">
+          <BusinessAccountForm 
+            exhibitorId={exhibitor?.id || ''} 
+            onSuccess={handleClaimSuccess} 
+            onCancel={handleClaimCancel} 
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Subscription Dialog */}
+      <Dialog open={showSubscriptionForm} onOpenChange={setShowSubscriptionForm}>
+        <DialogContent className="sm:max-w-[700px]">
+          <SubscriptionForm
+            exhibitorId={exhibitor?.id || ''}
+            companyName={exhibitor?.name || ''}
+            onSuccess={handleSubscriptionSuccess}
+            onCancel={handleSubscriptionCancel}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

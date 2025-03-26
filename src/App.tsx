@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import DesignStudio from './pages/DesignStudio';
@@ -12,6 +11,7 @@ import ProductDetail from './pages/ProductDetail';
 import SupplierPage from './pages/supplier/SupplierPage';
 import Edit from './pages/Edit';
 import Prefabs from './pages/Prefabs';
+import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import './App.css';
 import * as THREE from 'three';
 import SupplierProfilePage from './pages/SupplierProfilePage';
@@ -66,6 +66,9 @@ function App() {
         <Route path="/exhibitor/:slug" element={<ExhibitorProfile />} />
         <Route path="/exhibitors" element={<ExhibitorListings />} />
         <Route path="/admin" element={<Admin />} />
+        
+        {/* Subscription success route */}
+        <Route path="/exhibitor/:exhibitorId/subscription-success" element={<SubscriptionSuccess />} />
         
         {/* Supplier routes - make sure it's properly nested */}
         <Route path="/supplier/*" element={<SupplierPage />} />
