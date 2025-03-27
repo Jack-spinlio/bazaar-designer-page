@@ -1,13 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header/Header';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, Star, StarHalf, ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
+import { Building2, Star, StarHalf, ChevronLeft, ChevronRight, ExternalLink, Info, Check } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Exhibitor } from '@/components/exhibitors/ExhibitorCard';
 import { ExhibitorScraperService } from '@/integrations/scrapers/exhibitorScraper';
 import { GalleryImage } from '@/integrations/scrapers/types';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from '@/components/ui/dialog';
 
 const ExhibitorProfile = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -17,6 +19,7 @@ const ExhibitorProfile = () => {
   const [loading, setLoading] = useState(true);
   const [featuredImage, setFeaturedImage] = useState<string>('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showClaimDialog, setShowClaimDialog] = useState(false);
   
   const scraperService = new ExhibitorScraperService();
 
@@ -321,13 +324,84 @@ const ExhibitorProfile = () => {
         <div className="mt-8 text-center">
           <Button 
             variant="default" 
-            onClick={() => window.open('https://buy.stripe.com/dR68wPf370vb2bu8wA', '_blank')}
+            onClick={() => setShowClaimDialog(true)}
             className="px-6"
           >
             Claim my Profile
           </Button>
         </div>
       </div>
+
+      <Dialog open={showClaimDialog} onOpenChange={setShowClaimDialog}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Activate Your Exhibitor Account</DialogTitle>
+            <DialogDescription className="text-gray-600 mt-2">
+              Start managing your exhibitor profile with premium features
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="mt-4">
+            <div className="mb-6">
+              <h3 className="text-xl font-semibold">Exhibitor Premium Plan</h3>
+              <div className="flex items-center gap-3 mt-2">
+                <span className="text-3xl font-bold">€20</span>
+                <span className="text-gray-600">/month</span>
+                <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">
+                  First month FREE
+                </span>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <p className="text-gray-600 mb-4">
+                Access all premium features to showcase your products and connect with potential buyers.
+              </p>
+
+              <ul className="space-y-2">
+                <li className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                  <span>Full exhibitor profile customization</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                  <span>Featured placement in search results</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                  <span>Direct customer inquiries</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                  <span>Product catalog management</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <Check className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                  <span>Analytics dashboard</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="bg-blue-50 p-4 rounded-md flex gap-3 mb-6">
+              <Info className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
+              <p className="text-sm text-blue-700">
+                Your subscription includes a FREE 30-day trial. You won't be charged until the trial period ends, and you can cancel at any time during this period at no cost.
+              </p>
+            </div>
+
+            <div className="flex justify-between mt-8">
+              <DialogClose asChild>
+                <Button variant="outline">Cancel</Button>
+              </DialogClose>
+              <Button 
+                onClick={() => window.open('https://buy.stripe.com/dR68wPf370vb2bu8wA', '_blank')}
+              >
+                Start Free Trial
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
