@@ -39,7 +39,6 @@ const ExhibitorProfile = () => {
           return;
         }
         
-        // Format the data to match the Exhibitor interface
         const formattedExhibitor: Exhibitor = {
           id: exhibitorData.id || `temp-${Math.random().toString(36).substring(2, 9)}`,
           name: exhibitorData.exhibitor_name || exhibitorData.name || 'Unknown Exhibitor',
@@ -56,11 +55,9 @@ const ExhibitorProfile = () => {
         
         setExhibitor(formattedExhibitor);
         
-        // Get gallery images
         const galleryImages = scraperService.formatGalleryImages(exhibitorData);
         setGallery(galleryImages);
         
-        // Set featured image to first gallery image if available
         if (galleryImages.length > 0) {
           setFeaturedImage(galleryImages[0].url);
         }
@@ -91,7 +88,6 @@ const ExhibitorProfile = () => {
     setFeaturedImage(gallery[newIndex].url);
   };
 
-  // Extract product categories for display
   const productCategories = exhibitor?.products
     ? exhibitor.products
         .split(/[,;]/)
@@ -129,9 +125,7 @@ const ExhibitorProfile = () => {
       <Header />
       
       <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 pb-20">
-        {/* Top Section: Exhibitor Info */}
         <div className="flex flex-col md:flex-row gap-8 mb-8">
-          {/* Left side - Company info */}
           <div className="w-full md:w-1/3">
             <div className="w-48 h-48 bg-gray-100 rounded-lg overflow-hidden mb-4">
               <img 
@@ -159,11 +153,8 @@ const ExhibitorProfile = () => {
             </div>
           </div>
           
-          {/* Right side - Featured image with thumbnails */}
           <div className="w-full md:w-2/3 flex justify-center">
-            {/* Gallery container with max width */}
             <div className="flex flex-col space-y-4 max-w-[70%]">
-              {/* Main image */}
               <div className="rounded-lg overflow-hidden h-72 w-full">
                 {featuredImage ? (
                   <img 
@@ -182,10 +173,8 @@ const ExhibitorProfile = () => {
                 )}
               </div>
               
-              {/* Only show thumbnails if we have more than one image */}
               {gallery.length > 1 && (
                 <div className="relative flex items-center">
-                  {/* Navigation buttons */}
                   <button 
                     onClick={handlePrevImage}
                     className="absolute -left-4 z-10 bg-white/80 rounded-full p-1 shadow-md hover:bg-gray-100"
@@ -229,7 +218,6 @@ const ExhibitorProfile = () => {
           </div>
         </div>
         
-        {/* Tab Navigation Section */}
         <div className="mb-8">
           <Tabs defaultValue="information">
             <TabsList className="flex mb-6 p-1 bg-gray-100 rounded-lg">
@@ -330,14 +318,13 @@ const ExhibitorProfile = () => {
           </Tabs>
         </div>
         
-        {/* Edit Button */}
         <div className="mt-8 text-center">
           <Button 
-            variant="outline" 
-            onClick={() => toast.info("Edit functionality coming soon!")}
+            variant="default" 
+            onClick={() => window.open('https://buy.stripe.com/dR68wPf370vb2bu8wA', '_blank')}
             className="px-6"
           >
-            Edit Exhibitor
+            Claim my Profile
           </Button>
         </div>
       </div>
