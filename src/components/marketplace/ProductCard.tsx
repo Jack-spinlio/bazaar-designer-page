@@ -12,6 +12,7 @@ interface Product {
   price: number;
   manufacturer: string;
   category?: string;
+  customDesignUrl?: string;
 }
 
 interface ProductCardProps {
@@ -57,7 +58,8 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     ],
     leadTime: '30 Day',
     moq: 50,
-    origin: 'Taiwan'
+    origin: 'Taiwan',
+    customDesignUrl: product.customDesignUrl
   };
   
   return (

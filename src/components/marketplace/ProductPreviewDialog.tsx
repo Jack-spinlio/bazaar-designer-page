@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -24,6 +23,7 @@ export interface ProductDetails {
   leadTime?: string;
   moq?: number;
   origin?: string;
+  customDesignUrl?: string;
 }
 
 interface ProductPreviewDialogProps {
@@ -49,8 +49,14 @@ export const ProductPreviewDialog: React.FC<ProductPreviewDialogProps> = ({
   ];
   
   const handleCustomize = () => {
-    // Navigate to design studio with the selected product
-    navigate(`/design?product=${product.id}`);
+    // Check if product has a custom design URL
+    if (product.customDesignUrl) {
+      // Open external design URL in a new tab
+      window.open(product.customDesignUrl, '_blank');
+    } else {
+      // Navigate to internal design studio with the selected product
+      navigate(`/design?product=${product.id}`);
+    }
     onOpenChange(false);
   };
   

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ProductCategory } from '@/components/marketplace/ProductCategory';
 import { Header } from '@/components/Header/Header';
@@ -14,7 +13,8 @@ const eBikes = [
     name: 'Mens Smart eBike',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//2.jpg',
     price: 1160,
-    manufacturer: 'Vulz'
+    manufacturer: 'Vulz',
+    customDesignUrl: 'https://design.spinlio.com/'
   },
   {
     id: 'ebike-2',
@@ -42,7 +42,8 @@ const eBikes = [
     name: 'RitBlazer 2170',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//5.jpg',
     price: 1120,
-    manufacturer: 'Vulz'
+    manufacturer: 'Vulz',
+    customDesignUrl: 'https://design.spinlio.com/'
   },
   {
     id: 'ebike-6',
