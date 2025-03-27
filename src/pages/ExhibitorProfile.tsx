@@ -345,7 +345,7 @@ const ExhibitorProfile = () => {
             <div className="mb-6">
               <h3 className="text-xl font-semibold">Exhibitor Premium Plan</h3>
               <div className="flex items-center gap-3 mt-2">
-                <span className="text-3xl font-bold">€20</span>
+                <span className="text-3xl font-bold">$50</span>
                 <span className="text-gray-600">/month</span>
                 <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded">
                   First month FREE
