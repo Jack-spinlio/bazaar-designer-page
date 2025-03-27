@@ -21,14 +21,16 @@ const eBikes = [
     name: 'Sensations eGravel Bike',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//7.jpg',
     price: 1347,
-    manufacturer: 'Vulz'
+    manufacturer: 'Vulz',
+    customDesignUrl: 'https://design.spinlio.com/vulz/stepthru'
   },
   {
     id: 'ebike-3',
     name: 'Urban Beauty',
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//8.jpg',
     price: 980,
-    manufacturer: 'Vulz'
+    manufacturer: 'Vulz',
+    customDesignUrl: 'https://design.spinlio.com/vulz/urban'
   },
   {
     id: 'ebike-4',
@@ -51,6 +53,14 @@ const eBikes = [
     image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//3.jpg',
     price: 815,
     manufacturer: 'Vulz'
+  },
+  {
+    id: 'ebike-7',
+    name: 'eGravel bike',
+    image: 'https://dnauvvkfpmtquaysfdvm.supabase.co/storage/v1/object/public/images//vulz_supreme.jpg',
+    price: 1499,
+    manufacturer: 'Vulz',
+    customDesignUrl: 'https://design.spinlio.com/vulz'
   }
 ];
 
